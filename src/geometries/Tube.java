@@ -1,0 +1,42 @@
+package geometries;
+
+import primitives.Ray;
+import primitives.Vector;
+import primitives.Point;
+/**
+ * The Tube class represents an infinite cylindrical tube defined by an axis and a radius.
+ * It extends RadialGeometry and provides functionality for getting the normal vector at a point on the tube's surface.
+ *
+ * @author Chen Babay & Linoy Shamshian
+ */
+public class Tube extends RadialGeometry {
+    protected final Ray axis;
+
+    /**
+     * Constructor for Tube class. Initializes the axis and radius of the tube.
+     *
+     * @param axis   The axis of the tube (represented by a Ray).
+     * @param radius The radius of the tube.
+     */
+    public Tube(Ray axis, double radius) {
+        super(radius);
+        if (axis == null) {
+            throw new IllegalArgumentException("Axis cannot be null");
+        }
+        this.axis = axis;
+    }
+
+    /**
+     * This method is an implementation of the getNormal method from Geometry interface.
+     * It returns the normal vector to the surface of the tube at a specific point.
+     * In this case, it is an abstract method, so we return null for now.
+     *
+     * @param point The point on the surface of the tube.
+     * @return The normal vector at the point (null for now).
+     */
+    @Override
+    public Vector getNormal(Point point) {
+        // For now, we'll return null (this should be implemented later based on the geometry of the tube).
+        return null;
+    }
+}
