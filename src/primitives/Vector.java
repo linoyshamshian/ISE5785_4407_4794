@@ -2,7 +2,7 @@ package primitives;
 /**
  * The Vector class represents a mathematical vector in 3D space.
  * A vector is defined by its x, y, and z components, and provides several methods to perform vector operations.
- *
+ *aa
  * @author Chen Babay & Linoy Shamshian
  */
 public class Vector extends Point {
