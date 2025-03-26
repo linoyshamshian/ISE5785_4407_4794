@@ -17,12 +17,8 @@ public class Ray {
      *
      * @param head      The origin point of the ray.
      * @param direction The direction vector of the ray, not necessarily normalized.
-     * @throws IllegalArgumentException if the direction vector is null.
      */
     public Ray(Point head, Vector direction) {
-        if (head == null || direction == null) {
-            throw new IllegalArgumentException("Point and direction cannot be null.");
-        }
         this.head = head;
         this.direction = direction.normalize();
     }
@@ -62,6 +58,5 @@ public class Ray {
     public String toString() {
         return "Ray[Origin: " + head + ", Direction: " + direction + "]";
     }
-
 
 }

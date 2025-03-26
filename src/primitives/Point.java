@@ -33,42 +33,42 @@ public class Point {
     /**
      * Subtracts another point from this point and returns the result as a vector.
      *
-     * @param p1 The point to subtract.
+     * @param p The point to subtract.
      * @return A Vector representing the difference between the points.
      */
-    public Vector subtract(Point p1) {
-        return new Vector(xyz.subtract(p1.xyz));
+    public Vector subtract(Point p) {
+        return new Vector(xyz.subtract(p.xyz));
     }
 
     /**
      * Adds a vector to this point and returns the resulting point.
      *
-     * @param v1 The vector to add to the point.
+     * @param v The vector to add to the point.
      * @return A new Point representing the sum of the point and the vector.
      */
-    public Point add(Vector v1) {
-        return new Point(xyz.add(v1.xyz));
+    public Point add(Vector v) {
+        return new Point(xyz.add(v.xyz));
     }
 
     /**
      * Calculates the squared distance between this point and another point.
      *
-     * @param p1 The point to calculate the distance to.
+     * @param p The point to calculate the distance to.
      * @return The squared distance between the two points.
      */
-    public double distanceSquared(Point p1) {
-        Double3 sub = xyz.subtract(p1.xyz);
+    public double distanceSquared(Point p) {
+        Double3 sub = xyz.subtract(p.xyz);
         return sub.d1() * sub.d1() + sub.d2() * sub.d2() + sub.d3() * sub.d3();
     }
 
     /**
      * Calculates the distance between this point and another point.
      *
-     * @param p1 The point to calculate the distance to.
+     * @param p The point to calculate the distance to.
      * @return The distance between the two points.
      */
-    public double distance(Point p1) {
-        return Math.sqrt(distanceSquared(p1));
+    public double distance(Point p) {
+        return Math.sqrt(distanceSquared(p));
     }
 
     /**
@@ -93,6 +93,6 @@ public class Point {
      */
     @Override
     public String toString() {
-        return "Point(" + xyz.d1() + ", " + xyz.d2() + ", " + xyz.d3() + ")";
+        return "" + xyz;
     }
 }
