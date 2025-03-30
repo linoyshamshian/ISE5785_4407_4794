@@ -1,13 +1,18 @@
 package geometries;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import primitives.Point;
 import primitives.Vector;
 import primitives.Util;
 
 class PlaneTest {
 
+    /**
+     * Test method for {@link geometries.Plane#getNormal()}.
+     */
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
@@ -16,34 +21,39 @@ class PlaneTest {
 
         // Expected normal: (0, 0, 1) or (0, 0, -1), depending on implementation
         Vector normal = plane.getNormal();
-
-        // Ensure the normal is perpendicular to the two plane vectors
         Vector v1 = new Vector(1, 0, 0);
         Vector v2 = new Vector(0, 1, 0);
 
-        // Check dot product is zero without using assertTrue
+        // TC01: Check that the normal is perpendicular to v1
         assertEquals(0, Util.alignZero(normal.dotProduct(v1)), "Normal is not perpendicular to v1");
+        // TC02: Check that the normal is perpendicular to v2
         assertEquals(0, Util.alignZero(normal.dotProduct(v2)), "Normal is not perpendicular to v2");
-
-        // Ensure the normal is a unit vector
+        // TC03: Ensure the normal is a unit vector
         assertEquals(0, Util.alignZero(normal.length() - 1), "Normal is not a unit vector");
     }
 
+    /**
+     * Test method for {@link geometries.Plane#Plane(Point, Vector)}.
+     */
     @Test
-    void testTestGetNormal() {
+    void testConstructorWithPointAndNormal() {
         // =============== Boundary Values Tests ==================
         // BVA: Define a plane with a point and a normal
         Point p = new Point(1, 2, 3);
         Vector normal = new Vector(0, 0, 1);
         Plane plane = new Plane(p, normal);
 
-        // Retrieve the normal
-        Vector resultNormal = plane.getNormal();
-
-        // Check that the retrieved normal is the same (or opposite) as the given normal
-        assertEquals(0, Util.alignZero(normal.normalize().dotProduct(resultNormal) - 1), "Normal is not correct");
+        // TC01: Retrieve the normal and ensure it is the same (or opposite) as given normal
+        assertEquals(
+                1,
+                Util.alignZero(normal.normalize().dotProduct(plane.getNormal())),
+                "Normal is not correct");
     }
 
+
+    /**
+     * Test method for {@link geometries.Plane#Plane(Point, Point, Point)}.
+     */
     @Test
     void testConstructorWithThreePoints() {
         // Define three valid points that are not collinear
@@ -59,30 +69,59 @@ class PlaneTest {
 
         // Check that the normal is perpendicular to the vector from p1 to p2 (should be perpendicular)
         Vector p1ToP2 = p2.subtract(p1);
-        assertEquals(0, Util.alignZero(p1ToP2.dotProduct(normal)), "Normal is not perpendicular to vector p1->p2");
-
-        // Check that the normal is perpendicular to the vector from p1 to p3 (should be perpendicular)
         Vector p1ToP3 = p3.subtract(p1);
-        assertEquals(0, Util.alignZero(p1ToP3.dotProduct(normal)), "Normal is not perpendicular to vector p1->p3");
 
-        // Check that the normal's length is 1
+        // TC01: Check that the normal is perpendicular to p1->p2
+        assertEquals(
+                0,
+                Util.alignZero(p1ToP2.dotProduct(normal)),
+                "Normal is not perpendicular to vector p1->p2");
+        // TC02: Check that the normal is perpendicular to p1->p3
+        assertEquals(
+                0,
+                Util.alignZero(p1ToP3.dotProduct(normal)),
+                "Normal is not perpendicular to vector p1->p3");
+
+        // TC03: Ensure the normal is a unit vector
         assertEquals(1, normal.length(), "Normal is not unit length");
 
-        // Test cases for boundary values (edge cases)
-        // Case 1: Two coincident points (should throw an exception)
-        assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(2, 2, 2)));
+        // =============== Boundary Values Tests ==================
 
-        // Case 2: First and third points coincide (should throw an exception)
-        assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 1, 1), new Point(2, 2, 2), new Point(1, 1, 1)));
-
-        // Case 3: Second and third points coincide (should throw an exception)
-        assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(2, 2, 2), new Point(3, 3, 3), new Point(3, 3, 3)));
-
-        // Case 4: All three points coincide (should throw an exception)
-        assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(1, 1, 1)));
-
-        // Case 5: Points are collinear (should throw an exception)
-        assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(0, 0, 0), new Point(1, 1, 1), new Point(2, 2, 2)));
+        // TC11: First and second points coincide (should throw an exception)
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Plane(
+                        new Point(1, 1, 1),
+                        new Point(1, 1, 1),
+                        new Point(2, 2, 2)));
+        // TC12: First and third points coincide (should throw an exception)
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Plane(
+                        new Point(1, 1, 1),
+                        new Point(2, 2, 2),
+                        new Point(1, 1, 1)));
+        // TC13: Second and third points coincide (should throw an exception)
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Plane(
+                        new Point(2, 2, 2),
+                        new Point(3, 3, 3),
+                        new Point(3, 3, 3)));
+        // TC14: All three points coincide (should throw an exception)
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Plane(
+                        new Point(1, 1, 1),
+                        new Point(1, 1, 1),
+                        new Point(1, 1, 1)));
+        // TC15: All points are collinear (should throw an exception)
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Plane(
+                        new Point(0, 0, 0),
+                        new Point(1, 1, 1),
+                        new Point(2, 2, 2)));
     }
 
 }
