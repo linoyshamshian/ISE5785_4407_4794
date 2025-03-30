@@ -10,6 +10,7 @@ class PlaneTest {
 
     @Test
     void testGetNormal() {
+        // ============ Equivalence Partitions Tests ==============
         // EP: Create a plane from three non-collinear points
         Plane plane = new Plane(new Point(0, 0, 0), new Point(1, 0, 0), new Point(0, 1, 0));
 
@@ -30,6 +31,7 @@ class PlaneTest {
 
     @Test
     void testTestGetNormal() {
+        // =============== Boundary Values Tests ==================
         // BVA: Define a plane with a point and a normal
         Point p = new Point(1, 2, 3);
         Vector normal = new Vector(0, 0, 1);
