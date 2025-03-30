@@ -6,6 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class VectorTest {
 
     @Test
+    void testConstructorThrowsExceptionForZeroVector() {
+        // =============== Boundary Values Tests ==================
+        // BVA: Trying to create a zero vector should throw an exception
+        assertThrows(IllegalArgumentException.class, () -> new Vector(0, 0, 0), "Constructor should throw an exception for a zero vector");
+    }
+
+    @Test
     void testAdd() {
         Vector v1 = new Vector(1, -2, 3);
         Vector v2 = new Vector(-1, 2, -3);
