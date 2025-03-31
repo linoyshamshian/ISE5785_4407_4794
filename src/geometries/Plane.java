@@ -22,13 +22,13 @@ public class Plane extends Geometry {
      */
     public Plane(Point v0, Point v1, Point v2) {
         this.q = v0;
-        this.normal = null;
+        this.normal = v1.subtract(v0).crossProduct(v2.subtract(v0)).normalize();
     }
 
     /**
      * Constructor for creating a Plane with a point and a normal vector.
      *
-     * @param q      The point on the plane.
+     * @param q The point on the plane.
      * @param normal The normal vector of the plane.
      */
     public Plane(Point q, Vector normal) {

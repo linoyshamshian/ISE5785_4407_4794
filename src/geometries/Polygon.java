@@ -10,7 +10,7 @@ import primitives.*;
  * system
  * @author Dan
  */
-/// ////////////////////
+
 public class Polygon extends Geometry {
    /** List of polygon's vertices */
    protected final List<Point> vertices;

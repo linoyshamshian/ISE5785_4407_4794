@@ -8,9 +8,9 @@ class VectorTest {
 
     /** Test method for {@link primitives.Vector#Vector(double, double, double)}. */
     @Test
-    void testConstructorThrowsExceptionForZeroVector() {
+    void testConstructor() {
         // =============== Boundary Values Tests ==================
-        // BVA: Trying to create a zero vector should throw an exception
+        // Trying to create a zero vector should throw an exception
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new Vector(0, 0, 0),

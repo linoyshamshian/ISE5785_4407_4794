@@ -50,7 +50,7 @@ class PlaneTest {
                 "Normal is not correct");
     }
 
-
+    //אני לא בטוחה שצריך אתזה עמוד שלוש סעיף 5 נקודה שנייה//////////////////////////////
     /**
      * Test method for {@link geometries.Plane#Plane(Point, Point, Point)}.
      */

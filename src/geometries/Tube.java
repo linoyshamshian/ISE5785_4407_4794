@@ -3,6 +3,7 @@ package geometries;
 import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
+
 /**
  * The Tube class represents an infinite cylindrical tube defined by an axis and a radius.
  * It extends RadialGeometry and provides functionality for getting the normal vector at a point on the tube's surface.
@@ -36,7 +37,14 @@ public class Tube extends RadialGeometry {
      */
     @Override
     public Vector getNormal(Point point) {
-        // For now, we'll return null (this should be implemented later based on the geometry of the tube).
-        return null;
+
+        // Compute the vector from the point on the tube to the head of the axis (Ray origin)
+        Vector v = point.subtract(axis.getHead());
+        // Project the vector onto the axis and subtract it from the original vector
+        double t = v.dotProduct(axis.getDirection()); // Scalar projection of v on the axis direction
+        if (t == 0)
+            return v.normalize();
+        Point o = axis.getHead().add(axis.getDirection().scale(t));
+        return point.subtract(o).normalize(); // Subtract the projection to get the normal and normalize it
     }
 }

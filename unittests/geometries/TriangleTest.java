@@ -30,10 +30,8 @@ class TriangleTest {
     }
 
     /**
-     * Test method for the Triangle constructor.
-     * This test verifies that a valid triangle is created with three non-collinear points
-     * and ensures that invalid triangles with collinear points or fewer than three points
-     * throw an IllegalArgumentException.
+     * Test method for
+     * {@link geometries.Triangle#Triangle(primitives.Point, primitives.Point, primitives.Point)}.
      */
     @Test
     void testTriangleConstructor() {
