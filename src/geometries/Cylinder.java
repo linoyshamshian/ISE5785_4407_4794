@@ -40,8 +40,31 @@ public class Cylinder extends Tube {
      */
     @Override
     public Vector getNormal(Point point) {
-        return null;
+        // The cylinder's axis
+        Point p0 = axis.getHead(); // The base center (start of the axis)
+        Vector v = axis.getDirection(); // The cylinder's direction (normalized)
+        // If the point is exactly at the bottom base center
+        if (point.equals(p0)) {
+            return v.scale(-1);
+        }
+        //  If the point is exactly at the top base center
+        Point topCenter = p0.add(v.scale(height));
+        if (point.equals(topCenter)) {
+            return v;
+        }
+        // Compute the projection of the point onto the cylinder's axis
+        double t = v.dotProduct(point.subtract(p0));
+        // If the point is on the bottom base (including edge cases at the junction with the mantle)
+        if (t <= 0) {
+            return v.scale(-1);
+        }
+        // If the point is on the top base (including edge cases at the junction with the mantle)
+        if (t >= height) {
+            return v;
+        }
+        // If the point is on the cylindrical mantle
+        Point o = p0.add(v.scale(t)); // The center of the circular section where the point is located
+        return point.subtract(o).normalize();
     }
-
 
 }

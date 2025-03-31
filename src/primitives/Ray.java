@@ -24,6 +24,23 @@ public class Ray {
     }
 
     /**
+     * Getter for the origin point (head) of the ray.
+     * @return The origin point of the ray.
+     */
+    public Point getHead() {
+        return head;
+    }
+
+    /**
+     * Getter for the direction vector of the ray.
+     * @return The direction vector of the ray.
+     */
+    public Vector getDirection() {
+        return direction;
+    }
+
+
+    /**
      * Compares this Ray to another object for equality.
      * Two Rays are considered equal if they have the same head point and the same direction vector.
      *
