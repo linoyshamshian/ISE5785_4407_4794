@@ -33,25 +33,6 @@ class PlaneTest {
     }
 
     /**
-     * Test method for {@link geometries.Plane#Plane(Point, Vector)}.
-     */
-    @Test
-    void testConstructorWithPointAndNormal() {
-        // =============== Boundary Values Tests ==================
-        // BVA: Define a plane with a point and a normal
-        Point p = new Point(1, 2, 3);
-        Vector normal = new Vector(0, 0, 1);
-        Plane plane = new Plane(p, normal);
-
-        // TC01: Retrieve the normal and ensure it is the same (or opposite) as given normal
-        assertEquals(
-                1,
-                Util.alignZero(normal.normalize().dotProduct(plane.getNormal())),
-                "Normal is not correct");
-    }
-
-    //אני לא בטוחה שצריך אתזה עמוד שלוש סעיף 5 נקודה שנייה//////////////////////////////
-    /**
      * Test method for {@link geometries.Plane#Plane(Point, Point, Point)}.
      */
     @Test

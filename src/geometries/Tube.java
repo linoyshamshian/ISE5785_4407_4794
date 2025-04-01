@@ -39,11 +39,11 @@ public class Tube extends RadialGeometry {
     public Vector getNormal(Point point) {
 
         // Compute the vector from the point on the tube to the head of the axis (Ray origin)
-        Vector v = point.subtract(axis.getHead());
+        Vector u = point.subtract(axis.getHead());
         // Project the vector onto the axis and subtract it from the original vector
-        double t = v.dotProduct(axis.getDirection()); // Scalar projection of v on the axis direction
+        double t = axis.getDirection().dotProduct(u); // Scalar projection of v on the axis direction
         if (t == 0)
-            return v.normalize();
+            return u.normalize();
         Point o = axis.getHead().add(axis.getDirection().scale(t));
         return point.subtract(o).normalize(); // Subtract the projection to get the normal and normalize it
     }
