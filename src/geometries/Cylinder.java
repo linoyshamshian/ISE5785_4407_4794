@@ -48,23 +48,21 @@ public class Cylinder extends Tube {
             return v.scale(-1);
         }
         //  If the point is exactly at the top base center
-        Point topCenter = p0.add(v.scale(height));
-        if (point.equals(topCenter)) {
+        if (point.equals(p0.add(v.scale(height)))){
             return v;
         }
         // Compute the projection of the point onto the cylinder's axis
         double t = v.dotProduct(point.subtract(p0));
         // If the point is on the bottom base (including edge cases at the junction with the mantle)
-        if (t <= 0) {
+        if (t == 0) {
             return v.scale(-1);
         }
         // If the point is on the top base (including edge cases at the junction with the mantle)
-        if (t >= height) {
+        if (t == height) {
             return v;
         }
         // If the point is on the cylindrical mantle
-        Point o = p0.add(v.scale(t)); // The center of the circular section where the point is located
-        return point.subtract(o).normalize();
+        return point.subtract(p0.add(v.scale(t))).normalize();
     }
 
 }
