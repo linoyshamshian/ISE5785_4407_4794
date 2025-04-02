@@ -6,6 +6,11 @@ import primitives.Point;
 import primitives.Vector;
 
 class TriangleTest {
+    /**
+     * Delta value for accuracy when comparing the numbers of type 'double' in
+     * assertEquals
+     */
+    private static final double DELTA = 0.000001;
 
     /**
      * Test method for
@@ -22,11 +27,20 @@ class TriangleTest {
         Vector normal = triangle.getNormal(p0);
 
         // Check that the normal vector has length 1
-        assertEquals(1, normal.length(), "Normal vector length should be 1");
+        assertEquals(
+                1,
+                normal.length(),
+                DELTA,
+                "Normal vector length should be 1");
 
         // Check that the normal is orthogonal to the vector (0, 0, 1)
         double dotProduct = normal.dotProduct(new Vector(0, 0, 1));
-        assertEquals(0, dotProduct, "Normal direction is incorrect");
+        assertEquals(
+                1,
+                Math.abs(dotProduct),
+                DELTA,
+                "Normal direction is incorrect");
+
     }
 
     /**

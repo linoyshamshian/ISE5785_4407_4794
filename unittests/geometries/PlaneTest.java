@@ -9,6 +9,11 @@ import primitives.Vector;
 import primitives.Util;
 
 class PlaneTest {
+    /**
+     * Delta value for accuracy when comparing the numbers of type 'double' in
+     * assertEquals
+     */
+    private static final double DELTA = 0.000001;
 
     /**
      * Test method for {@link geometries.Plane#getNormal()}.
@@ -25,11 +30,23 @@ class PlaneTest {
         Vector v2 = new Vector(0, 1, 0);
 
         // TC01: Check that the normal is perpendicular to v1
-        assertEquals(0, Util.alignZero(normal.dotProduct(v1)), "Normal is not perpendicular to v1");
+        assertEquals(
+                0,
+                normal.dotProduct(v1),
+                DELTA,
+                "Normal is not perpendicular to v1");
         // TC02: Check that the normal is perpendicular to v2
-        assertEquals(0, Util.alignZero(normal.dotProduct(v2)), "Normal is not perpendicular to v2");
+        assertEquals(
+                0,
+                normal.dotProduct(v2),
+                DELTA,
+                "Normal is not perpendicular to v2");
         // TC03: Ensure the normal is a unit vector
-        assertEquals(0, Util.alignZero(normal.length() - 1), "Normal is not a unit vector");
+        assertEquals(
+                1,
+                normal.length(),
+                DELTA,
+                "Normal is not a unit vector");
     }
 
     /**
@@ -55,16 +72,22 @@ class PlaneTest {
         // TC01: Check that the normal is perpendicular to p1->p2
         assertEquals(
                 0,
-                Util.alignZero(p1ToP2.dotProduct(normal)),
+                p1ToP2.dotProduct(normal),
+                DELTA,
                 "Normal is not perpendicular to vector p1->p2");
         // TC02: Check that the normal is perpendicular to p1->p3
         assertEquals(
                 0,
-                Util.alignZero(p1ToP3.dotProduct(normal)),
+                p1ToP3.dotProduct(normal),
+                DELTA,
                 "Normal is not perpendicular to vector p1->p3");
 
         // TC03: Ensure the normal is a unit vector
-        assertEquals(1, normal.length(), "Normal is not unit length");
+        assertEquals(
+                1,
+                normal.length(),
+                DELTA,
+                "Normal is not unit length");
 
         // =============== Boundary Values Tests ==================
 

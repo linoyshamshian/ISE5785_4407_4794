@@ -4,6 +4,8 @@ import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
 
+import static primitives.Util.isZero;
+
 /**
  * The Tube class represents an infinite cylindrical tube defined by an axis and a radius.
  * It extends RadialGeometry and provides functionality for getting the normal vector at a point on the tube's surface.
@@ -12,7 +14,7 @@ import primitives.Point;
  */
 public class Tube extends RadialGeometry {
     protected final Ray axis;
-
+    protected static final double DELTA = 0.000001;
     /**
      * Constructor for Tube class. Initializes the axis and radius of the tube.
      *
@@ -21,9 +23,6 @@ public class Tube extends RadialGeometry {
      */
     public Tube(Ray axis, double radius) {
         super(radius);
-        if (axis == null) {
-            throw new IllegalArgumentException("Axis cannot be null");
-        }
         this.axis = axis;
     }
 
@@ -42,7 +41,7 @@ public class Tube extends RadialGeometry {
         Vector u = point.subtract(axis.getHead());
         // Project the vector onto the axis and subtract it from the original vector
         double t = axis.getDirection().dotProduct(u); // Scalar projection of v on the axis direction
-        if (t == 0)
+        if (isZero(t))
             return u.normalize();
         Point o = axis.getHead().add(axis.getDirection().scale(t));
         return point.subtract(o).normalize(); // Subtract the projection to get the normal and normalize it
