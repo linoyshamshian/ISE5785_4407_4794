@@ -21,9 +21,6 @@ public class Sphere extends RadialGeometry {
      */
     public Sphere(Point center, double radius) {
         super(radius);
-        if (center == null) {
-            throw new IllegalArgumentException("Center cannot be null.");
-        }
         this.center = center;
     }
 

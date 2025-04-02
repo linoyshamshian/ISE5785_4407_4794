@@ -3,7 +3,7 @@ package geometries;
 import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
-
+import static primitives.Util.isZero;
 /**
  * This class represents a Cylinder, a 3D geometric object defined by its radius and height.
  * The class extends Tube, inheriting the radius and axis properties, and adds a height property.
@@ -14,6 +14,7 @@ import primitives.Point;
 
 public class Cylinder extends Tube {
     private final double height;
+
 
     /**
      * Constructor for Cylinder class. Initializes the radius, axis, and height of the cylinder.
@@ -54,15 +55,16 @@ public class Cylinder extends Tube {
         // Compute the projection of the point onto the cylinder's axis
         double t = v.dotProduct(point.subtract(p0));
         // If the point is on the bottom base (including edge cases at the junction with the mantle)
-        if (t == 0) {
+        if (isZero(t)) {
             return v.scale(-1);
         }
+
         // If the point is on the top base (including edge cases at the junction with the mantle)
         if (t == height) {
             return v;
         }
         // If the point is on the cylindrical mantle
-        return point.subtract(p0.add(v.scale(t))).normalize();
+        return super.getNormal(point);
     }
 
 }

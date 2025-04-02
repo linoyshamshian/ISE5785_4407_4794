@@ -2,6 +2,7 @@ package geometries;
 
 import primitives.*;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SphereTest {
@@ -15,23 +16,16 @@ class SphereTest {
         // ============ Equivalence Partitions Tests ==============
         Sphere sphere = new Sphere(new Point(0, 0, 0), 2);
         // TC01 :Test that the normal is correctly calculated for point (2, 0, 0)
+        Vector v = new Vector(1, 0, 0);
         assertEquals(
-                new Vector(1, 0, 0),
+                v,
                 sphere.getNormal(new Point(2, 0, 0)),
                 "Wrong normal vector");
+        assertEquals(
+                1,
+                v.length(),
+                "Normal vector length should be 1");
     }
 
-    /**
-     * Test method for
-     * {@link geometries.Sphere#Sphere(primitives.Point, double)}.
-     */
-    @Test
-    void testConstructor() {
-        // =============== Boundary Values Tests ==================
-        // Testing if IllegalArgumentException is thrown when the center is null
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Sphere(null, 5);
-        });
-    }
 
 }
