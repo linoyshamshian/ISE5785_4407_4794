@@ -128,4 +128,7 @@ class PlaneTest {
                         new Point(2, 2, 2)));
     }
 
+    @Test
+    void testFindIntersections() {
+    }
 }

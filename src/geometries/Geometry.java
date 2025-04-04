@@ -9,7 +9,7 @@ import primitives.Point;
  *
  * @author Chen Babay & Linoy Shamshian
  */
-public abstract class Geometry {
+public abstract class Geometry implements Intersectable {
     /**
      * Gets the normal vector of the geometry at a specific point.
      *
