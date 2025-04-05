@@ -173,7 +173,7 @@ class PlaneTest {
         Ray ray7 = new Ray(new Point(0, 0, 1), new Vector(0, 0, 1));
         assertNull(plane.findIntersections(ray7), "Starts after the plane");
 
-        // **** Group 3: Special cases
+        // *** Group 3: Special cases
         // TC16: Ray starts in the plane but is not orthogonal or parallel
         Ray ray8 = new Ray(new Point(1, 1, 0), new Vector(1, 1, 1));
         assertNull(plane.findIntersections(ray8), "Starts in the plane");
