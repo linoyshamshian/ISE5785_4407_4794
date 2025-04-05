@@ -57,7 +57,9 @@ class TriangleTest {
 
         // Creating a valid triangle
         Triangle triangle = new Triangle(p0, p1, p2);
-        assertNotNull(triangle, "Triangle creation failed with valid points");
+        assertNotNull(
+                triangle,
+                "Triangle creation failed with valid points");
 
         // TC02: Invalid triangle with collinear points (should throw exception)
         Point p3 = new Point(0, 0, 0);

@@ -44,14 +44,18 @@ class CylinderTest {
         Vector normal1 = cylinder.getNormal(p4);
         boolean validNormal1 = normal1.equals(
                 new Vector(1, 0, 0)) || normal1.equals(new Vector(0, 0, -1));
-        assertTrue(validNormal1, "Wrong normal for edge case (bottom base and surface)");
+        assertTrue(
+                validNormal1,
+                "Wrong normal for edge case (bottom base and surface)");
 
         // TC12: Point exactly on the edge between base and curved surface (top base)
         Point p5 = new Point(2, 0, 5);
         Vector normal2 = cylinder.getNormal(p5);
         boolean validNormal2 = normal2.equals(
                 new Vector(1, 0, 0)) || normal2.equals(new Vector(0, 0, 1));
-        assertTrue(validNormal2, "Wrong normal for edge case (top base and surface)");
+        assertTrue(
+                validNormal2,
+                "Wrong normal for edge case (top base and surface)");
 
         // TC13: Point at the exact center of the bottom base
         Point p6 = new Point(0, 0, 0);

@@ -24,7 +24,10 @@ class VectorTest {
         Vector v2 = new Vector(-1, 2, -3);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Test regular vector addition
-        assertEquals(new Vector(2, -4, 6), v1.add(v1), "Vector addition failed");
+        assertEquals(
+                new Vector(2, -4, 6),
+                v1.add(v1),
+                "Vector addition failed");
         // =============== Boundary Values Tests ==================
         // TC11: Adding a vector to its inverse should throw an exception (zero vector is not allowed)
         assertThrows(
@@ -40,9 +43,15 @@ class VectorTest {
         Vector v = new Vector(1, -2, 3);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Scaling by a positive scalar
-        assertEquals(new Vector(2, -4, 6), v.scale(2), "Scaling by positive number failed");
+        assertEquals(
+                new Vector(2, -4, 6),
+                v.scale(2),
+                "Scaling by positive number failed");
         // TC02: Scaling by a negative scalar
-        assertEquals(new Vector(-2, 4, -6), v.scale(-2), "Scaling by negative number failed");
+        assertEquals(
+                new Vector(-2, 4, -6),
+                v.scale(-2),
+                "Scaling by negative number failed");
         // =============== Boundary Values Tests ==================
         // TC11: Scaling by zero should throw an exception
         assertThrows(
@@ -59,9 +68,15 @@ class VectorTest {
         Vector v3 = new Vector(0, 3, -2);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Dot product with parallel vectors
-        assertEquals(-28, v1.dotProduct(v2), "Dot product with parallel vectors failed");
+        assertEquals(
+                -28,
+                v1.dotProduct(v2),
+                "Dot product with parallel vectors failed");
         // TC02: Dot product with perpendicular vectors should be zero
-        assertEquals(0, v1.dotProduct(v3), "Dot product with perpendicular vectors failed");
+        assertEquals(
+                0,
+                v1.dotProduct(v3),
+                "Dot product with perpendicular vectors failed");
     }
 
     /** Test method for {@link primitives.Vector#crossProduct(primitives.Vector)}. */
@@ -79,7 +94,10 @@ class VectorTest {
         // TC01: Cross product with non-parallel vectors
         Vector v3 = new Vector(0, 3, -2);
         Vector result = v1.crossProduct(v3);
-        assertEquals(new Vector(-13, 2, 3), result, "Cross product failed");
+        assertEquals(
+                new Vector(-13, 2, 3),
+                result,
+                "Cross product failed");
 
     }
 
@@ -89,7 +107,9 @@ class VectorTest {
         // ============ Equivalence Partitions Tests ==============
         // TC01: Checking squared length of a vector
         Vector v1=new Vector(1,2,3);
-        assertEquals(14,v1.lengthSquared());
+        assertEquals(
+                14,
+                v1.lengthSquared());
     }
 
     /** Test method for {@link primitives.Vector#length()}. */
@@ -98,7 +118,10 @@ class VectorTest {
         // ============ Equivalence Partitions Tests ==============
         // TC01: Checking length of a vector
         Vector v = new Vector(0, 3, 4);
-        assertEquals(5, v.length(), "Length calculation is incorrect");
+        assertEquals(
+                5,
+                v.length(),
+                "Length calculation is incorrect");
     }
 
     /** Test method for {@link primitives.Vector#normalize()}. */
@@ -113,7 +136,10 @@ class VectorTest {
                 Util.alignZero(normalized.length() - 1),
                 "Normalized vector should have length 1");
         // TC02: Check direction remains the same
-        assertEquals(new Vector(0, 0.6, 0.8), normalized, "Normalization failed");
+        assertEquals(
+                new Vector(0, 0.6, 0.8),
+                normalized,
+                "Normalization failed");
     }
 
     /** Test method for {@link primitives.Point#subtract(primitives.Point)}. */
@@ -123,7 +149,10 @@ class VectorTest {
         // TC01: Subtracting two regular vectors
         Vector v1 = new Vector(3, 5, 7);
         Vector v2 = new Vector(1, 2, 3);
-        assertEquals(new Vector(2, 3, 4), v1.subtract(v2), "Vector subtraction failed");
+        assertEquals(
+                new Vector(2, 3, 4),
+                v1.subtract(v2),
+                "Vector subtraction failed");
         // TC02: Subtracting a negative vector (ensuring negative values are handled correctly)
         Vector v3 = new Vector(-1, -1, -1);
         assertEquals(

@@ -16,7 +16,10 @@ class PointTest {
         Point p2 = new Point(1, 1, 1);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Subtracting two different points should return the correct vector
-        assertEquals(new Vector(2, 3, 4), p1.subtract(p2), "Subtracting two points failed");
+        assertEquals(
+                new Vector(2, 3, 4),
+                p1.subtract(p2),
+                "Subtracting two points failed");
         // =============== Boundary Values Tests ==================
         // TC11: Subtracting a point from itself should throw an exception (zero vector is not allowed)
         assertThrows(
@@ -35,7 +38,10 @@ class PointTest {
         Vector v = new Vector(2, 3, 4);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Adding a vector to a point should return a new point
-        assertEquals(new Point(3, 5, 7), p.add(v), "Adding a vector to a point failed");
+        assertEquals(
+                new Point(3, 5, 7),
+                p.add(v),
+                "Adding a vector to a point failed");
     }
 
     /**
@@ -48,10 +54,16 @@ class PointTest {
         Point p2 = new Point(4, 6, 8);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Calculating the squared distance between two different points
-        assertEquals(50, p1.distanceSquared(p2), "Distance squared calculation is incorrect");
+        assertEquals(
+                50,
+                p1.distanceSquared(p2),
+                "Distance squared calculation is incorrect");
         // =============== Boundary Values Tests ==================
         // TC11: Squared distance from a point to itself should be 0
-        assertEquals(0, p1.distanceSquared(p1), "Distance squared from a point to itself should be 0");
+        assertEquals(
+                0,
+                p1.distanceSquared(p1),
+                "Distance squared from a point to itself should be 0");
     }
 
     /**
@@ -64,9 +76,15 @@ class PointTest {
         Point p2 = new Point(0, 3, 4);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Calculating the distance between two different points
-        assertEquals(5, p1.distance(p2), "Distance calculation is incorrect");
+        assertEquals(
+                5,
+                p1.distance(p2),
+                "Distance calculation is incorrect");
         // =============== Boundary Values Tests ==================
         // TC11: Distance from a point to itself should be 0
-        assertEquals(0, p1.distance(p1), "Distance from a point to itself should be 0");
+        assertEquals(
+                0,
+                p1.distance(p1),
+                "Distance from a point to itself should be 0");
     }
 }
