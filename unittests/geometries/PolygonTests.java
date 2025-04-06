@@ -115,9 +115,11 @@ class PolygonTests {
                  DELTA,
                  "Polygon's normal is not orthogonal to one of the edges");
    }
+   /**
+    * Test method for {@link geometries.Polygon#findIntersections(primitives.Ray)}.
+    */
    @Test
    void testFindIntersections() {
-      // מצולע קמור: מרובע הנמצא במישור y = 0
       Polygon polygon = new Polygon(
               new Point(1, 0, 1),
               new Point(2, 0, 3),
