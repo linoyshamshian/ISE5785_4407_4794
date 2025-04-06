@@ -6,6 +6,8 @@ import primitives.Vector;
 
 import java.util.List;
 
+import static primitives.Util.isZero;
+
 /**
  * The Plane class represents a geometric plane in 3D space.
  * The plane is defined by a point and a normal vector. It also provides a method to get the normal vector at any point on the plane.
@@ -62,8 +64,56 @@ public class Plane extends Geometry {
         return normal;
     }
 
+    /**
+     * Finds the intersection point(s) between the given ray and the plane.
+     * <p>
+     * If the ray is parallel to the plane or starts on the plane – there is no intersection.
+     * If the intersection point is behind the ray's head (t <= 0), it is not considered valid.
+     * Otherwise, the method returns a list with the single intersection point.
+     *
+     * @param ray the ray to intersect with the plane
+     * @return list with one intersection point if there is an intersection; {@code null} otherwise
+     */
+
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        // Ray starting point
+        Point p0 = ray.getHead();
+
+        // Ray direction vector
+        Vector v = ray.getDirection();
+
+        // If the ray starts exactly at the reference point of the plane
+        if (q.equals(p0)) {
+            return null; // no intersection – edge case
+        }
+
+        // Vector from ray start to plane point (Q - P0)
+        Vector qMinusP0 = q.subtract(p0);
+
+        // Numerator of the t formula: normal • (Q - P0)
+        double numerator = normal.dotProduct(qMinusP0);
+
+        // Denominator of the t formula: normal • v
+        double denominator = normal.dotProduct(v);
+
+        // If the denominator is 0, the ray is parallel to the plane
+        if (isZero(denominator)) {
+            return null; // no intersection
+        }
+
+        // Compute t = numerator / denominator
+        double t = numerator / denominator;
+
+        // If t is zero or negative – intersection is behind the ray
+        if (t <= 0) {
+            return null; // no valid intersection
+        }
+
+        // Calculate intersection point: P = P0 + t*v
+        return List.of(ray.getPoint(t));
     }
+
+
+
 }

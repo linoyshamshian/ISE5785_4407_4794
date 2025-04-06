@@ -76,4 +76,13 @@ public class Ray {
         return "Ray[Origin: " + head + ", Direction: " + direction + "]";
     }
 
+    /**
+     * Returns a point on the ray at a given distance from the ray origin.
+     * @param t Distance from the origin
+     * @return The point at distance t on the ray
+     */
+    public Point getPoint(double t) {
+        return head.add(direction.scale(t));
+    }
+
 }

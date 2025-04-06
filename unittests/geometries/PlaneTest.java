@@ -138,8 +138,9 @@ class PlaneTest {
         Plane plane = new Plane(new Point(0, 0, 2), new Vector(0, 0, 1));
 
         // TC01: Ray intersects the plane
-        Ray ray1 = new Ray(new Point(1, 1, 2), new Vector(2, 2, 2));
+        Ray ray1 = new Ray(new Point(1, 1, 1), new Vector(2, 2, 2));
         var result1 = plane.findIntersections(ray1);
+
         assertNotNull(
                 result1,
                 "Expected intersection point");
