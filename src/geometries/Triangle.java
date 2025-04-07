@@ -7,6 +7,8 @@ import primitives.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
+import static primitives.Util.isZero;
+
 /**
  * Class representing a triangle in 3D space.
  * Inherits from Polygon.
@@ -91,7 +93,7 @@ public class Triangle extends Polygon {
         double s3 = v.dotProduct(n3);
 
 
-        if (s1 == 0 || s2 == 0 || s3 == 0) return null;
+        if (isZero(s1) || isZero(s2) || isZero(s3)) return null;
 
         // אם כל הסימנים זהים
         if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
