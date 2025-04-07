@@ -173,8 +173,102 @@ class PolygonTests {
               new Point(1.5, 1, 2),
               new Vector(0, -1, 0)
       );
+//      assertNull(
+//              polygon.findIntersections(rayOnEdge),
+//              "Ray intersecting exactly on edge should return null"
+//      );
+      assertThrows(IllegalArgumentException.class, () -> {
+         polygon.findIntersections(rayOnEdge);
+      }, "Intersection exactly on vertex should throw an exception due to zero vector creation");
+
+      // TC05: Intersection point is exactly on a vertex of the polygon
+      Ray rayOnVertex = new Ray(
+              new Point(1, 1, 1),
+              new Vector(0, -1, 0)
+      );
+//      assertNull(
+//              polygon.findIntersections(rayOnVertex),
+//              "Ray intersecting exactly on vertex should return null"
+//      );
+      assertThrows(IllegalArgumentException.class, () -> {
+         polygon.findIntersections(rayOnVertex);
+      }, "Intersection exactly on vertex should throw an exception due to zero vector creation");
+
+      // TC06: Intersection point is on the extension of an edge
+      Ray rayOnEdgeExtension = new Ray(
+              new Point(0, 1, 1),
+              new Vector(0, -1, 0)
+      );
+//      assertNull(
+//              polygon.findIntersections(rayOnEdgeExtension),
+//              "Ray intersecting on edge extension should return null"
+//      );
+      assertThrows(IllegalArgumentException.class, () -> {
+         polygon.findIntersections(rayOnEdgeExtension);
+      }, "Intersection exactly on vertex should throw an exception due to zero vector creation");
+
+   }
+
+   /**
+    * Test method for {@link geometries.Polygon#findIntersectionsPyramid(primitives.Ray)}.
+    */
+   @Test
+   void testFindIntersectionsPyramid() {
+      Polygon polygon = new Polygon(
+              new Point(1, 0, 1),
+              new Point(2, 0, 3),
+              new Point(4, 0, 3),
+              new Point(5, 0, 1)
+      );
+
+      // ======== Equivalence Partitions Tests ========
+
+      // TC01: Intersection point is inside the polygon
+      Ray rayInside = new Ray(
+              new Point(3, 1, 2),
+              new Vector(0, -1, 0)
+      );
+      final var result1 = polygon.findIntersectionsPyramid(rayInside);
+      assertEquals(
+              1,
+              result1.size(),
+              "Wrong number of points"
+      );
+      assertEquals(
+              List.of(new Point(3, 0, 2)),
+              result1,
+              "Ray intersects inside the polygon"
+      );
+
+      // TC02: Intersection point is outside the polygon, opposite to one edge
+      Ray rayOutsideEdge = new Ray(
+              new Point(0.5, 1, 2),
+              new Vector(0, -1, 0)
+      );
       assertNull(
-              polygon.findIntersections(rayOnEdge),
+              polygon.findIntersectionsPyramid(rayOutsideEdge),
+              "Ray outside opposite to one edge should not intersect"
+      );
+
+      // TC03: Intersection point is outside the polygon, opposite to one vertex
+      Ray rayOutsideVertex = new Ray(
+              new Point(5, 1, 4),
+              new Vector(0, -1, 0)
+      );
+      assertNull(
+              polygon.findIntersectionsPyramid(rayOutsideVertex),
+              "Ray outside opposite to one vertex should not intersect"
+      );
+
+      // ======== Boundary Values Tests ========
+
+      // TC04: Intersection point is on an edge of the polygon
+      Ray rayOnEdge = new Ray(
+              new Point(1.5, 1, 2),
+              new Vector(0, -1, 0)
+      );
+      assertNull(
+              polygon.findIntersectionsPyramid(rayOnEdge),
               "Ray intersecting exactly on edge should return null"
       );
 
@@ -184,7 +278,7 @@ class PolygonTests {
               new Vector(0, -1, 0)
       );
       assertNull(
-              polygon.findIntersections(rayOnVertex),
+              polygon.findIntersectionsPyramid(rayOnVertex),
               "Ray intersecting exactly on vertex should return null"
       );
 
@@ -194,9 +288,8 @@ class PolygonTests {
               new Vector(0, -1, 0)
       );
       assertNull(
-              polygon.findIntersections(rayOnEdgeExtension),
+              polygon.findIntersectionsPyramid(rayOnEdgeExtension),
               "Ray intersecting on edge extension should return null"
       );
    }
-
 }

@@ -1,6 +1,8 @@
 package geometries;
 
 import static java.lang.Double.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import static primitives.Util.*;
 import primitives.*;
@@ -83,6 +85,83 @@ public class Polygon extends Geometry {
 
    @Override
    public List<Point> findIntersections(Ray ray) {
-      return null;
+      // Intersect ray with the polygon's plane.
+      List<Point> planeIntersections = plane.findIntersections(ray);
+      if (planeIntersections == null) {
+         // No intersection with the plane, so no intersection with the polygon.
+         return null;
+      }
+
+      // Get the intersection point with the plane.
+      Point p = planeIntersections.get(0);
+
+      // Get the vertices of the polygon.
+      List<Point> polygonVertices = vertices;
+
+      // Calculate the vectors from the vertices to the point.
+      List<Vector> vertexVectors = new ArrayList<>();
+      for (Point vertex : polygonVertices) {
+         vertexVectors.add(p.subtract(vertex));
+      }
+
+      // Calculate the cross products of the edges and the vectors to the point.
+      List<Vector> normals = new ArrayList<>();
+      for (int i = 0; i < polygonVertices.size(); i++) {
+         Point currentVertex = polygonVertices.get(i);
+         Point nextVertex = polygonVertices.get((i + 1) % polygonVertices.size()); // Wrap around for the last edge
+         normals.add(nextVertex.subtract(currentVertex).crossProduct(vertexVectors.get(i)));
+      }
+
+      // Check if all the cross products point in the same direction.
+      for (int i = 0; i < normals.size() - 1; i++) {
+         if (normals.get(i).dotProduct(normals.get(i + 1)) <= 0) {
+            // The intersection point is outside the polygon.
+            return null;
+         }
+      }
+
+      // The intersection point is inside the polygon.
+      return List.of(p);
    }
+
+
+   public List<Point> findIntersectionsPyramid(Ray ray) {
+      // Intersect the ray with the plane of the polygon
+      List<Point> planeIntersections = plane.findIntersections(ray);
+      if (planeIntersections == null) return null; // No intersection with the plane
+
+      Point p = planeIntersections.get(0); // Intersection point with the plane
+      Point p0 = ray.getHead();            // Ray origin
+      Vector dir = ray.getDirection();     // Ray direction
+
+      int n = vertices.size();
+      Boolean positive = null; // Will hold the sign of the dot product (first side of the "pyramid")
+
+      // Check if the intersection point is inside the polygon using the pyramid method
+      for (int i = 0; i < n; i++) {
+         Point p1 = vertices.get(i);
+         Point p2 = vertices.get((i + 1) % n);
+
+         Vector v1 = p1.subtract(p0); // Vector from ray origin to first vertex
+         Vector v2 = p2.subtract(p0); // Vector from ray origin to next vertex
+
+         Vector normal = v1.crossProduct(v2); // Create a face of the pyramid
+
+         double dot = dir.dotProduct(normal); // Project ray direction on the face normal
+
+         // If dot product is zero → ray is parallel to this pyramid face → considered outside
+         if (isZero(dot)) return null;
+
+         // Check sign consistency across all triangle faces
+         if (positive == null) {
+            positive = dot > 0;
+         } else {
+            if ((dot > 0) != positive) return null; // Opposite sign → intersection is outside
+         }
+      }
+
+      // All signs are consistent → the intersection point is inside the polygon
+      return List.of(p);
+   }
+
 }
