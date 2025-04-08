@@ -1,5 +1,7 @@
 package primitives;
 
+import static primitives.Util.isZero;
+
 /**
  * Represents a Ray (half-line) in 3D geometry.
  * A ray is defined by a point (its origin) and a direction vector.
@@ -82,7 +84,10 @@ public class Ray {
      * @return The point at distance t on the ray
      */
     public Point getPoint(double t) {
-        return head.add(direction.scale(t));
+        if (isZero(t)) {
+            return head;  // Return the origin point if t == 0
+        }
+        return head.add(direction.scale(t));  // Otherwise, return the calculated point
     }
 
 }
