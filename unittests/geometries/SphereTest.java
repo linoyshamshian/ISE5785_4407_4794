@@ -8,6 +8,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SphereTest {
+    /**
+     * Delta value for accuracy when comparing the numbers of type 'double' in
+     * assertEquals
+     */
+    private static final double DELTA = 0.00001;
 
     /**
      * Test method for
@@ -110,7 +115,7 @@ class SphereTest {
         Vector v0minus20=new Vector(0 ,-2, 0);
         Point gp1minus10=new Point(1, -1, 0);
         // TC21: Ray starts before the sphere (2 points)
-        final var exp2 = List.of(gp1minus10, new Point(1,1,0));
+        final var exp2 = List.of( new Point(1,1,0),gp1minus10);
         final var result4 = sphere.findIntersections(new Ray(new Point(1, 2, 0), v0minus20));
         assertNotNull(
                 result4,
@@ -201,9 +206,16 @@ class SphereTest {
                 1,
                 result8.size(),
                 "Wrong number of points");
-        assertEquals(
-                new Point(1.867,0,0.5),
-                result8.get(0),
-                "Wrong intersection point");
+//        assertEquals(
+//                new Point(1.86602,0,0.5),
+//                result8.get(0),
+//                "Wrong intersection point");
+
+        // Later in your test:
+        assertEquals(1, result8.size(), "Wrong number of points");
+        assertTrue(
+                result8.get(0).distance(new Point(1.86602, 0, 0.5)) < DELTA,
+                "Wrong intersection point"
+        );
     }
 }

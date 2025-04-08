@@ -41,70 +41,53 @@ public class Sphere extends RadialGeometry {
         return point.subtract(center).normalize();
     }
 
+    /**
+     * Finds intersection points between a ray and the sphere.
+     *
+     * Calculates the intersection points using geometric relations between
+     * the ray and the sphere. Returns up to two points in front of the ray,
+     * or null if there are no valid intersections.
+     *
+     * @param ray The ray to intersect with the sphere.
+     * @return A list of intersection points, or null if none.
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        Point P0 = ray.getHead();
+        Point p0 = ray.getHead();
         Vector v = ray.getDirection();
 
-        if (P0.equals(center)) {
-            return List.of(P0.add(v.scale(radius)));
+        // Ray starts at the center → one intersection in direction of the ray
+        if (p0.equals(center)) {
+            return List.of(center.add(v.scale(radius)));
         }
 
-        Vector u;
-        try {
-            u = center.subtract(P0);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-
-        double tm = u.dotProduct(v);
+        Vector u = center.subtract(p0);
+        double tm = v.dotProduct(u);
         double dSquared = u.lengthSquared() - tm * tm;
         double rSquared = radius * radius;
 
-        if (dSquared > rSquared) return null;
+        // No intersection: ray misses the sphere or just touches (tangent)
+        if (dSquared >= rSquared) return null;
 
-        double thSquared = rSquared - dSquared;
-        if (thSquared <= 0) return null;
+        double th = Math.sqrt(rSquared - dSquared);
 
-        double th = Math.sqrt(thSquared);
+        // Tangent case (touches only one point) – doesn't count as intersection
+        if (isZero(th)) return null;
+
         double t1 = tm - th;
         double t2 = tm + th;
 
-        if (isZero(P0.distance(center) - radius)) {
-            Vector toCenter = center.subtract(P0);
-            if (v.dotProduct(toCenter) <= 0) {
-                return null;
-            }
-            if (t2 > 0) {
-                return List.of(ray.getPoint(t2));
-            } else {
-                return null;
-            }
+        // Only create list if we actually have intersections
+        if (t1 > 0 && t2 > 0) {
+            return List.of(ray.getPoint(t1), ray.getPoint(t2));
+        } else if (t1 > 0) {
+            return List.of(ray.getPoint(t1));
+        } else if (t2 > 0) {
+            return List.of(ray.getPoint(t2));
         }
 
-        List<Point> intersections = null;
-
-        if (t1 > 0) {
-            intersections = new ArrayList<>();
-            intersections.add(ray.getPoint(t1));
-        }
-
-        if (t2 > 0) {
-            if (intersections == null)
-                intersections = new ArrayList<>();
-            intersections.add(ray.getPoint(t2));
-        }
-
-        if (intersections == null || intersections.size() < 2)
-            return intersections;
-
-        // מיון לפי מרחק מראש הקרן
-        intersections.sort((p1, p2) -> {
-            double d1 = P0.distanceSquared(p1);
-            double d2 = P0.distanceSquared(p2);
-            return Double.compare(d1, d2);
-        });
-
-        return intersections;
+        return null;
     }
+
+
 }
