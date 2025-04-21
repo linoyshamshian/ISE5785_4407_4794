@@ -4,8 +4,10 @@ import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -17,6 +19,7 @@ import static primitives.Util.isZero;
 public class Tube extends RadialGeometry {
     protected final Ray axis;
     protected static final double DELTA = 0.000001;
+
     /**
      * Constructor for Tube class. Initializes the axis and radius of the tube.
      *
@@ -49,8 +52,69 @@ public class Tube extends RadialGeometry {
         return point.subtract(o).normalize(); // Subtract the projection to get the normal and normalize it
     }
 
+    /**
+     * This method implements the {@code findIntersections} method defined in the {@code Intersectable} interface.
+     * It calculates the intersection points (if any) between a given ray and the surface of the infinite tube.
+     * If there are no intersections or if the ray only touches the tube (tangent), the method returns {@code null}.
+     * Intersection points where the ray origin lies exactly on the surface are not considered valid intersections.
+     *
+     * @param ray The ray for which intersection points with the tube are to be found.
+     * @return A list of intersection points, or {@code null} if there are none.
+     */
+
     @Override
     public List<Point> findIntersections(Ray ray) {
+        Vector va = axis.getDirection().normalize(); // Direction vector of the tube's axis
+        Point pa = axis.getHead(); // A point on the tube's axis
+        Vector vr = ray.getDirection().normalize(); // Direction vector of the ray
+        Point pr = ray.getHead(); // Origin of the ray
+
+        // Calculate the vector (pr - pa)
+        Vector deltaP = pr.subtract(pa);
+
+        // Calculate the coefficients A, B, and C of the quadratic equation At^2 + Bt + C = 0
+        double A = 1 - Math.pow(vr.dotProduct(va), 2);
+
+        double B = 2 * (vr.dotProduct(deltaP) - vr.dotProduct(va) * va.dotProduct(deltaP));
+
+        double C = deltaP.lengthSquared() - Math.pow(deltaP.dotProduct(va), 2) - radius * radius;
+
+        // Solve the quadratic equation
+        double discriminant = B * B - 4 * A * C;
+
+        if (discriminant < 0 || isZero(discriminant)) {
+            return null; // No real intersections (including tangent)
+        }
+
+        double t1 = (-B + Math.sqrt(discriminant)) / (2 * A);
+        double t2 = (-B - Math.sqrt(discriminant)) / (2 * A);
+
+        Point p1 = null, p2 = null;
+
+        if (alignZero(t1) > 0) {
+            p1 = pr.add(vr.scale(t1));
+        }
+        if (alignZero(t2) > 0) {
+            p2 = pr.add(vr.scale(t2));
+        }
+
+        if (p1 != null && p2 != null) {
+            // Ensure the intersections are ordered by their distance from the ray origin
+            if (p2.subtract(pr).lengthSquared() < p1.subtract(pr).lengthSquared()) {
+                return List.of(p2, p1);
+            }
+            return List.of(p1, p2);
+        }
+
+        if (p1 != null) {
+            return List.of(p1);
+        }
+
+        if (p2 != null) {
+            return List.of(p2);
+        }
+
         return null;
     }
+
 }
