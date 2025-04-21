@@ -64,9 +64,9 @@ public class Tube extends RadialGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        Vector va = axis.getDirection().normalize(); // Direction vector of the tube's axis
+        Vector va = axis.getDirection(); // Direction vector of the tube's axis
         Point pa = axis.getHead(); // A point on the tube's axis
-        Vector vr = ray.getDirection().normalize(); // Direction vector of the ray
+        Vector vr = ray.getDirection(); // Direction vector of the ray
         Point pr = ray.getHead(); // Origin of the ray
 
         // Calculate the vector (pr - pa)
