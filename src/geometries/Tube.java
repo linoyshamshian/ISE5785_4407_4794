@@ -70,6 +70,8 @@ public class Tube extends RadialGeometry {
         Point pr = ray.getHead(); // Origin of the ray
 
         // Calculate the vector (pr - pa)
+        if(pr.equals(pa))
+            return null;
         Vector deltaP = pr.subtract(pa);
 
         // Calculate the coefficients A, B, and C of the quadratic equation At^2 + Bt + C = 0

@@ -3,6 +3,12 @@ package geometries;
 import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 /**
  * This class represents a Cylinder, a 3D geometric object defined by its radius and height.
@@ -65,6 +71,73 @@ public class Cylinder extends Tube {
         }
         // If the point is on the cylindrical mantle
         return super.getNormal(point);
+    }
+
+    /**
+     * This method implements the {@code findIntersections} method defined in the {@code Intersectable} interface.
+     * It calculates the intersection points (if any) between a given ray and the surface of the finite cylinder
+     * (including its two bases).
+     *
+     * @param ray The ray for which intersection points with the cylinder are to be found.
+     * @return A list of intersection points, or {@code null} if there are none.
+     */
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        List<Point> intersections = super.findIntersections(ray); // Side intersections from Tube
+        List<Point> results = new ArrayList<>();
+
+        Point p0 = axis.getHead();                    // Bottom base center of the cylinder
+        Vector vAxis = axis.getDirection(); // Cylinder axis direction
+
+        // Filter side intersections to keep only those within cylinder height
+        if (intersections != null) {
+            for (Point p : intersections) {
+                double t = vAxis.dotProduct(p.subtract(p0));
+                if (alignZero(t) >= 0 && alignZero(t) <= height) {
+                    results.add(p);
+                }
+            }
+        }
+
+        // Intersect with bottom base
+        Plane bottomBase = new Plane(p0, vAxis.scale(-1)); // Plane facing downward
+        List<Point> bottomIntersections = bottomBase.findIntersections(ray);
+        if (bottomIntersections != null) {
+            for (Point p : bottomIntersections) {
+                if (p.equals(p0)) {
+                    results.add(p); // Center point – avoid zero vector creation
+                } else {
+                    Vector v = p.subtract(p0);
+                    if (alignZero(v.lengthSquared() - radius * radius) <= 0) {
+                        results.add(p);
+                    }
+                }
+            }
+        }
+
+        // Intersect with top base
+        Point topCenter = p0.add(vAxis.scale(height)); // Top base center
+        Plane topBase = new Plane(topCenter, vAxis);   // Plane facing upward
+        List<Point> topIntersections = topBase.findIntersections(ray);
+        if (topIntersections != null) {
+            for (Point p : topIntersections) {
+                if (p.equals(topCenter)) {
+                    results.add(p); // Center point – avoid zero vector creation
+                } else {
+                    Vector v = p.subtract(topCenter);
+                    if (alignZero(v.lengthSquared() - radius * radius) <= 0) {
+                        results.add(p);
+                    }
+                }
+            }
+        }
+
+        if (results.isEmpty()) return null;
+
+        // Sort the intersection points by their distance from the ray origin
+        results.sort(Comparator.comparingDouble(p -> ray.getDirection().dotProduct(p.subtract(ray.getHead()))));
+
+        return results;
     }
 
 }
