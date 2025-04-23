@@ -92,6 +92,11 @@ class CylinderTest {
         });
     }
 
+    /**
+     * Test method for {@link geometries.Cylinder#findIntersections(primitives.Ray)}.
+     * This method checks intersection points between a ray and the cylinder, including:
+     * curved surface, top/bottom bases, and edge/boundary scenarios.
+     */
     @Test
     void testFindIntersections() {
         // Cylinder on axis (0,0,z) with radius 1 and height 5

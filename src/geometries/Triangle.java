@@ -28,6 +28,15 @@ public class Triangle extends Polygon {
         super(p0, p1, p2); // Call Polygon constructor
     }
 
+    /**
+     * Finds the intersection point(s) between a ray and the triangle.
+     * The method first checks for intersection with the plane of the triangle,
+     * and then determines if the intersection point is within the triangle itself
+     * using the edge-cross-product method.
+     *
+     * @param ray The ray to check intersection with.
+     * @return A list with a single intersection point if the ray intersects the triangle, otherwise {@code null}.
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
         // First, intersect the ray with the triangle's plane.
@@ -63,7 +72,13 @@ public class Triangle extends Polygon {
         return null;
     }
 
-
+    /**
+     * Alternative intersection method using the pyramid method (based on normals between edges and ray origin).
+     * This checks whether the intersection point lies inside the triangle by comparing signs of dot products.
+     *
+     * @param ray The ray to check intersection with.
+     * @return A list with a single intersection point if inside the triangle, otherwise {@code null}.
+     */
     public List<Point> findIntersectionsPyramid(Ray ray) {
         // 1. Intersect ray with triangle's plane.
         List<Point> planeIntersections = plane.findIntersections(ray);
