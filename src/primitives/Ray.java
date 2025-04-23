@@ -27,6 +27,7 @@ public class Ray {
 
     /**
      * Getter for the origin point (head) of the ray.
+     *
      * @return The origin point of the ray.
      */
     public Point getHead() {
@@ -35,6 +36,7 @@ public class Ray {
 
     /**
      * Getter for the direction vector of the ray.
+     *
      * @return The direction vector of the ray.
      */
     public Vector getDirection() {
@@ -80,6 +82,7 @@ public class Ray {
 
     /**
      * Returns a point on the ray at a given distance from the ray origin.
+     *
      * @param t Distance from the origin
      * @return The point at distance t on the ray
      */

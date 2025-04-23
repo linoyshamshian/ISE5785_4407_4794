@@ -43,7 +43,7 @@ public class Sphere extends RadialGeometry {
 
     /**
      * Finds intersection points between a ray and the sphere.
-     *
+     * <p>
      * Calculates the intersection points using geometric relations between
      * the ray and the sphere. Returns up to two points in front of the ray,
      * or null if there are no valid intersections.

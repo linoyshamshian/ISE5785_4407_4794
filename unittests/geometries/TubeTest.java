@@ -32,6 +32,7 @@ class TubeTest {
                 tube.getNormal(p2),
                 "Wrong normal for boundary case");
     }
+
     /**
      * Test method for {@link geometries.Tube#findIntersections(primitives.Ray)}.
      */

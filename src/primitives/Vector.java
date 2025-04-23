@@ -1,4 +1,5 @@
 package primitives;
+
 /**
  * The Vector class represents a mathematical vector in 3D space.
  * A vector is defined by its x, y, and z components, and provides several methods to perform vector operations.
@@ -6,6 +7,9 @@ package primitives;
  * @author Chen Babay & Linoy Shamshian
  */
 public class Vector extends Point {
+    public static final Vector AXIS_X = new Vector(1, 0, 0);
+    public static final Vector AXIS_Z = new Vector(0, 0, 1);
+
     /**
      * Constructor receiving three double values
      *
@@ -122,6 +126,6 @@ public class Vector extends Point {
      */
     @Override
     public String toString() {
-        return "->" + super.toString() ;
+        return "->" + super.toString();
     }
 }

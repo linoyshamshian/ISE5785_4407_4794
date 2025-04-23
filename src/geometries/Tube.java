@@ -70,7 +70,7 @@ public class Tube extends RadialGeometry {
         Point pr = ray.getHead(); // Origin of the ray
 
         // Calculate the vector (pr - pa)
-        if(pr.equals(pa))
+        if (pr.equals(pa))
             return null;
         Vector deltaP = pr.subtract(pa);
 

@@ -10,6 +10,7 @@ import java.util.List;
 
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
+
 /**
  * This class represents a Cylinder, a 3D geometric object defined by its radius and height.
  * The class extends Tube, inheriting the radius and axis properties, and adds a height property.
@@ -55,7 +56,7 @@ public class Cylinder extends Tube {
             return v.scale(-1);
         }
         //  If the point is exactly at the top base center
-        if (point.equals(p0.add(v.scale(height)))){
+        if (point.equals(p0.add(v.scale(height)))) {
             return v;
         }
         // Compute the projection of the point onto the cylinder's axis
