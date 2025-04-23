@@ -25,7 +25,7 @@ public class Camera implements Cloneable {
     private double width=0.0;
     private double height=0.0;
     //View plane center point to save CPU time - it's always the same
-    private Point viewPlanePc;
+    private Point viewPlanePC;
 
 
     private Camera(){}
@@ -85,6 +85,17 @@ public class Camera implements Cloneable {
         return null;
     }
 
+    @Override
+    public Camera clone() {
+        try {
+            Camera clone = (Camera) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
     public static class Builder { // this is the way for internal class
         private final Camera camera = new Camera();
         public Builder setLocation(Point location) {
@@ -116,14 +127,14 @@ public class Camera implements Cloneable {
             // Delegate to the previous method
             return setDirection(cameraTarget, defaultUp);
         }
-        public Builder setViewPlaneSize(double width, double height) {
+        public Builder setVpSize(double width, double height) {
             if (Util.alignZero(width) <= 0 || Util.alignZero(height) <= 0)
                 throw new IllegalArgumentException("View plane width and height must be greater than zero");
             camera.width = width;
             camera.height = height;
             return this;
         }
-        public Builder setViewPlaneDistance(double distance) {
+        public Builder setVpDistance(double distance) {
             if (Util.alignZero(distance) <= 0)
                 throw new IllegalArgumentException("View plane distance must be greater than zero");
             camera.distance = distance;
@@ -134,23 +145,23 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        public Builder setImageWriter(ImageWriter imageWriter) {
-            camera.imageWriter = imageWriter;
-            return this;
-        }
-        public Builder setRayTracer(RayTracerBase tracer) {
-            camera.rayTracer = tracer;
-            return this;
-        }
+//        public Builder setImageWriter(ImageWriter imageWriter) {
+//            camera.imageWriter = imageWriter;
+//            return this;
+//        }
+//        public Builder setRayTracer(RayTracerBase tracer) {
+//            camera.rayTracer = tracer;
+//            return this;
+//        }
 
         public Camera build() {
             final String GENERAL_DESCRIPTION = "Missing render data";
             final String CLASS_NAME = "Camera";
 
-            if (camera.imageWriter == null)
-                throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "imageWriter");
-            if (camera.rayTracer == null)
-                throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "rayTracer");
+//            if (camera.imageWriter == null)
+//                throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "imageWriter");
+//            if (camera.rayTracer == null)
+//                throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "rayTracer");
             if (camera.p0 == null)
                 throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "p0");
             if (camera.vUp == null)
