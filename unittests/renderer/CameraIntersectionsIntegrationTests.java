@@ -1,4 +1,140 @@
 package renderer;
 
+import geometries.Sphere;
+import org.junit.jupiter.api.Test;
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Integration tests for ray generation from a camera and intersection calculations with geometric objects.
+ * Includes tests for Sphere, Plane, and Triangle (as shown in the lab presentation).
+ */
 public class CameraIntersectionsIntegrationTests {
+
+    private static final int WIDTH = 3;
+    private static final int HEIGHT = 3;
+
+    /**
+     * Helper method to generate rays through each pixel of a 3x3 view plane and count the intersections
+     * with a given intersectable object.
+     *
+     * @param camera      The camera from which the rays are generated.
+     * @param intersectable The geometric object to test intersections with.
+     * @return The total number of intersections found.
+     */
+    private int countIntersections(Camera camera, geometries.Intersectable intersectable) {
+        int intersectionCount = 0;
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                Ray ray = camera.constructRay(WIDTH, HEIGHT, j, i);
+                List<Point> intersections = intersectable.findIntersections(ray);
+                if (intersections!= null) {
+                    intersectionCount += intersections.size();
+                }
+            }
+        }
+        return intersectionCount;
+    }
+
+    /**
+     * Test method for
+     * {@link geometries.Sphere#findIntersections(primitives.Ray)}.
+     * Includes multiple test cases based on different sphere and camera configurations.
+     */
+    @Test
+    void testCameraSphereIntegration() {
+        // Case 1: Camera is located before the sphere.
+        // Sphere centered at (0,0,-3) with radius 1.
+        // View plane at a distance of 1 from the camera (at z=-1).
+        // Camera at (0,0,0) looking towards (0,0,-1).
+        // Expected: 2 intersection points.
+        Camera camera1 = Camera.getBuilder()
+                .setLocation(new Point(0, 0, 0))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setVpDistance(1)
+                .setVpSize(WIDTH, HEIGHT)
+                .build();
+        Sphere sphere1 = new Sphere(new Point(0, 0, -3), 1);
+        assertEquals(
+                2,
+                countIntersections(camera1, sphere1),
+                "Incorrect number of intersections for the first sphere test case");
+
+        // Case 2: Camera is located before a larger sphere.
+        // Sphere centered at (0, 0, -2.5) with radius 2.5.
+        // View plane at a distance of 1 from the camera (at z=1).
+        // Camera at (0, 0, 0.5) looking towards (0, 0, -1).
+        // Expected: 18 intersection points.
+        Camera camera2 = Camera.getBuilder()
+                .setLocation(new Point(0, 0, 0.5))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setVpDistance(1)
+                .setVpSize(WIDTH, HEIGHT)
+                .build();
+        Sphere sphere2 = new Sphere(new Point(0, 0, -2.5), 2.5);
+        assertEquals(
+                18,
+                countIntersections(camera2, sphere2),
+                "Incorrect number of intersections for the second sphere test case");
+
+        // Case 3: Camera is located before a sphere.
+        // Sphere centered at (0, 0, -2) with radius 2.
+        // View plane at a distance of 1 from the camera (at z=1).
+        // Camera at (0, 0, 0.5) looking towards (0, 0, -1).
+        // Expected: 10 intersection points.
+        Camera camera3 = Camera.getBuilder()
+                .setLocation(new Point(0, 0, 0.5))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setVpDistance(1)
+                .setVpSize(WIDTH, HEIGHT)
+                .build();
+        Sphere sphere3 = new Sphere(new Point(0, 0, -2), 2);
+        assertEquals(
+                10,
+                countIntersections(camera3, sphere3),
+                "Incorrect number of intersections for the third sphere test case");
+
+        // Case 4: Camera is located inside the sphere.
+        // Sphere centered at (0, 0, 0) with radius 4.
+        // View plane at a distance of 1 from the camera (at z=-1).
+        // Camera at (0, 0, -0.5) looking towards (0, 0, -1).
+        // Expected: 9 intersection points (one for each ray exiting the sphere).
+        Camera camera4 = Camera.getBuilder()
+                .setLocation(new Point(0, 0, -0.5))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setVpDistance(1)
+                .setVpSize(WIDTH, HEIGHT)
+                .build();
+        Sphere sphere4 = new Sphere(new Point(0, 0, 0), 4);
+        assertEquals(
+                9,
+                countIntersections(camera4, sphere4),
+                "Incorrect number of intersections for the fourth sphere test case");
+
+        // Case 5: Camera is located before the sphere, with the sphere not intersecting the view frustum.
+        // Sphere centered at (0, 0, 1) with radius 0.5.
+        // View plane at a distance of 1 from the camera (at z=1).
+        // Camera at (0, 0, 0) looking towards (0, 0, 1).
+        // Expected: 0 intersection points.
+        Camera camera5 = Camera.getBuilder()
+                .setLocation(new Point(0, 0, 0))
+                .setDirection(new Vector(0, 0, 1), new Vector(0, 1, 0))
+                .setVpDistance(1)
+                .setVpSize(WIDTH, HEIGHT)
+                .build();
+        Sphere sphere5 = new Sphere(new Point(0, 0, 1), 0.5);
+        assertEquals(
+                0,
+                countIntersections(camera5, sphere5),
+                "Incorrect number of intersections for the fifth sphere test case");
+    }
+
+    // Additional test methods for Plane and Triangle will go here
+    // according to the scenarios in the lab presentation
+
 }
