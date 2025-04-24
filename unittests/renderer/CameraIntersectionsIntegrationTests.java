@@ -119,11 +119,11 @@ public class CameraIntersectionsIntegrationTests {
         // Case 5: Camera is located before the sphere, with the sphere not intersecting the view frustum.
         // Sphere centered at (0, 0, 1) with radius 0.5.
         // View plane at a distance of 1 from the camera (at z=1).
-        // Camera at (0, 0, 0) looking towards (0, 0, 1).
+        // Camera at (0, 0, 0) looking towards (0, 0, -1).
         // Expected: 0 intersection points.
         Camera camera5 = Camera.getBuilder()
                 .setLocation(new Point(0, 0, 0))
-                .setDirection(new Vector(0, 0, 1), new Vector(0, 1, 0))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
                 .setVpSize(WIDTH, HEIGHT)
                 .build();
