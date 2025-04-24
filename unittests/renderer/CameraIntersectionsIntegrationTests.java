@@ -164,7 +164,6 @@ public class CameraIntersectionsIntegrationTests {
 
         // Case 2: Plane intersecting some rays.
         // Plane defined by three non-collinear points.
-        // Based on the image, the plane seems to be tilted.
         // We'll define it by points that should lead to some intersections.
         Point p1 = new Point(0, 1, -2);
         Point p2 = new Point(1, -1, -1);
@@ -178,12 +177,11 @@ public class CameraIntersectionsIntegrationTests {
                 .setVpDistance(1)
                 .setVpSize(WIDTH, HEIGHT)
                 .build();
-        // Expected: Based on the visual in the image, it appears some rays will miss.
         // The exact number (9) in the image suggests all rays might be hitting,
         // but the tilt implies otherwise. We'll assume 9 for now, adjust if needed
         // after more precise geometric reasoning based on the plane definition.
         assertEquals(
-                9, // Adjust this value based on the actual intersection count you expect
+                9,
                 countIntersections(camera2, plane2),
                 "Incorrect number of intersections for the second plane test case (tilted plane)");
 
@@ -202,9 +200,71 @@ public class CameraIntersectionsIntegrationTests {
         assertEquals(
                 6,
                 countIntersections(camera3, plane3),
-                "Incorrect number of intersections for the third plane test case (downward sloping plane - 6 intersections)");
+                "Incorrect number of intersections for the third plane test case " +
+                        "(downward sloping plane - 6 intersections)");
 
+    }
 
+    /**
+     * Test method for
+     * {@link geometries.Triangle#findIntersections(primitives.Ray)}.
+     * Integration test for camera ray generation with a triangle.
+     * Test case where one ray intersects the triangle.
+     */
+    @Test
+    void testCameraTriangleIntegration() {
+        // Case 1: One ray intersects the triangle.
+        // Triangle defined by points (0, 1, -2), (1, -1, -2), (-1, -1, -2).
+        Point p1 = new Point(0, 1, -2);
+        Point p2 = new Point(1, -1, -2);
+        Point p3 = new Point(-1, -1, -2);
+        geometries.Triangle triangle = new geometries.Triangle(p1, p2, p3);
+
+        // View plane at a distance of 1 from the camera (at z=-1).
+        // Camera at (0, 0, 0) looking towards (0, 0, -1).
+        Camera camera = Camera.getBuilder()
+                .setLocation(new Point(0, 0, 0))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setVpDistance(1)
+                .setVpSize(WIDTH, HEIGHT)
+                .build();
+
+        // Expected: 1 intersection point.
+        assertEquals(
+                1,
+                countIntersections(camera, triangle),
+                "Incorrect number of intersections for the first triangle test case " +
+                        "(one intersection)");
+
+        // Case 2: Two rays intersect the triangle.
+        // Triangle defined by points (0, 20, -2), (1, -1, -2), (-1, -1, -2).
+        Point p4 = new Point(0, 20, -2);
+        Point p5 = new Point(1, -1, -2);
+        Point p6 = new Point(-1, -1, -2);
+        geometries.Triangle triangle2 = new geometries.Triangle(p4, p5, p6);
+
+        // Expected: 2 intersection points.
+        assertEquals(
+                2,
+                countIntersections(camera, triangle2),
+                "Incorrect number of intersections for the second triangle test case" +
+                        " (two intersections)");
+
+        // Case 3: Triangle is behind the camera.
+        // Triangle defined by points (0, 1, 2), (1, -1, 2), (-1, -1, 2).
+        // Notice the positive Z values, placing it behind the camera at (0, 0, 0)
+        // which is looking in the -Z direction.
+        Point p7 = new Point(0, 1, 2);
+        Point p8 = new Point(1, -1, 2);
+        Point p9 = new Point(-1, -1, 2);
+        geometries.Triangle triangle3 = new geometries.Triangle(p7, p8, p9);
+
+        // Expected: 0 intersection points (triangle is behind the camera).
+        assertEquals(
+                0,
+                countIntersections(camera, triangle3),
+                "Incorrect number of intersections for the third triangle test case" +
+                        " (triangle behind camera)");
     }
 
 
