@@ -71,10 +71,10 @@ public class Camera implements Cloneable {
      * <p>
      * The method receives four parameters:
      * <ul>
-     *     <li>{@code nX} – the number of pixels along the X-axis (the width resolution)</li>
-     *     <li>{@code nY} – the number of pixels along the Y-axis (the height resolution)</li>
-     *     <li>{@code j} – the pixel index along the X-axis (horizontal index, column)</li>
-     *     <li>{@code i} – the pixel index along the Y-axis (vertical index, row)</li>
+     * <li>{@code nX} – the number of pixels along the X-axis (the width resolution)</li>
+     * <li>{@code nY} – the number of pixels along the Y-axis (the height resolution)</li>
+     * <li>{@code j} – the pixel index along the X-axis (horizontal index, column)</li>
+     * <li>{@code i} – the pixel index along the Y-axis (vertical index, row)</li>
      * </ul>
      * <p>
      * The coordinate system is geometric and centered at the middle of the view plane,
@@ -89,8 +89,24 @@ public class Camera implements Cloneable {
      * @return the constructed {@link Ray} through the center of the specified pixel
      */
     public Ray constructRay(int nX, int nY, int j, int i){
-        return null;
+        double rX = width / nX;
+        double rY = height / nY;
+        double xJ = (j - (nX - 1) / 2d) * rX;
+        double yI = -(i - (nY - 1) / 2d) * rY;
+
+        Point pIJ = viewPlanePC;
+
+        if (!isZero(xJ)) {
+            pIJ = pIJ.add(vRight.scale(xJ));
+        }
+        if (!isZero(yI)) {
+            pIJ = pIJ.add(vUp.scale(yI));
+        }
+
+        Vector v = pIJ.subtract(p0).normalize();
+        return new Ray(p0, v);
     }
+
 
     /**
      * Clones the current Camera object.
