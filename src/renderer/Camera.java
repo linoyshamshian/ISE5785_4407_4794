@@ -26,6 +26,7 @@ public class Camera implements Cloneable {
     private double height = 0.0;
     //View plane center point to save CPU time - it's always the same
     private Point viewPlanePC;
+//    private ImageWriter imageWriter;
 
     /**
      * Default constructor - private for use by Builder only.
@@ -206,17 +207,17 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * Sets the resolution of the view plane.
-         * currently a placeholder for future implementation.
-         *
-         * @param nX number of pixels in X direction
-         * @param nY number of pixels in Y direction
-         * @return the current Builder
-         */
-        public Builder setResolution(int nX, int nY) {
-            return this;
-        }
+//        /**
+//         * Sets the resolution of the view plane.
+//         * currently a placeholder for future implementation.
+//         *
+//         * @param nX number of pixels in X direction
+//         * @param nY number of pixels in Y direction
+//         * @return the current Builder
+//         */
+//        public Builder setResolution(int nX, int nY) {
+//            return this;
+//        }
 
 //        public Builder setImageWriter(ImageWriter imageWriter) {
 //            camera.imageWriter = imageWriter;

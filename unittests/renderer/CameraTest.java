@@ -63,7 +63,7 @@ class CameraTest {
 
    @Test
    void testBuilder() {
-      cameraBuilder.setVpSize(4, 4).setResolution(2, 2);
+      cameraBuilder.setVpSize(4, 4);
 
       // ============ Equivalence Partitions Tests ==============
       // EP01: set to a target point without up vector
