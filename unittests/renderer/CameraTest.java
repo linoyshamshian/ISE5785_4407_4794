@@ -89,3 +89,7 @@ class CameraTest {
       assertThrows(IllegalArgumentException.class, () -> cameraBuilder.setDirection(new Point(0, 10, 0)).build());
    }
 }
+
+
+
+

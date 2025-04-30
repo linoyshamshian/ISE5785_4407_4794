@@ -33,29 +33,6 @@ public class Camera implements Cloneable {
     private Camera(){}
 
 
-    /**
-     * Sets the distance between the camera and the view plane.
-     *
-     * @param distance the distance to the view plane
-     * @return the current Camera object (for method chaining)
-     */
-    public Camera setVpDistance(int distance){
-        this.distance = distance;
-        return this;
-    }
-
-    /**
-     * Sets the dimensions (width and height) of the view plane.
-     *
-     * @param width  the width of the view plane
-     * @param height the height of the view plane
-     * @return the current Camera object (for method chaining)
-     */
-    public Camera setVpSize(int width, int height){
-        this.width = width;
-        this.height = height;
-        return this;
-    }
 
     /**
      * Returns a new instance of the Camera builder.
@@ -132,7 +109,7 @@ public class Camera implements Cloneable {
      */
     public static class Builder { // this is the way for internal class
         private final Camera camera = new Camera();
-
+        public Builder(){}
         /**
          * Sets the location (eye point) of the camera in space.
          *
@@ -187,8 +164,7 @@ public class Camera implements Cloneable {
          * @return the current Builder (for method chaining)
          */
         public Builder setDirection(Point cameraTarget) {
-            // Assume default "up" vector in Z direction
-            Vector defaultUp = new Vector(0, 0, 1);
+            Vector defaultUp = new Vector(0, 1, 0);
             // Delegate to the previous method
             return setDirection(cameraTarget, defaultUp);
         }
@@ -222,6 +198,8 @@ public class Camera implements Cloneable {
             camera.distance = distance;
             return this;
         }
+
+
 
         /**
          * Sets the resolution of the view plane.
@@ -281,4 +259,6 @@ public class Camera implements Cloneable {
     } // end of Builder class
 // the rest of Camera methods, like constructRay(), etc.
 } // end of Camera class
+
+
 
