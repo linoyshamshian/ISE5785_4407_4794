@@ -21,17 +21,17 @@ public class Camera implements Cloneable {
     private Vector vTo;
     private Vector vUp;
     private Vector vRight;
-    private double distance=0.0;
-    private double width=0.0;
-    private double height=0.0;
+    private double distance = 0.0;
+    private double width = 0.0;
+    private double height = 0.0;
     //View plane center point to save CPU time - it's always the same
     private Point viewPlanePC;
 
     /**
      * Default constructor - private for use by Builder only.
      */
-    private Camera(){}
-
+    private Camera() {
+    }
 
 
     /**
@@ -65,7 +65,7 @@ public class Camera implements Cloneable {
      * @param i  pixel index in Y-axis (row)
      * @return the constructed {@link Ray} through the center of the specified pixel
      */
-    public Ray constructRay(int nX, int nY, int j, int i){
+    public Ray constructRay(int nX, int nY, int j, int i) {
         double rX = width / nX;
         double rY = height / nY;
         double xJ = (j - (nX - 1) / 2d) * rX;
@@ -109,7 +109,14 @@ public class Camera implements Cloneable {
      */
     public static class Builder { // this is the way for internal class
         private final Camera camera = new Camera();
-        public Builder(){}
+
+        /**
+         * Default constructor for the {@link Builder} class.
+         * Initializes a new builder instance for constructing a {@link Camera} object.
+         */
+        public Builder() {
+        }
+
         /**
          * Sets the location (eye point) of the camera in space.
          *
@@ -147,7 +154,7 @@ public class Camera implements Cloneable {
          * The method computes the vTo and vRight vectors automatically.
          *
          * @param cameraTarget a point that the camera should face
-         * @param vUp the up direction vector
+         * @param vUp          the up direction vector
          * @return the current Builder (for method chaining)
          */
         public Builder setDirection(Point cameraTarget, Vector vUp) {
@@ -198,8 +205,6 @@ public class Camera implements Cloneable {
             camera.distance = distance;
             return this;
         }
-
-
 
         /**
          * Sets the resolution of the view plane.
@@ -254,10 +259,9 @@ public class Camera implements Cloneable {
                 throw new IllegalArgumentException("vTo and vUp must be orthogonal");
             camera.vRight = camera.vTo.crossProduct(camera.vUp).normalize();
             camera.viewPlanePC = camera.p0.add(camera.vTo.scale(camera.distance));
-            return (Camera)camera.clone(); // Cloneable – get a full shadow copy
+            return (Camera) camera.clone(); // Cloneable – get a full shadow copy
         }
     } // end of Builder class
-// the rest of Camera methods, like constructRay(), etc.
 } // end of Camera class
 
 
