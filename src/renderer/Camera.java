@@ -1,9 +1,7 @@
 package renderer;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Util;
-import primitives.Vector;
+import primitives.*;
+import scene.Scene;
 
 import java.util.MissingResourceException;
 
@@ -26,8 +24,10 @@ public class Camera implements Cloneable {
     private double height = 0.0;
     //View plane center point to save CPU time - it's always the same
     private Point viewPlanePC;
-//    private ImageWriter imageWriter;
-
+    private ImageWriter imageWriter;
+    private RayTracerBase rayTracer;
+    private int nX = 1;
+    private int nY = 1;
     /**
      * Default constructor - private for use by Builder only.
      */
@@ -80,9 +80,79 @@ public class Camera implements Cloneable {
         if (!isZero(yI)) {
             pIJ = pIJ.add(vUp.scale(yI));
         }
+        // If the ray is exactly at the camera origin, return the forward direction directly
+        Vector direction;
+        if (pIJ.equals(p0)) {
+            direction = vTo;
+        } else {
+            direction = pIJ.subtract(p0).normalize();
+        }
+//        Vector v = pIJ.subtract(p0).normalize();
+        return new Ray(p0, direction);
+    }
 
-        Vector v = pIJ.subtract(p0).normalize();
-        return new Ray(p0, v);
+    /**
+     * Casts a single ray through a pixel, gets its color and writes it to the image.
+     *
+     * @param nX total number of columns (width in pixels)
+     * @param nY total number of rows (height in pixels)
+     * @param j  column index of the pixel
+     * @param i  row index of the pixel
+     */
+    private void castRay(int nX, int nY, int j, int i) {
+        Ray ray = constructRay(nX, nY, j, i);
+        Color pixelColor = rayTracer.traceRay(ray);
+        imageWriter.writePixel(j, i, pixelColor);
+    }
+
+
+    /**
+     * Render the image by casting rays through each pixel.
+     *
+     * @return this camera instance
+     */
+    public Camera renderImage() {
+
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                castRay(nX, nY, j, i); // j - column index, i - row index
+            }
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Draws a grid over the image with the given interval and color.
+     *
+     * @param interval number of pixels between grid lines
+     * @param color    the color of the grid lines
+     * @return this camera instance
+     */
+    public Camera printGrid(int interval, Color color) {
+
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                if (i % interval == 0 || j % interval == 0) {
+                    imageWriter.writePixel(j, i, color);
+                }
+            }
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Writes the image to disk.
+     *
+     * @param filename name of the image file (without extension)
+     * @return this camera instance
+     */
+    public Camera writeToImage(String filename) {
+        imageWriter.writeToImage(filename);
+        return this;
     }
 
 
@@ -207,26 +277,37 @@ public class Camera implements Cloneable {
             return this;
         }
 
-//        /**
-//         * Sets the resolution of the view plane.
-//         * currently a placeholder for future implementation.
-//         *
-//         * @param nX number of pixels in X direction
-//         * @param nY number of pixels in Y direction
-//         * @return the current Builder
-//         */
-//        public Builder setResolution(int nX, int nY) {
-//            return this;
-//        }
+        /**
+         * Sets the resolution (number of pixels in X and Y).
+         *
+         * @param nX number of pixels along the X axis
+         * @param nY number of pixels along the Y axis
+         * @return this builder
+         */
+        public Builder setResolution(int nX, int nY) {
+            if (nX <= 0 || nY <= 0)
+                throw new IllegalArgumentException("Resolution values must be positive");
 
-//        public Builder setImageWriter(ImageWriter imageWriter) {
-//            camera.imageWriter = imageWriter;
-//            return this;
-//        }
-//        public Builder setRayTracer(RayTracerBase tracer) {
-//            camera.rayTracer = tracer;
-//            return this;
-//        }
+            camera.nX = nX;
+            camera.nY = nY;
+            return this;
+        }
+
+        /**
+         * Sets the ray tracer for the camera.
+         *
+         * @param scene the scene to trace
+         * @param type  the type of the ray tracer
+         * @return this builder
+         */
+        public Builder setRayTracer(Scene scene, RayTracerType type) {
+            if (type == RayTracerType.SIMPLE) {
+                camera.rayTracer = new SimpleRayTracer(scene);
+            } else {
+                camera.rayTracer = null;
+            }
+            return this;
+        }
 
         /**
          * Finalizes the building of the {@link Camera} object.
@@ -240,10 +321,7 @@ public class Camera implements Cloneable {
             final String GENERAL_DESCRIPTION = "Missing render data";
             final String CLASS_NAME = "Camera";
 
-//            if (camera.imageWriter == null)
-//                throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "imageWriter");
-//            if (camera.rayTracer == null)
-//                throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "rayTracer");
+
             if (camera.p0 == null)
                 throw new MissingResourceException(GENERAL_DESCRIPTION, CLASS_NAME, "p0");
             if (camera.vUp == null)
@@ -258,6 +336,14 @@ public class Camera implements Cloneable {
                 throw new IllegalArgumentException("Distance must be positive");
             if (!Util.isZero(camera.vTo.dotProduct(camera.vUp)))
                 throw new IllegalArgumentException("vTo and vUp must be orthogonal");
+            if (camera.nX <= 0 || camera.nY <= 0)
+                throw new IllegalArgumentException("Resolution must be positive");
+
+            camera.imageWriter = new ImageWriter(camera.nX, camera.nY);
+
+            if (camera.rayTracer == null) {
+                camera.rayTracer = new SimpleRayTracer(null); // default to empty scene
+            }
             camera.vRight = camera.vTo.crossProduct(camera.vUp).normalize();
             camera.viewPlanePC = camera.p0.add(camera.vTo.scale(camera.distance));
             return (Camera) camera.clone(); // Cloneable – get a full shadow copy
