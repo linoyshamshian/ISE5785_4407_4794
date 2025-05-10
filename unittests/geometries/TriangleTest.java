@@ -136,9 +136,6 @@ class TriangleTest {
                 new Vector(0, -1, 0)
         );
 
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            triangle.findIntersections(rayOnEdge);
-//        }, "Intersection exactly on vertex should throw an exception due to zero vector creation");
         assertNull(
                 triangle.findIntersections(rayOnEdge),
                 "Intersection exactly on vertex should return null"
@@ -149,9 +146,6 @@ class TriangleTest {
                 new Vector(0, -1, 0)
         );
 
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            triangle.findIntersections(rayOnVertex);
-//        }, "Intersection exactly on vertex should throw an exception due to zero vector creation");
         assertNull(
                 triangle.findIntersections(rayOnVertex)
                 , "Intersection exactly on vertex should throw an exception due to zero vector creation");
@@ -161,9 +155,7 @@ class TriangleTest {
                 new Point(0, 1, 1),
                 new Vector(0, -1, 0)
         );
-//        assertThrows(IllegalArgumentException.class, () -> {
-//            triangle.findIntersections(rayOnEdgeExtension);
-//        }, "Intersection exactly on vertex should throw an exception due to zero vector creation");
+
         assertNull(
                 triangle.findIntersections(rayOnEdgeExtension)
                 , "Intersection exactly on vertex should throw an exception due to zero vector creation");

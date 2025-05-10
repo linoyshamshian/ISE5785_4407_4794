@@ -82,51 +82,6 @@ public class Triangle extends Polygon {
         return planeIntersections;
     }
 
-//    public List<Point> findIntersections(Ray ray) {
-//        // First, intersect the ray with the triangle's plane.
-//        List<Point> planeIntersections = plane.findIntersections(ray);
-//        if (planeIntersections == null)
-//            // No intersection with the plane, so no intersection with the triangle.
-//            return null;
-//
-//        // Get the intersection point with the plane.
-//        Point p = planeIntersections.get(0);
-//
-//
-//        // Get the vertices of the triangle.
-//        Point p1 = vertices.get(0);
-//        Point p2 = vertices.get(1);
-//        Point p3 = vertices.get(2);
-//        // Retrieve the direction vector and head point of the ray
-//        Vector rayDirection = ray.getDirection();
-//        Point rayPoint = ray.getHead();
-//
-//        if (p1.equals(rayPoint) || p2.equals(rayPoint) || p3.equals(rayPoint))
-//            return null; // The ray's head is one of the triangle's vertices
-//        // Reject intersections that are exactly on the triangle's vertices (to avoid zero vectors)
-//        if (p.equals(p1) || p.equals(p2) || p.equals(p3)) return null;
-//
-//        // Calculate the vectors from the vertices to the point.
-//        Vector v0 = p.subtract(p1);
-//        Vector v1 = p.subtract(p2);
-//        Vector v2 = p.subtract(p3);
-//        if (p1.equals(p2) || p1.equals(p3) || p2.equals(p3)) {
-//            return null;
-//        }
-//        // Calculate the cross products of the edges and the vectors to the point.
-//        Vector n1 = p2.subtract(p1).crossProduct(v0);
-//        Vector n2 = p3.subtract(p2).crossProduct(v1);
-//        Vector n3 = p1.subtract(p3).crossProduct(v2);
-//
-//        // Check if all the cross products point in the same direction.
-//        if (n1.dotProduct(n2) > 0 && n2.dotProduct(n3) > 0) {
-//            // The intersection point is inside the triangle.
-//            return List.of(p);
-//        }
-//        // The intersection point is outside the triangle.
-//        return null;
-//    }
-
     /**
      * Alternative intersection method using the pyramid method (based on normals between edges and ray origin).
      * This checks whether the intersection point lies inside the triangle by comparing signs of dot products.
