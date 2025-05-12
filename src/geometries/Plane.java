@@ -76,7 +76,7 @@ public class Plane extends Geometry {
      */
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
         // Ray starting point
         Point p0 = ray.getHead();
 
@@ -111,7 +111,8 @@ public class Plane extends Geometry {
         }
 
         // Calculate intersection point: P = P0 + t*v
-        return List.of(ray.getPoint(t));
+        return List.of(new Intersection(this, ray.getPoint(t)));
+
     }
 
 

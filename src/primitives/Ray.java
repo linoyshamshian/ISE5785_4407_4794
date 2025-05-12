@@ -1,5 +1,7 @@
 package primitives;
 
+import geometries.Intersectable.Intersection;
+
 import java.util.List;
 
 import static primitives.Util.isZero;
@@ -96,20 +98,34 @@ public class Ray {
     }
 
     /**
-     * Returns the point from the list that is closest to the ray's origin (p0)
-     * and lies in the direction of the ray.
-     * If the list is null or empty, returns null.
+     * Finds the closest point to the ray's head from a list of points.
+     * <p>
+     * Internally converts each point into an {@link Intersection} object and then
+     * delegates to {@link #findClosestIntersection(List)} to determine the closest one.
      *
-     * @param points the list of points to search
-     * @return the closest point in the direction of the ray, or null if none
+     * @param points List of points to check
+     * @return The closest point in the direction of the ray, or {@code null} if none found
      */
     public Point findClosestPoint(List<Point> points) {
-        if (points == null || points.isEmpty()) return null;
+        return points == null ? null
+                : findClosestIntersection(points.stream().map(p -> new Intersection(null, p)).toList()).point;
+    }
 
-        Point closest = null;
+
+    /**
+     * Finds the closest intersection point to the ray's head from a list of intersections,
+     * considering only those that lie in the direction of the ray (i.e., dot product > 0).
+     *
+     * @param intersections List of {@link Intersection} objects to check
+     * @return The closest {@link Intersection} in the ray's direction, or {@code null} if none are valid
+     */
+    public Intersection findClosestIntersection(List<Intersection> intersections) {
+        if (intersections == null)
+            return null;
         double minDistance = Double.POSITIVE_INFINITY;
-
-        for (Point point : points) {
+        Intersection closestIntersection = null;
+        for (Intersection intersection : intersections) {
+            Point point = intersection.point;
             // Skip if the point is exactly at the ray's origin
             if (point.equals(head)) continue;
             Vector toPoint = point.subtract(head);
@@ -118,12 +134,12 @@ public class Ray {
                 double distance = toPoint.lengthSquared(); // faster than distance()
                 if (distance < minDistance) {
                     minDistance = distance;
-                    closest = point;
+                    closestIntersection = intersection;
                 }
             }
         }
 
-        return closest;
+        return closestIntersection;
     }
 
 }

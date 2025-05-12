@@ -75,7 +75,7 @@ public class Cylinder extends Tube {
     }
 
     /**
-     * This method implements the {@code findIntersections} method defined in the {@code Intersectable} interface.
+     * This method implements the {@code calculateIntersectionsHelper} method defined in the {@code Intersectable} interface.
      * It calculates the intersection points (if any) between a given ray and the surface of the finite cylinder
      * (including its two bases).
      *
@@ -83,62 +83,62 @@ public class Cylinder extends Tube {
      * @return A list of intersection points, or {@code null} if there are none.
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = super.findIntersections(ray); // Side intersections from Tube
-        List<Point> results = new ArrayList<>();
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        List<Intersection> intersections = super.calculateIntersectionsHelper(ray); // Side intersections from Tube
+        List<Intersection> results = new ArrayList<>();
 
         Point p0 = axis.getHead();                    // Bottom base center of the cylinder
         Vector vAxis = axis.getDirection(); // Cylinder axis direction
 
         // Filter side intersections to keep only those within cylinder height
         if (intersections != null) {
-            for (Point p : intersections) {
+            for (Intersection intersection : intersections) {
+                Point p = intersection.point;
                 double t = vAxis.dotProduct(p.subtract(p0));
                 if (alignZero(t) >= 0 && alignZero(t) <= height) {
-                    results.add(p);
+                    results.add(intersection);
                 }
             }
         }
 
         // Intersect with bottom base
-        Plane bottomBase = new Plane(p0, vAxis.scale(-1)); // Plane facing downward
-        List<Point> bottomIntersections = bottomBase.findIntersections(ray);
-        if (bottomIntersections != null) {
-            for (Point p : bottomIntersections) {
-                if (p.equals(p0)) {
-                    results.add(p); // Center point – avoid zero vector creation
-                } else {
-                    Vector v = p.subtract(p0);
-                    if (alignZero(v.lengthSquared() - radius * radius) <= 0) {
-                        results.add(p);
-                    }
-                }
-            }
-        }
+        List<Intersection> bottomHits = intersectBase(p0, vAxis.scale(-1), ray);
+        if (bottomHits != null) results.addAll(bottomHits);
 
         // Intersect with top base
         Point topCenter = p0.add(vAxis.scale(height)); // Top base center
-        Plane topBase = new Plane(topCenter, vAxis);   // Plane facing upward
-        List<Point> topIntersections = topBase.findIntersections(ray);
-        if (topIntersections != null) {
-            for (Point p : topIntersections) {
-                if (p.equals(topCenter)) {
-                    results.add(p); // Center point – avoid zero vector creation
-                } else {
-                    Vector v = p.subtract(topCenter);
-                    if (alignZero(v.lengthSquared() - radius * radius) <= 0) {
-                        results.add(p);
-                    }
-                }
-            }
-        }
+        List<Intersection> topHits = intersectBase(topCenter, vAxis, ray);
+        if (topHits != null) results.addAll(topHits);
 
         if (results.isEmpty()) return null;
 
         // Sort the intersection points by their distance from the ray origin
-        results.sort(Comparator.comparingDouble(p -> ray.getDirection().dotProduct(p.subtract(ray.getHead()))));
+        results.sort(Comparator.comparingDouble(p -> ray.getDirection().dotProduct(p.point.subtract(ray.getHead()))));
 
         return results;
     }
+
+
+
+    private List<Intersection> intersectBase(Point center, Vector normal, Ray ray) {
+        Plane basePlane = new Plane(center, normal);
+        List<Intersection> baseIntersections = basePlane.calculateIntersectionsHelper(ray);
+        if (baseIntersections == null) return null;
+
+        List<Intersection> result = new ArrayList<>();
+        for (Intersection intersection : baseIntersections) {
+            Point p = intersection.point;
+            if (p.equals(center)) {
+                result.add(intersection); // Center point – avoid zero vector creation
+            } else {
+                Vector v = p.subtract(center);
+                if (alignZero(v.lengthSquared() - radius * radius) <= 0) {
+                    result.add(intersection);
+                }
+            }
+        }
+        return result.isEmpty() ? null : result;
+    }
+
 
 }

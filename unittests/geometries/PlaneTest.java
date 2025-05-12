@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-import primitives.Util;
 
 class PlaneTest {
     /**

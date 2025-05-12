@@ -38,7 +38,7 @@ public class Triangle extends Polygon {
      * @return A list with a single intersection point if the ray intersects the triangle, otherwise {@code null}.
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
         var planeIntersections = plane.findIntersections(ray);
         // Check if the ray intersects the plane of the triangle
         if (planeIntersections == null)
@@ -79,7 +79,7 @@ public class Triangle extends Polygon {
         if (d1 * d3 <= 0)
             return null;
 
-        return planeIntersections;
+        return List.of(new Intersection(this,planeIntersections.getFirst()));
     }
 
     /**
@@ -95,7 +95,7 @@ public class Triangle extends Polygon {
         if (planeIntersections == null) {
             return null; // No intersection with the plane, so no intersection with the triangle.
         }
-        Point p = planeIntersections.get(0); // Intersection point with the plane.
+        Point p = planeIntersections.getFirst(); // Intersection point with the plane.
 
         // 2. Check if the intersection point is inside the triangle using the pyramid method.
         Point p0 = ray.getHead();
@@ -120,7 +120,7 @@ public class Triangle extends Polygon {
 
         if (isZero(s1) || isZero(s2) || isZero(s3)) return null;
 
-        // אם כל הסימנים זהים
+        // if all the signs are the same
         if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
             // The intersection point is inside the triangle.
             return List.of(p);

@@ -4,7 +4,6 @@ import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static primitives.Util.alignZero;
@@ -53,7 +52,7 @@ public class Tube extends RadialGeometry {
     }
 
     /**
-     * This method implements the {@code findIntersections} method defined in the {@code Intersectable} interface.
+     * This method implements the {@code calculateIntersectionsHelper} method defined in the {@code Intersectable} interface.
      * It calculates the intersection points (if any) between a given ray and the surface of the infinite tube.
      * If there are no intersections or if the ray only touches the tube (tangent), the method returns {@code null}.
      * Intersection points where the ray origin lies exactly on the surface are not considered valid intersections.
@@ -63,7 +62,7 @@ public class Tube extends RadialGeometry {
      */
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
         Vector va = axis.getDirection(); // Direction vector of the tube's axis
         Point pa = axis.getHead(); // A point on the tube's axis
         Vector vr = ray.getDirection(); // Direction vector of the ray
@@ -103,17 +102,17 @@ public class Tube extends RadialGeometry {
         if (p1 != null && p2 != null) {
             // Ensure the intersections are ordered by their distance from the ray origin
             if (p2.subtract(pr).lengthSquared() < p1.subtract(pr).lengthSquared()) {
-                return List.of(p2, p1);
+                return List.of(new Intersection(this,p2),new Intersection(this,p1));
             }
-            return List.of(p1, p2);
+            return List.of(new Intersection(this,p1),new Intersection(this,p2));
         }
 
         if (p1 != null) {
-            return List.of(p1);
+            return List.of(new Intersection(this,p1));
         }
 
         if (p2 != null) {
-            return List.of(p2);
+            return List.of(new Intersection(this,p2));
         }
 
         return null;

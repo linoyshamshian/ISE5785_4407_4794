@@ -19,7 +19,7 @@ import primitives.Point;
  *
  * @author Chen Babay & Linoy Shamshian
  */
-public abstract class Geometry implements Intersectable {
+public abstract class Geometry extends Intersectable {
 
     /**
      * The emission color of the geometry, used in lighting calculations.

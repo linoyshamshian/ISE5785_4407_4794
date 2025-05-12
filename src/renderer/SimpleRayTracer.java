@@ -1,7 +1,7 @@
 package renderer;
 
+import geometries.Intersectable.Intersection;
 import primitives.Color;
-import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
 
@@ -24,34 +24,37 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Calculates the color at the given intersection point.
-     * For now, returns only the ambient light of the scene.
+     * Calculates the color at a given intersection point.
+     * <p>
+     * The color is calculated as the sum of the ambient light and the emission of the intersected geometry.
      *
-     * @param point the intersection point
-     * @return the ambient light color
+     * @param intersection The intersection for which the color is calculated.
+     * @return The resulting color at the intersection.
      */
-    private Color calcColor(Point point) {
-        return scene.ambientLight.getIntensity();
+    private Color calcColor(Intersection intersection) {
+        return scene.ambientLight.getIntensity().add(intersection.geometry.getEmission());
     }
 
+
     /**
-     * Traces a ray in the scene.
-     * If the ray intersects with a geometry, returns the ambient light color.
-     * Otherwise, returns the background color.
+     * Traces a ray and determines the color seen along that ray.
+     * <p>
+     * If the ray intersects any geometry, the closest intersection is used to calculate the color.
+     * If no intersection is found, the background color of the scene is returned.
      *
-     * @param ray the ray to trace
-     * @return the color of the intersection point or background color
+     * @param ray The ray to trace through the scene.
+     * @return The color visible along the ray.
      */
     @Override
     public Color traceRay(Ray ray) {
-        List<Point> intersections = scene.geometries.findIntersections(ray);
+        List<Intersection> intersections = scene.geometries.calculateIntersections(ray);
 
         if (intersections == null || intersections.isEmpty()) {
             return scene.background;
         }
 
-        Point closestPoint = ray.findClosestPoint(intersections);
-        return calcColor(closestPoint);
+        Intersection closestIntersection = ray.findClosestIntersection(intersections);
+        return calcColor(closestIntersection);
     }
 
 }

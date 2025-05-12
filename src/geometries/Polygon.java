@@ -1,7 +1,5 @@
 package geometries;
 
-import static java.lang.Double.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +94,7 @@ public class Polygon extends Geometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
         // Intersect ray with the polygon's plane.
         List<Point> planeIntersections = plane.findIntersections(ray);
         if (planeIntersections == null) {
@@ -133,7 +131,7 @@ public class Polygon extends Geometry {
         }
 
         // The intersection point is inside the polygon.
-        return List.of(p);
+        return List.of(new Intersection(this,p));
     }
 
 
@@ -142,7 +140,7 @@ public class Polygon extends Geometry {
         List<Point> planeIntersections = plane.findIntersections(ray);
         if (planeIntersections == null) return null; // No intersection with the plane
 
-        Point p = planeIntersections.get(0); // Intersection point with the plane
+        Point p = planeIntersections.getFirst(); // Intersection point with the plane
         Point p0 = ray.getHead();            // Ray origin
         Vector dir = ray.getDirection();     // Ray direction
 
