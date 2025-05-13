@@ -103,12 +103,14 @@ public class Ray {
      * Internally converts each point into an {@link Intersection} object and then
      * delegates to {@link #findClosestIntersection(List)} to determine the closest one.
      *
-     * @param points List of points to check
+     * @param intersections List of points to check
      * @return The closest point in the direction of the ray, or {@code null} if none found
      */
-    public Point findClosestPoint(List<Point> points) {
-        return points == null ? null
-                : findClosestIntersection(points.stream().map(p -> new Intersection(null, p)).toList()).point;
+    public Point findClosestPoint(List<Point> intersections) {
+        return intersections == null ? null
+                : findClosestIntersection(
+                intersections.stream().map(p -> new Intersection(null, p))
+                                .toList()).point;
     }
 
 
