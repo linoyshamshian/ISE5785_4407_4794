@@ -7,9 +7,7 @@ import primitives.Color;
  *
  * @author Chen Babay & Linoy Shamshian
  */
-public class AmbientLight {
-    private final Color intensity;
-
+public class AmbientLight extends Light  {
     /**
      * Public constant for ambient light with no intensity (black).
      */
@@ -17,17 +15,12 @@ public class AmbientLight {
 
     /**
      * Constructor for ambient light with given intensity.
+     *
      * @param intensity the light intensity (Color)
      */
     public AmbientLight(Color intensity) {
-        this.intensity = intensity;
+        super(intensity); // Call to the superclass constructor
     }
 
-    /**
-     * Getter for the ambient light intensity.
-     * @return the intensity (Color)
-     */
-    public Color getIntensity() {
-        return intensity;
-    }
+
 }
