@@ -81,4 +81,52 @@ public class RenderTests {
     }
 
 
+    /**
+     * Test method for rendering a scene using ambient reflection only.
+     * <p>
+     * The scene contains a sphere and three triangles. Each geometry is given a
+     * different ambient reflection coefficient (kA) to demonstrate how ambient light
+     * interacts with different materials.
+     * <p>
+     * The ambient light is set to full white, and there is no emission color on the
+     * geometries. The output image will reflect only the ambient component.
+     */
+    @Test
+    void renderAmbientReflectionTest() {
+        Scene scene = new Scene("Ambient Reflection Test")
+                .setAmbientLight(new AmbientLight(new Color(white)));
+
+        scene.geometries
+                .add(// center
+                        new Sphere(new Point(0, 0, -100), 50)
+                                .setMaterial(new Material().setKA(new Double3(0.4))),
+
+                        // up left
+                        new Triangle(new Point(-100, 0, -100),
+                                new Point(0, 100, -100),
+                                new Point(-100, 100, -100))
+                                .setMaterial(new Material().setKA(new Double3(0, 0.8, 0))),
+
+                        // down left
+                        new Triangle(new Point(-100, 0, -100),
+                                new Point(0, -100, -100),
+                                new Point(-100, -100, -100))
+                                .setMaterial(new Material().setKA(new Double3(0.8, 0, 0))),
+
+                        // down right
+                        new Triangle(new Point(100, 0, -100),
+                                new Point(0, -100, -100),
+                                new Point(100, -100, -100))
+                                .setMaterial(new Material().setKA(new Double3(0, 0, 0.8)))
+                );
+
+        camera //
+                .setRayTracer(scene, RayTracerType.SIMPLE) //
+                .setResolution(1000, 1000) //
+                .build() //
+                .renderImage() //
+                .printGrid(100, new Color(WHITE)) //
+                .writeToImage("color render test");
+    }
+
 }
