@@ -22,7 +22,7 @@ public class Material {
      * @param kA the diffuse reflection coefficient
      * @return the Material object itself (for chaining)
      */
-    public Material setKD(Double3 kA) {
+    public Material setKA(Double3 kA) {
         this.kA = kA;
         return this;
     }
@@ -33,7 +33,7 @@ public class Material {
      * @param kA the diffuse reflection coefficient
      * @return the Material object itself (for chaining)
      */
-    public Material setKD(double kA) {
+    public Material setKA(double kA) {
         this.kA = new Double3(kA);
         return this;
     }
