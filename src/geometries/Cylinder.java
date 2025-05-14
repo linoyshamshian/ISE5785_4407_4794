@@ -1,8 +1,8 @@
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-import primitives.Point;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -117,7 +117,6 @@ public class Cylinder extends Tube {
 
         return results;
     }
-
 
 
     private List<Intersection> intersectBase(Point center, Vector normal, Ray ray) {

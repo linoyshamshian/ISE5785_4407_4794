@@ -1,23 +1,28 @@
 package renderer;
 
-import static java.awt.Color.*;
-
-import org.junit.jupiter.api.Test;
-
-import geometries.*;
+import geometries.Sphere;
+import geometries.Triangle;
 import lighting.AmbientLight;
+import org.junit.jupiter.api.Test;
 import primitives.*;
 import scene.Scene;
 
+import static java.awt.Color.*;
+
 /**
  * Test rendering a basic image
+ *
  * @author Dan
  */
 public class RenderTests {
-    /** Default constructor to satisfy JavaDoc generator */
+    /**
+     * Default constructor to satisfy JavaDoc generator
+     */
     public RenderTests() { /* to satisfy JavaDoc generator */ }
 
-    /** Camera builder of the tests */
+    /**
+     * Camera builder of the tests
+     */
     private final Camera.Builder camera = Camera.getBuilder() //
             .setLocation(Point.ZERO).setDirection(new Point(0, 0, -1), Vector.AXIS_Y) //
             .setVpDistance(100) //
@@ -51,6 +56,7 @@ public class RenderTests {
     }
 
     // For stage 6
+
     /**
      * Produce a scene with basic 3D model - including individual lights of the
      * bodies and render it into a png image with a grid

@@ -3,7 +3,7 @@ package renderer;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static java.awt.Color.*;
 
 /**
  * Test class for {@link ImageWriter}.
@@ -20,7 +20,7 @@ class ImageWriterTest {
         ImageWriter imageWriter = new ImageWriter(800, 500);
         for (int i = 0; i < imageWriter.nX(); i++)
             for (int j = 0; j < imageWriter.nY(); j++)
-                imageWriter.writePixel(i, j, new Color(java.awt.Color.YELLOW));
+                imageWriter.writePixel(i, j, new Color(YELLOW));
         imageWriter.writeToImage("yellow");
     }
 
@@ -37,8 +37,8 @@ class ImageWriterTest {
         int height = 500;
         int rows = 10;
         int cols = 16;
-        Color backgroundColor = new Color(java.awt.Color.PINK);
-        Color gridColor = new Color(java.awt.Color.WHITE);
+        Color backgroundColor = new Color(PINK);
+        Color gridColor = new Color(WHITE);
 
         ImageWriter imageWriter = new ImageWriter(width, height);
 

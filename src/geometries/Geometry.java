@@ -2,8 +2,8 @@ package geometries;
 
 import primitives.Color;
 import primitives.Material;
-import primitives.Vector;
 import primitives.Point;
+import primitives.Vector;
 
 /**
  * Abstract base class representing a geometric object in 3D space.

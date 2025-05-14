@@ -1,8 +1,8 @@
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-import primitives.Point;
 
 import java.util.List;
 
@@ -102,17 +102,17 @@ public class Tube extends RadialGeometry {
         if (p1 != null && p2 != null) {
             // Ensure the intersections are ordered by their distance from the ray origin
             if (p2.subtract(pr).lengthSquared() < p1.subtract(pr).lengthSquared()) {
-                return List.of(new Intersection(this,p2),new Intersection(this,p1));
+                return List.of(new Intersection(this, p2), new Intersection(this, p1));
             }
-            return List.of(new Intersection(this,p1),new Intersection(this,p2));
+            return List.of(new Intersection(this, p1), new Intersection(this, p2));
         }
 
         if (p1 != null) {
-            return List.of(new Intersection(this,p1));
+            return List.of(new Intersection(this, p1));
         }
 
         if (p2 != null) {
-            return List.of(new Intersection(this,p2));
+            return List.of(new Intersection(this, p2));
         }
 
         return null;

@@ -28,6 +28,7 @@ public class Camera implements Cloneable {
     private RayTracerBase rayTracer;
     private int nX = 1;
     private int nY = 1;
+
     /**
      * Default constructor - private for use by Builder only.
      */
@@ -94,17 +95,14 @@ public class Camera implements Cloneable {
     /**
      * Casts a single ray through a pixel, gets its color and writes it to the image.
      *
-     * @param nX total number of columns (width in pixels)
-     * @param nY total number of rows (height in pixels)
      * @param j  column index of the pixel
      * @param i  row index of the pixel
      */
-    private void castRay(int nX, int nY, int j, int i) {
+    private void castRay(int j, int i) {
         Ray ray = constructRay(nX, nY, j, i);
         Color pixelColor = rayTracer.traceRay(ray);
         imageWriter.writePixel(j, i, pixelColor);
     }
-
 
     /**
      * Render the image by casting rays through each pixel.
@@ -115,28 +113,34 @@ public class Camera implements Cloneable {
 
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                castRay(nX, nY, j, i); // j - column index, i - row index
+                castRay(j, i); // j - column index, i - row index
             }
         }
 
         return this;
     }
 
-
     /**
-     * Draws a grid over the image with the given interval and color.
+     * Draws a grid over the image by first filling the background
+     * and then drawing vertical and horizontal grid lines at a given interval.
      *
      * @param interval number of pixels between grid lines
      * @param color    the color of the grid lines
      * @return this camera instance
      */
     public Camera printGrid(int interval, Color color) {
-
-        for (int i = 0; i < nY; i++) {
+        // Fill background with the existing image colors
+        // Draw horizontal grid lines
+        for (int i = 0; i < nY; i += interval) {
             for (int j = 0; j < nX; j++) {
-                if (i % interval == 0 || j % interval == 0) {
-                    imageWriter.writePixel(j, i, color);
-                }
+                imageWriter.writePixel(j, i, color);
+            }
+        }
+
+        // Draw vertical grid lines
+        for (int j = 0; j < nX; j += interval) {
+            for (int i = 0; i < nY; i++) {
+                imageWriter.writePixel(j, i, color);
             }
         }
 
@@ -167,7 +171,6 @@ public class Camera implements Cloneable {
     public Camera clone() {
         try {
             Camera clone = (Camera) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

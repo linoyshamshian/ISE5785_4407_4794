@@ -2,11 +2,15 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class VectorTest {
 
 
-    /** Test method for {@link primitives.Vector#Vector(double, double, double)}. */
+    /**
+     * Test method for {@link primitives.Vector#Vector(double, double, double)}.
+     */
     @Test
     void testConstructor() {
         // =============== Boundary Values Tests ==================
@@ -17,7 +21,9 @@ class VectorTest {
                 "Constructor should throw an exception for a zero vector");
     }
 
-    /** Test method for {@link primitives.Vector#add(primitives.Vector)}. */
+    /**
+     * Test method for {@link primitives.Vector#add(primitives.Vector)}.
+     */
     @Test
     void testAdd() {
         Vector v1 = new Vector(1, -2, 3);
@@ -37,7 +43,9 @@ class VectorTest {
 
     }
 
-    /** Test method for {@link primitives.Vector#scale(double)}. */
+    /**
+     * Test method for {@link primitives.Vector#scale(double)}.
+     */
     @Test
     void testScale() {
         Vector v = new Vector(1, -2, 3);
@@ -60,7 +68,9 @@ class VectorTest {
                 "Scaling by zero should throw exception");
     }
 
-    /** Test method for {@link primitives.Vector#scale(double)}. */
+    /**
+     * Test method for {@link primitives.Vector#scale(double)}.
+     */
     @Test
     void testDotProduct() {
         Vector v1 = new Vector(1, 2, 3);
@@ -79,7 +89,9 @@ class VectorTest {
                 "Dot product with perpendicular vectors failed");
     }
 
-    /** Test method for {@link primitives.Vector#crossProduct(primitives.Vector)}. */
+    /**
+     * Test method for {@link primitives.Vector#crossProduct(primitives.Vector)}.
+     */
     @Test
     void testCrossProduct() {
         Vector v1 = new Vector(1, 2, 3);
@@ -101,18 +113,22 @@ class VectorTest {
 
     }
 
-    /** Test method for {@link primitives.Vector#lengthSquared()}. */
+    /**
+     * Test method for {@link primitives.Vector#lengthSquared()}.
+     */
     @Test
     void testLengthSquared() {
         // ============ Equivalence Partitions Tests ==============
         // TC01: Checking squared length of a vector
-        Vector v1=new Vector(1,2,3);
+        Vector v1 = new Vector(1, 2, 3);
         assertEquals(
                 14,
                 v1.lengthSquared());
     }
 
-    /** Test method for {@link primitives.Vector#length()}. */
+    /**
+     * Test method for {@link primitives.Vector#length()}.
+     */
     @Test
     void testLength() {
         // ============ Equivalence Partitions Tests ==============
@@ -124,7 +140,9 @@ class VectorTest {
                 "Length calculation is incorrect");
     }
 
-    /** Test method for {@link primitives.Vector#normalize()}. */
+    /**
+     * Test method for {@link primitives.Vector#normalize()}.
+     */
     @Test
     void testNormalize() {
         Vector v = new Vector(0, 3, 4);
@@ -142,7 +160,9 @@ class VectorTest {
                 "Normalization failed");
     }
 
-    /** Test method for {@link primitives.Point#subtract(primitives.Point)}. */
+    /**
+     * Test method for {@link primitives.Point#subtract(primitives.Point)}.
+     */
     @Test
     void testSubtract() {
         // ============ Equivalence Partitions Tests ==============

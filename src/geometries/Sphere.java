@@ -4,7 +4,6 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static primitives.Util.isZero;
@@ -58,7 +57,7 @@ public class Sphere extends RadialGeometry {
 
         // Ray starts at the center → one intersection in direction of the ray
         if (p0.equals(center)) {
-            return List.of(new Intersection(this, center.add(v.scale(radius))));
+            return List.of(new Intersection(this, ray.getPoint(radius)));
         }
 
         Vector u = center.subtract(p0);

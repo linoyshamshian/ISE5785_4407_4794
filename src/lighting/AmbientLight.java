@@ -1,13 +1,14 @@
 package lighting;
 
 import primitives.Color;
+
 /**
  * Class representing ambient light in the scene.
  * Ambient light is a global light source that affects all objects equally.
  *
  * @author Chen Babay & Linoy Shamshian
  */
-public class AmbientLight extends Light  {
+public class AmbientLight extends Light {
     /**
      * Public constant for ambient light with no intensity (black).
      */

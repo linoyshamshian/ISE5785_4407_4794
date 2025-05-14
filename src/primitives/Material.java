@@ -14,7 +14,8 @@ public class Material {
     /**
      * Default constructor
      */
-    public Material() {}
+    public Material() {
+    }
 
     /**
      * Setter for kD using a Double3 parameter
