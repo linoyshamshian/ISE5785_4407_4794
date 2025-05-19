@@ -63,7 +63,7 @@ public class Material {
      * @param kD the diffuse coefficient
      * @return the material itself for method chaining
      */
-    public Material setKd(Double3 kD) {
+    public Material setKD(Double3 kD) {
         this.kD = kD;
         return this;
     }
@@ -74,7 +74,7 @@ public class Material {
      * @param kD the diffuse coefficient as a double
      * @return the material itself for method chaining
      */
-    public Material setKd(double kD) {
+    public Material setKD(double kD) {
         this.kD = new Double3(kD);
         return this;
     }
@@ -85,7 +85,7 @@ public class Material {
      * @param kS the specular coefficient
      * @return the material itself for method chaining
      */
-    public Material setKs(Double3 kS) {
+    public Material setKS(Double3 kS) {
         this.kS = kS;
         return this;
     }
@@ -96,7 +96,7 @@ public class Material {
      * @param kS the specular coefficient as a double
      * @return the material itself for method chaining
      */
-    public Material setKs(double kS) {
+    public Material setKS(double kS) {
         this.kS = new Double3(kS);
         return this;
     }

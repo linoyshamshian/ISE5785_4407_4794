@@ -31,7 +31,7 @@ public class Scene {
      * A list of light sources in the scene.
      * Initialized as an empty LinkedList by default.
      */
-    private List<LightSource> lights = new LinkedList<>();
+    public List<LightSource> lights = new LinkedList<>();
 
     /**
      * The ambient light of the scene.

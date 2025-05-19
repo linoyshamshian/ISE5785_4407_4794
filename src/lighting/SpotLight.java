@@ -48,8 +48,8 @@ public class SpotLight extends PointLight {
      * @return This SpotLight instance (for chaining)
      */
     @Override
-    public SpotLight setKL(double kL) {
-        super.setKL(kL);
+    public SpotLight setKl(double kL) {
+        super.setKl(kL);
         return this;
     }
 
@@ -60,8 +60,8 @@ public class SpotLight extends PointLight {
      * @return This SpotLight instance (for chaining)
      */
     @Override
-    public SpotLight setKQ(double kQ) {
-        super.setKQ(kQ);
+    public SpotLight setKq(double kQ) {
+        super.setKq(kQ);
         return this;
     }
 

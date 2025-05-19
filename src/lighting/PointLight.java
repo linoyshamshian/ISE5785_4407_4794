@@ -61,7 +61,7 @@ public class PointLight extends Light implements LightSource {
      * @param kL The linear attenuation coefficient
      * @return This PointLight object (for chaining)
      */
-    public PointLight setKL(double kL) {
+    public PointLight setKl(double kL) {
         this.kL = kL;
         return this;
     }
@@ -72,7 +72,7 @@ public class PointLight extends Light implements LightSource {
      * @param kQ The quadratic attenuation coefficient
      * @return This PointLight object (for chaining)
      */
-    public PointLight setKQ(double kQ) {
+    public PointLight setKq(double kQ) {
         this.kQ = kQ;
         return this;
     }
