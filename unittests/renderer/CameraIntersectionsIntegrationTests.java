@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class CameraIntersectionsIntegrationTests {
     private int cameraResolutionWidth = 3;
-    private int cameraResolutionHeight  = 3;
+    private int cameraResolutionHeight = 3;
 
     /**
      * Helper method to generate rays through each pixel of a 3x3 view plane and count the intersections
@@ -28,9 +28,9 @@ public class CameraIntersectionsIntegrationTests {
      */
     private int countIntersections(Camera camera, geometries.Intersectable intersectable) {
         int intersectionCount = 0;
-        for (int i = 0; i < cameraResolutionHeight ; i++) {
+        for (int i = 0; i < cameraResolutionHeight; i++) {
             for (int j = 0; j < cameraResolutionWidth; j++) {
-                Ray ray = camera.constructRay(cameraResolutionWidth, cameraResolutionHeight , j, i);
+                Ray ray = camera.constructRay(cameraResolutionWidth, cameraResolutionHeight, j, i);
                 List<Point> intersections = intersectable.findIntersections(ray);
                 if (intersections != null) {
                     intersectionCount += intersections.size();
@@ -56,7 +56,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         Sphere sphere1 = new Sphere(new Point(0, 0, -3), 1);
         assertEquals(
@@ -73,7 +73,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0.5))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         Sphere sphere2 = new Sphere(new Point(0, 0, -2.5), 2.5);
         assertEquals(
@@ -90,7 +90,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0.5))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         Sphere sphere3 = new Sphere(new Point(0, 0, -2), 2);
         assertEquals(
@@ -107,7 +107,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, -0.5))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         Sphere sphere4 = new Sphere(new Point(0, 0, 0), 4);
         assertEquals(
@@ -124,7 +124,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         Sphere sphere5 = new Sphere(new Point(0, 0, 1), 0.5);
         assertEquals(
@@ -150,7 +150,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         geometries.Plane plane1 = new geometries.Plane(
                 new Point(0, 0, -2),
@@ -174,7 +174,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         // The exact number (9) in the image suggests all rays might be hitting,
         // but the tilt implies otherwise. We'll assume 9 for now, adjust if needed
@@ -194,7 +194,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
         assertEquals(
                 6,
@@ -225,7 +225,7 @@ public class CameraIntersectionsIntegrationTests {
                 .setLocation(new Point(0, 0, 0))
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
                 .setVpDistance(1)
-                .setVpSize(cameraResolutionWidth, cameraResolutionHeight )
+                .setVpSize(cameraResolutionWidth, cameraResolutionHeight)
                 .build();
 
         // Expected: 1 intersection point.

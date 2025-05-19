@@ -95,8 +95,8 @@ public class Camera implements Cloneable {
     /**
      * Casts a single ray through a pixel, gets its color and writes it to the image.
      *
-     * @param j  column index of the pixel
-     * @param i  row index of the pixel
+     * @param j column index of the pixel
+     * @param i row index of the pixel
      */
     private void castRay(int j, int i) {
         Ray ray = constructRay(nX, nY, j, i);
