@@ -265,4 +265,69 @@ class LightsTests {
 //         .writeToImage("lightTrianglesSpotSharp");
 //   }
 
+
+    /**
+     * Test rendering a sphere with multiple types of lights:
+     * DirectionalLight, PointLight, and SpotLight.
+     * The test adds a sphere to the scene and applies three different light sources
+     * with different colors, directions, and attenuation factors.
+     * The rendered image is saved with the name "sphereMultipleLights".
+     */
+    @Test
+    void sphereMultipleLights() {
+        scene1.geometries.add(sphere);
+
+        scene1.lights.add(
+                new DirectionalLight(
+                        new Color(300, 150, 0),
+                        new Vector(-1, -0.5, -0.5)));
+        scene1.lights.add(
+                new PointLight(
+                        new Color(200, 250, 100),
+                        new Point(60, -40, 20)).setKl(0.001).setKq(0.0002));
+        scene1.lights.add(
+                new SpotLight(new Color(500, 300, 0),
+                        new Point(-80, 60, 100), new Vector(1, -1, -2))
+                .setKl(0.001).setKq(0.0001));
+
+        camera1
+                .setResolution(500, 500)
+                .build()
+                .renderImage()
+                .writeToImage("sphereMultipleLights");
+    }
+
+    /**
+     * Test rendering two triangles with multiple types of lights:
+     * DirectionalLight, PointLight, and SpotLight.
+     * The test adds two triangles to the scene and applies three different light sources
+     * with different colors, directions, and attenuation factors.
+     * The rendered image is saved with the name "trianglesMultipleLights".
+     */
+    @Test
+    void trianglesMultipleLights() {
+        scene2.geometries.add(triangle1, triangle2);
+
+        scene2.lights.add(
+                new DirectionalLight(
+                        new Color(400, 200, 100),
+                        new Vector(-1, -1, -1)));
+        scene2.lights.add(
+                new PointLight(
+                        new Color(300, 300, 150),
+                        new Point(40, 40, -120)).setKl(0.001).setKq(0.0001));
+        scene2.lights.add(
+                new SpotLight(
+                        new Color(500, 250, 250),
+                        new Point(-60, 30, 50), new Vector(2, -2, -1))
+                .setKl(0.0005).setKq(0.00005));
+
+        camera2
+                .setResolution(500, 500)
+                .build()
+                .renderImage()
+                .writeToImage("trianglesMultipleLights");
+    }
+
+
 }
