@@ -11,12 +11,17 @@ import primitives.Vector;
  */
 
 public class SpotLight extends PointLight {
+
+    /**
+     * Direction the spotlight is pointing (normalized)
+     */
     private final Vector direction;
 
     /**
      * Constructor for SpotLight.
+     *
      * @param intensity The light's base color/intensity
-     * @param position The position of the spotlight
+     * @param position  The position of the spotlight
      * @param direction The direction the spotlight is pointing
      */
     public SpotLight(Color intensity, Point position, Vector direction) {
@@ -26,6 +31,7 @@ public class SpotLight extends PointLight {
 
     /**
      * Overrides the attenuation factor setter (kC) for builder-style chaining.
+     *
      * @param kC Constant attenuation factor
      * @return This SpotLight instance (for chaining)
      */
@@ -37,6 +43,7 @@ public class SpotLight extends PointLight {
 
     /**
      * Overrides the attenuation factor setter (kL) for builder-style chaining.
+     *
      * @param kL Linear attenuation factor
      * @return This SpotLight instance (for chaining)
      */
@@ -48,6 +55,7 @@ public class SpotLight extends PointLight {
 
     /**
      * Overrides the attenuation factor setter (kQ) for builder-style chaining.
+     *
      * @param kQ Quadratic attenuation factor
      * @return This SpotLight instance (for chaining)
      */

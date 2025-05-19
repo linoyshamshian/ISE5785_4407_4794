@@ -12,19 +12,32 @@ import primitives.Vector;
  */
 
 public class PointLight extends Light implements LightSource {
-    // The 3D position of the point light source
+
+    /**
+     * The 3D position of the point light source
+     */
     private final Point position;
-    // Constant attenuation factor
+
+    /**
+     * Constant attenuation factor
+     */
     private double kC = 1.0;
-    // Linear attenuation factor
+
+    /**
+     * Linear attenuation factor
+     */
     private double kL = 0.0;
-    // Quadratic attenuation factor
+
+    /**
+     * Quadratic attenuation factor
+     */
     private double kQ = 0.0;
 
     /**
      * Constructor for PointLight.
+     *
      * @param intensity The base intensity (color) of the light
-     * @param position The location of the light source in 3D space
+     * @param position  The location of the light source in 3D space
      */
     public PointLight(Color intensity, Point position) {
         super(intensity);
@@ -33,6 +46,7 @@ public class PointLight extends Light implements LightSource {
 
     /**
      * Sets the constant attenuation factor (kC).
+     *
      * @param kC The constant attenuation coefficient
      * @return This PointLight object (for chaining)
      */
@@ -43,6 +57,7 @@ public class PointLight extends Light implements LightSource {
 
     /**
      * Sets the linear attenuation factor (kL).
+     *
      * @param kL The linear attenuation coefficient
      * @return This PointLight object (for chaining)
      */
@@ -53,6 +68,7 @@ public class PointLight extends Light implements LightSource {
 
     /**
      * Sets the quadratic attenuation factor (kQ).
+     *
      * @param kQ The quadratic attenuation coefficient
      * @return This PointLight object (for chaining)
      */
@@ -74,9 +90,9 @@ public class PointLight extends Light implements LightSource {
         double d = position.distance(p);
         double factor = kC + kL * d + kQ * d * d;
         // If the factor is effectively zero, return maximum intensity to avoid division by zero
-        if(Util.isZero(factor))
+        if (Util.isZero(factor))
             return intensity.scale(Double.POSITIVE_INFINITY);
-        return intensity.scale(1.0/factor);
+        return intensity.scale(1.0 / factor);
     }
 
     /**
