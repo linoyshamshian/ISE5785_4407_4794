@@ -4,6 +4,7 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static primitives.Util.alignZero;
@@ -117,5 +118,4 @@ public class Tube extends RadialGeometry {
 
         return null;
     }
-
 }

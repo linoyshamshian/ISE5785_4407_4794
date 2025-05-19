@@ -1,8 +1,6 @@
 package renderer;
 
-import geometries.Geometry;
-import geometries.Sphere;
-import geometries.Triangle;
+import geometries.*;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.PointLight;
@@ -328,6 +326,98 @@ class LightsTests {
                 .renderImage()
                 .writeToImage("trianglesMultipleLights");
     }
+
+//    @Test
+//    void cylinderSpotLightTest() {
+//        Scene scene = new Scene("Cylinder Spot Light Test")
+//                .setAmbientLight(new AmbientLight(new Color(30, 30, 30)));
+//
+//        Camera camera = Camera.getBuilder()
+//                .setRayTracer(scene, RayTracerType.SIMPLE)
+//                .setLocation(new Point(0, 0, 1000))
+//                .setDirection(Point.ZERO, Vector.AXIS_Z.scale(-1)) // מבט לעומק המסך
+//                .setVpSize(150, 150)
+//                .setVpDistance(1000)
+//                .build();
+//
+//        Cylinder cylinder = new Cylinder(
+//                new Ray(new Point(0, 0, -100), new Vector(0, 0, 1)), // ציר לאורך z
+//                25, // רדיוס
+//                100 // גובה
+//        );
+//        cylinder.setEmission(new Color(0, 0, 255)); // כחול
+//        cylinder.setMaterial(new Material()
+//                .setKD(0.5)
+//                .setKS(0.5)
+//                .setShininess(100));
+//
+//        scene.geometries.add(cylinder);
+//
+//        scene.lights.add(new SpotLight(
+//                new Color(1000, 600, 600),
+//                new Point(-50, -50, 50),  // מיקום מקור האור
+//                new Vector(0, 0, -1))     // כיוון הפנס
+//                .setKl(0.0004)
+//                .setKq(0.0000006)
+//        );
+//
+//        camera.renderImage().writeToImage("CylinderSpotLightTest");
+//    }
+
+    /**
+     * The tube used in the tests
+     */
+    private final Geometry tube = new Tube(new Ray(new Point(0, 0, -100), new Vector(0, 1, 0)), 30)
+            .setEmission(new Color(java.awt.Color.RED)) //
+            .setMaterial(new Material().setKD(KD).setKS(KS).setShininess(SHININESS));
+
+    /**
+     * Produce a picture of a tube lighted by a directional light
+     */
+    @Test
+    void tubeDirectional() {
+        scene1.geometries.add(tube);
+        scene1.lights.add(new DirectionalLight(new Color(800, 500, 250), new Vector(1, 1, -1)));
+
+        camera1 //
+                .setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightTubeDirectional");
+    }
+
+    /**
+     * Produce a picture of a tube lighted by a point light
+     */
+    @Test
+    void tubePoint() {
+        scene1.geometries.add(tube);
+        scene1.lights.add(new PointLight(new Color(800, 500, 250), new Point(-50, -50, 25)) //
+                .setKl(0.001).setKq(0.0002));
+
+        camera1 //
+                .setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightTubePoint");
+    }
+
+    /**
+     * Produce a picture of a tube lighted by a spotlight
+     */
+    @Test
+    void tubeSpot() {
+        scene1.geometries.add(tube);
+        scene1.lights.add(new SpotLight(new Color(800, 500, 250), new Point(-50, -50, 25), new Vector(1, 1, -0.5)) //
+                .setKl(0.001).setKq(0.0001));
+
+        camera1 //
+                .setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightTubeSpot");
+    }
+
 
 
 }
