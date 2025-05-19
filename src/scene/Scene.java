@@ -2,7 +2,11 @@ package scene;
 
 import geometries.Geometries;
 import lighting.AmbientLight;
+import lighting.LightSource;
 import primitives.Color;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A Plain Data Structure (PDS) representing a 3D scene for rendering.
@@ -12,8 +16,22 @@ import primitives.Color;
  * @author Chen Babay & Linoy Shamshian
  */
 public class Scene {
+    /**
+     * The name of the scene.
+     */
     public String name;
+
+    /**
+     * The background color of the scene.
+     * Defaults to black.
+     */
     public Color background = Color.BLACK;
+
+    /**
+     * A list of light sources in the scene.
+     * Initialized as an empty LinkedList by default.
+     */
+    private List<LightSource> lights = new LinkedList<>();
 
     /**
      * The ambient light of the scene.
@@ -66,6 +84,18 @@ public class Scene {
      */
     public Scene setGeometries(Geometries geometries) {
         this.geometries = geometries;
+        return this;
+    }
+
+    /**
+     * Sets the list of light sources in the scene.
+     * This method follows the Builder design pattern to allow method chaining.
+     *
+     * @param lights a list of LightSource objects to be used in the scene
+     * @return the current Scene object, for method chaining
+     */
+    public Scene setLights(List<LightSource> lights) {
+        this.lights = lights;
         return this;
     }
 
