@@ -18,6 +18,13 @@ public class SpotLight extends PointLight {
     private final Vector direction;
 
     /**
+     * Controls the narrowness of the spotlight beam.
+     * Higher values result in a narrower, more focused beam.
+     * Default is 1 (no narrowing).
+     */
+    private int narrowBeam = 1;
+
+    /**
      * Constructor for SpotLight.
      *
      * @param intensity The light's base color/intensity
@@ -65,18 +72,30 @@ public class SpotLight extends PointLight {
         return this;
     }
 
+    public SpotLight setNarrowBeam(int narrowBeam) {
+        this.narrowBeam = narrowBeam;
+        return this;
+    }
+
     /**
      * Calculates the intensity of the spotlight at a given point.
-     * It scales the PointLight's intensity by the cosine of the angle between
-     * the spotlight's direction and the direction to the point.
-     * If the angle is greater than 90°, the point is not lit (dot product is negative).
+     * The spotlight intensity is based on the PointLight intensity,
+     * scaled by the cosine of the angle between the spotlight's direction
+     * and the vector pointing from the light source to the point.
+     * A narrow beam effect is applied using the 'narrowBeam' parameter:
+     * - If narrowBeam == 1, the spotlight behaves like a regular spotLight.
+     * - If narrowBeam > 1, the beam becomes narrower: points not aligned with the
+     * spotlight direction receive significantly less intensity.
      *
-     * @param p The point to calculate light intensity at
+     * @param p The point at which to calculate the light intensity
      * @return The scaled color intensity at the point
      */
     @Override
     public Color getIntensity(Point p) {
         Color oldColor = super.getIntensity(p);
-        return oldColor.scale(Math.max(0d, direction.dotProduct(getL(p))));
+        if (narrowBeam == 1.0)
+            return oldColor.scale(Math.max(0d, direction.dotProduct(getL(p))));
+        return oldColor.scale(Math.pow(Math.max(0d, direction.dotProduct(getL(p))), narrowBeam));
     }
+
 }
