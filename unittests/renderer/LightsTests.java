@@ -10,6 +10,7 @@ import primitives.*;
 import scene.Scene;
 
 import static java.awt.Color.BLUE;
+import static java.awt.Color.RED;
 
 /**
  * Test rendering a basic image
@@ -207,6 +208,37 @@ class LightsTests {
     }
 
     /**
+     * Test for a pair of triangles illuminated by a narrow beam spotlight.
+     * <p>
+     * This test adds two triangles to the scene and illuminates them using a spotlight with a focused narrow beam.
+     * The spotlight originates from a point above and to the side of the triangles and is directed at an angle.
+     * The narrow beam (setNarrowBeam = 20) concentrates the light, resulting in a sharp, focused lighting effect
+     * with a clear highlight and minimal spread, which tests the enhanced spotlight functionality.
+     * The final rendered image is saved to "trianglesWithNarrowSpotLight".
+     */
+    @Test
+    void trianglesSpotLightNarrowBeam() {
+        scene2.geometries.add(
+                new Triangle(new Point(-150, -150, -115), new Point(150, -150, -135), new Point(75, 75, -150))
+                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(300)),
+                new Triangle(new Point(-150, -150, -115), new Point(-70, 70, -140), new Point(75, 75, -150))
+                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(300))
+        );
+
+        scene2.lights.add(
+                new SpotLight(new Color(1000, 600, 0), new Point(60, 60, 100), new Vector(-1, -1, -2))
+                        .setKl(0.0004).setKq(0.0000006)
+                        .setNarrowBeam(20)
+        );
+
+        camera2.setResolution(500, 500)
+                .build()
+                .renderImage()
+                .writeToImage("trianglesWithNarrowSpotLight");
+    }
+
+
+    /**
      * Produce a picture of two triangles lighted by a point light
      */
     @Test
@@ -236,32 +268,65 @@ class LightsTests {
                 .writeToImage("lightTrianglesSpot");
     }
 
-    /** Produce a picture of a sphere lighted by a narrow spotlight */
-//   @Test
-//   void sphereSpotSharp() {
-//      scene1.geometries.add(sphere);
-//      scene1.lights
-//         .add(new SpotLight(sphereLightColor, sphereLightPosition, new Vector(1, 1, -0.5)) //
-//            .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
-//
-//      camera1.setResolution(500, 500) //
-//         .build() //
-//         .renderImage() //
-//         .writeToImage("lightSphereSpotSharp");
-//   }
+    /**
+     * Produce a picture of a sphere lighted by a narrow spotlight
+     */
+    @Test
+    void sphereSpotSharp() {
+        scene1.geometries.add(sphere);
+        scene1.lights
+                .add(new SpotLight(sphereLightColor, sphereLightPosition, new Vector(1, 1, -0.5)) //
+                        .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
 
-    /** Produce a picture of two triangles lighted by a narrow spotlight */
-//   @Test
-//   void trianglesSpotSharp() {
-//      scene2.geometries.add(triangle1, triangle2);
-//      scene2.lights.add(new SpotLight(trianglesLightColor, trianglesLightPosition, trianglesLightDirection) //
-//         .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
-//
-//      camera2.setResolution(500, 500) //
-//         .build() //
-//         .renderImage() //
-//         .writeToImage("lightTrianglesSpotSharp");
-//   }
+        camera1.setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightSphereSpotSharp");
+    }
+
+    /**
+     * Test for a sphere illuminated by a narrow beam spotlight.
+     * <p>
+     * The test creates a red sphere and adds a spotlight with a narrow beam (focused beam using setNarrowBeam).
+     * The light originates from a point and is directed toward the sphere with a limited spread,
+     * which creates a sharper and more focused lighting effect compared to a regular spotlight.
+     * The result is rendered to an image file named "sphereWithNarrowSpotLight".
+     */
+    @Test
+    void sphereSpotLightNarrowBeam() {
+        scene1.geometries.add(
+                new Sphere(new Point(0, 0, -50), 50d)
+                        .setEmission(new Color(RED))
+                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(300))
+        );
+
+        scene1.lights.add(
+                new SpotLight(new Color(1000, 600, 0), new Point(100, 100, 100), new Vector(-1, -1, -2))
+                        .setKl(0.0004).setKq(0.0000006)
+                        .setNarrowBeam(10)
+        );
+
+        camera1.setResolution(500, 500)
+                .build()
+                .renderImage()
+                .writeToImage("sphereWithNarrowSpotLight");
+    }
+
+
+    /**
+     * Produce a picture of two triangles lighted by a narrow spotlight
+     */
+    @Test
+    void trianglesSpotSharp() {
+        scene2.geometries.add(triangle1, triangle2);
+        scene2.lights.add(new SpotLight(trianglesLightColor, trianglesLightPosition, trianglesLightDirection) //
+                .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+
+        camera2.setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightTrianglesSpotSharp");
+    }
 
 
     /**
@@ -286,7 +351,7 @@ class LightsTests {
         scene1.lights.add(
                 new SpotLight(new Color(500, 300, 0),
                         new Point(-80, 60, 100), new Vector(1, -1, -2))
-                .setKl(0.001).setKq(0.0001));
+                        .setKl(0.001).setKq(0.0001));
 
         camera1
                 .setResolution(500, 500)
@@ -318,7 +383,7 @@ class LightsTests {
                 new SpotLight(
                         new Color(500, 250, 250),
                         new Point(-60, 30, 50), new Vector(2, -2, -1))
-                .setKl(0.0005).setKq(0.00005));
+                        .setKl(0.0005).setKq(0.00005));
 
         camera2
                 .setResolution(500, 500)
@@ -327,48 +392,45 @@ class LightsTests {
                 .writeToImage("trianglesMultipleLights");
     }
 
-//    @Test
-//    void cylinderSpotLightTest() {
-//        Scene scene = new Scene("Cylinder Spot Light Test")
-//                .setAmbientLight(new AmbientLight(new Color(30, 30, 30)));
-//
-//        Camera camera = Camera.getBuilder()
-//                .setRayTracer(scene, RayTracerType.SIMPLE)
-//                .setLocation(new Point(0, 0, 1000))
-//                .setDirection(Point.ZERO, Vector.AXIS_Z.scale(-1)) // מבט לעומק המסך
-//                .setVpSize(150, 150)
-//                .setVpDistance(1000)
-//                .build();
-//
-//        Cylinder cylinder = new Cylinder(
-//                new Ray(new Point(0, 0, -100), new Vector(0, 0, 1)), // ציר לאורך z
-//                25, // רדיוס
-//                100 // גובה
-//        );
-//        cylinder.setEmission(new Color(0, 0, 255)); // כחול
-//        cylinder.setMaterial(new Material()
-//                .setKD(0.5)
-//                .setKS(0.5)
-//                .setShininess(100));
-//
-//        scene.geometries.add(cylinder);
-//
-//        scene.lights.add(new SpotLight(
-//                new Color(1000, 600, 600),
-//                new Point(-50, -50, 50),  // מיקום מקור האור
-//                new Vector(0, 0, -1))     // כיוון הפנס
-//                .setKl(0.0004)
-//                .setKq(0.0000006)
-//        );
-//
-//        camera.renderImage().writeToImage("CylinderSpotLightTest");
-//    }
+    /**
+     * Test rendering a cylinder illuminated by a combination of directional, point, and spot lights.
+     * The scene tests how different light sources interact with a non-trivial geometry (cylinder) and
+     * how the lighting effects such as shading and specular highlights are handled.
+     */
+    @Test
+    void cylinderDirectional() {
+        Geometry cylinder = new Cylinder(
+                new Ray(new Point(0, -20, -50), new Vector(7, 1, -8)),
+                50, 60
+        )
+                .setEmission(new Color(java.awt.Color.pink).reduce(1))
+                .setMaterial(new Material().setKD(KD3).setKS(KS3).setShininess(SHININESS));
+
+        scene1.geometries.add(cylinder);
+        scene1.lights.add(
+                new DirectionalLight(
+                        new Color(300, 150, 0),
+                        new Vector(-1, -0.5, -0.5)));
+        scene1.lights.add(
+                new PointLight(
+                        new Color(200, 250, 100),
+                        new Point(60, -40, 20)).setKl(0.001).setKq(0.0002));
+        scene1.lights.add(
+                new SpotLight(new Color(500, 300, 0),
+                        new Point(-80, 60, 100), new Vector(1, -1, -2))
+                        .setKl(0.001).setKq(0.0001));
+        camera1.setResolution(500, 500)
+                .build()
+                .renderImage()
+                .writeToImage("lightCylinderDirectional");
+    }
+
 
     /**
      * The tube used in the tests
      */
     private final Geometry tube = new Tube(new Ray(new Point(0, 0, -100), new Vector(0, 1, 0)), 30)
-            .setEmission(new Color(java.awt.Color.RED)) //
+            .setEmission(new Color(RED)) //
             .setMaterial(new Material().setKD(KD).setKS(KS).setShininess(SHININESS));
 
     /**
@@ -417,7 +479,6 @@ class LightsTests {
                 .renderImage() //
                 .writeToImage("lightTubeSpot");
     }
-
 
 
 }
