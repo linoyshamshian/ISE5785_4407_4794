@@ -118,7 +118,18 @@ public class Cylinder extends Tube {
         return results;
     }
 
-
+    /**
+     * Finds the intersections between a ray and a circular base of a cylinder or a cone.
+     * <p>
+     * The method first checks intersection with the plane in which the base lies.
+     * Then, it filters out any intersection points that fall outside the circular base
+     * by verifying the distance from the center of the base is less than or equal to the radius.
+     *
+     * @param center The center point of the base circle
+     * @param normal The normal vector of the base plane
+     * @param ray    The ray to intersect with the base
+     * @return A list of intersections with the base (null if none are within the radius)
+     */
     private List<Intersection> intersectBase(Point center, Vector normal, Ray ray) {
         Plane basePlane = new Plane(center, normal);
         List<Intersection> baseIntersections = basePlane.calculateIntersectionsHelper(ray);
@@ -128,11 +139,11 @@ public class Cylinder extends Tube {
         for (Intersection intersection : baseIntersections) {
             Point p = intersection.point;
             if (p.equals(center)) {
-                result.add(intersection); // Center point – avoid zero vector creation
+                result.add(new Intersection(this, p)); // Center point – avoid zero vector creation
             } else {
                 Vector v = p.subtract(center);
                 if (alignZero(v.lengthSquared() - radius * radius) <= 0) {
-                    result.add(intersection);
+                    result.add(new Intersection(this, p));
                 }
             }
         }
