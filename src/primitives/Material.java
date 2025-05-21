@@ -28,6 +28,16 @@ public class Material {
     public int nSh = 0;
 
     /**
+     * Transparency attenuation coefficient (𝒌𝑻)
+     */
+    public Double3 kT = Double3.ZERO;
+
+    /**
+     * Reflection attenuation coefficient (𝒌𝑹)
+     */
+    public Double3 kR = Double3.ZERO;
+
+    /**
      * Default constructor
      */
     public Material() {
@@ -109,6 +119,49 @@ public class Material {
      */
     public Material setShininess(int nSh) {
         this.nSh = nSh;
+        return this;
+    }
+    /**
+     * Sets the transparency attenuation coefficient (𝒌𝑻) using a {@link Double3} value.
+     *
+     * @param kT the transparency coefficient
+     * @return the current Material instance (for chaining)
+     */
+    public Material setKT(Double3 kT) {
+        this.kT = kT;
+        return this;
+    }
+
+    /**
+     * Sets the transparency attenuation coefficient (𝒌𝑻) using a single double value.
+     *
+     * @param kT the transparency coefficient as a double
+     * @return the current Material instance (for chaining)
+     */
+    public Material setKT(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+
+    /**
+     * Sets the reflection attenuation coefficient (𝒌𝑹) using a {@link Double3} value.
+     *
+     * @param kR the reflection coefficient
+     * @return the current Material instance (for chaining)
+     */
+    public Material setKR(Double3 kR) {
+        this.kR = kR;
+        return this;
+    }
+
+    /**
+     * Sets the reflection attenuation coefficient (𝒌𝑹) using a single double value.
+     *
+     * @param kR the reflection coefficient as a double
+     * @return the current Material instance (for chaining)
+     */
+    public Material setKR(double kR) {
+        this.kR = new Double3(kR);
         return this;
     }
 }
