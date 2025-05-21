@@ -144,8 +144,22 @@ public class SimpleRayTracer extends RayTracerBase {
         return intersection.material.kS.scale(Math.pow(vr, intersection.material.nSh));
     }
 
+    /**
+     * A small offset value used to move the starting point of a shadow ray slightly away from the surface
+     * to prevent self-intersection due to floating-point inaccuracies.
+     * This helps avoid detecting the surface itself as an obstruction when checking for shadows.
+     */
     private static final double DELTA = 0.1;
 
+    /**
+     * Determines whether a point on a surface is unshaded (i.e., fully illuminated by a light source).
+     * This method checks if any geometry blocks the light from reaching the point by casting a shadow ray
+     * toward the light source. If the ray intersects any geometry before reaching the light, the point is considered shaded.
+     *
+     * @param intersection An {@link Intersection} object containing details about the intersection point,
+     * its normal vector, light direction, and dot product (nl).
+     * @return {@code true} if the point is unshaded (no blocking geometry), {@code false} if the point is in shadow.
+     */
     private boolean unshaded(Intersection intersection) {
         Vector pointToLight = intersection.l.scale(-1);
         Vector delta = intersection.n.scale(intersection.nl < 0 ? DELTA : -DELTA);
