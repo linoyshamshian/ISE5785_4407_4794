@@ -102,12 +102,12 @@ public class SimpleRayTracer extends RayTracerBase {
     private Color calcColorLocalEffects(Intersection intersection) {
         Color color = intersection.geometry.getEmission(); // Start with emission color
         for (LightSource lightSource : scene.lights) {
-            if (!setLightSource(intersection, lightSource)) {
-                continue;
+            if (setLightSource(intersection, lightSource) && unshaded(intersection)) {
+
+                Color iL = lightSource.getIntensity(intersection.point); // Light intensity
+                // Add the scaled light contribution to the total color
+                color = color.add(iL.scale(calcDiffusive(intersection).add(calcSpecular(intersection))));
             }
-            Color iL = lightSource.getIntensity(intersection.point); // Light intensity
-            // Add the scaled light contribution to the total color
-            color = color.add(iL.scale(calcDiffusive(intersection).add(calcSpecular(intersection))));
         }
 
         return color;
@@ -142,6 +142,35 @@ public class SimpleRayTracer extends RayTracerBase {
         if (vr <= 0) return Double3.ZERO;
 
         return intersection.material.kS.scale(Math.pow(vr, intersection.material.nSh));
+    }
+
+    private static final double DELTA = 0.1;
+
+    private boolean unshaded(Intersection intersection) {
+        Vector pointToLight = intersection.l.scale(-1);
+        Vector delta = intersection.n.scale(intersection.nl < 0 ? DELTA : -DELTA);
+        Ray shadowRay = new Ray(intersection.point.add(delta), pointToLight);
+        List<Intersection> intersections = scene.geometries.calculateIntersectionsHelper(shadowRay);
+
+        // If there are no intersections, the point is unshaded
+        if (null == intersections || intersections.isEmpty()) {
+            return true;
+        }
+
+        // Calculate the distance from the point to the light source
+        double lightDistance = intersection.light.getDistance(intersection.point);
+
+        // Check if there is any intersection point that blocks the light before it reaches the point
+        for (Intersection intersect : intersections) {
+            double disPoints = intersect.point.distance(intersection.point);
+            if (disPoints < lightDistance - DELTA) {
+                // Light is blocked by another object → the point is in shadow
+                return false;
+            }
+        }
+
+        // No object blocks the light → the point is unshaded
+        return true;
     }
 
 }
