@@ -17,6 +17,7 @@ public class Ray {
 
     private final Point head;
     private final Vector direction;
+    private static final double DELTA = 0.1;
 
     /**
      * Constructor for Ray.
@@ -27,6 +28,24 @@ public class Ray {
     public Ray(Point head, Vector direction) {
         this.head = head;
         this.direction = direction.normalize();
+    }
+
+    /**
+     * Constructor to initialize a ray based on a head point, a direction vector and a normal vector
+     *
+     * @param head      head point
+     * @param direction direction vector
+     * @param normal    normal vector
+     */
+    public Ray(Point head, Vector direction, Vector normal) {
+        this.direction = direction.normalize();
+        double nv = normal.dotProduct(this.direction);
+        // Add a small delta to the ray's origin to avoid floating-point precision issues
+        if (!Util.isZero(nv)) {
+            this.head = head.add(normal.scale(nv > 0 ? DELTA : -DELTA));
+        } else {
+            this.head = head;
+        }
     }
 
     /**
