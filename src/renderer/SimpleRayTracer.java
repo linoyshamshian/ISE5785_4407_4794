@@ -131,7 +131,7 @@ public class SimpleRayTracer extends RayTracerBase {
             setLightSource(intersection, lightSource);
             if (intersection.nl * intersection.nv > 0) {
                 Double3 ktr = transparency(intersection);
-                if (new Double3(MIN_CALC_COLOR_K).lowerThan((ktr.product(k)))) {
+                if (ktr.product(k).greaterThan(MIN_CALC_COLOR_K)) {
                     Color iL = lightSource.getIntensity(intersection.point).scale(ktr);
                     // Add the scaled light contribution to the total color
                     color = color.add(iL.scale(calcDiffusive(intersection)
@@ -304,9 +304,9 @@ public class SimpleRayTracer extends RayTracerBase {
         for (Intersection inter : intersections) {
             if (inter.point.distance(intersection.point) < lightDistance) {
                 ktr = ktr.product(inter.material.kT);
-                if (ktr.lowerThan(MIN_CALC_COLOR_K)) {
-                    return Double3.ZERO;
-                }
+//                if (ktr.lowerThan(MIN_CALC_COLOR_K)) {
+//                    return Double3.ZERO;
+//                }
             }
         }
 
