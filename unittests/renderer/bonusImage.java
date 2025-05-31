@@ -1,235 +1,3 @@
-//package renderer;
-//
-//import static java.awt.Color.*;
-//
-//import org.junit.jupiter.api.Test;
-//
-//import geometries.*;
-//import lighting.*;
-//import primitives.*;
-//import scene.Scene;
-//
-///**
-// * An elaborate custom test scene demonstrating various rendering effects
-// * with a diverse set of geometries, materials, and lighting.
-// * This scene aims for visual complexity and artistic composition,
-// * avoiding random placements and showcasing all implemented features.
-// */
-//class ElaborateCustomSceneTests {
-//
-//    /** Scene for the tests */
-//    private final Scene scene = new Scene("Elaborate Custom Scene");
-//    /** Camera builder for the tests */
-//    private final Camera.Builder cameraBuilder = Camera.getBuilder()
-//            .setRayTracer(scene, RayTracerType.SIMPLE); // Using SimpleRayTracer for this example
-//
-//    /**
-//     * Produces an elaborate custom picture with diverse objects and effects.
-//     */
-//    @Test
-//    void myElaborateCustomScene() {
-//
-//        // --- Geometry ---
-//
-//        // 1. Grand Reflective Floor (Plane) - Central element, subtle reflection
-//        scene.geometries.add(
-//                new Plane(new Point(0, 0, 0), new Vector(0, 0, 1))
-//                        .setEmission(new Color(30, 30, 35)) // Darker, richer grey
-//                        .setMaterial(new Material()
-//                                .setKD(0.05)
-//                                .setKS(0.05)
-//                                .setShininess(10)
-//                                .setKR(0.3)) // More noticeable reflection than previous
-//        );
-//
-//        // 2. Main Transparent Sphere (Glass Orb) - Prominent, high transparency
-//        scene.geometries.add(
-//                new Sphere(new Point(-50, 60, 40), 35d) // Larger, positioned to the left-front
-//                        .setEmission(new Color(10, 10, 25)) // Deeper blue tint for glass
-//                        .setMaterial(new Material()
-//                                .setKD(0.05)
-//                                .setKS(0.1)
-//                                .setShininess(50)
-//                                .setKT(0.85) // Very transparent
-//                                .setKR(0.05))
-//        );
-//
-//        // 3. Opaque Diffuse Triangle (Deep Red) - Clearly visible, strong diffuse
-//        Point t1 = new Point(60, -70, 30);
-//        Point t2 = new Point(90, -40, 30);
-//        Point t3 = new Point(75, -55, 120); // Taller apex for a dramatic look
-//
-//        Material triangleMaterial = new Material()
-//                .setKD(0.8) // Very strong diffuse
-//                .setKS(0.2) // Subtle specular
-//                .setShininess(15);
-//        Color triangleColor = new Color(150, 30, 30); // Deep red
-//
-//        scene.geometries.add(
-//                new Triangle(t1, t2, t3)
-//                        .setMaterial(triangleMaterial)
-//                        .setEmission(triangleColor)
-//        );
-//
-//        // 4. Mirror Sphere (Polished Chrome) - Highly reflective, near perfect mirror
-//        scene.geometries.add(
-//                new Sphere(new Point(20, -80, 25), 20d) // Smaller, positioned closer to center
-//                        .setEmission(new Color(5, 5, 5)) // Minimal emission for true reflection
-//                        .setMaterial(new Material()
-//                                .setKD(0.005)
-//                                .setKS(0.005)
-//                                .setShininess(150)
-//                                .setKR(0.95) // Almost pure reflection
-//                                .setKT(0.0))
-//        );
-//
-//        // 5. Back Wall (Plane) - Horizon line, subtle texture
-//        scene.geometries.add(
-//                new Plane(new Point(0, 0, -600), new Vector(0, 0, 1)) // Far background
-//                        .setEmission(new Color(150, 150, 160)) // Muted blue-grey
-//                        .setMaterial(new Material().setKD(0.6).setKS(0.05).setShininess(5)) // Slight sheen
-//        );
-//
-//        // 6. Large Opaque Cube (Polygon based) - Using six planes/polygons for a cube
-//        // This demonstrates the Polygon class for a more complex shape
-//        Point p0 = new Point(-100, -30, 10);
-//        Point p1 = new Point(-100, -30, 60);
-//        Point p2 = new Point(-100, 20, 60);
-//        Point p3 = new Point(-100, 20, 10);
-//
-//        Point p4 = new Point(-50, -30, 10);
-//        Point p5 = new Point(-50, -30, 60);
-//        Point p6 = new Point(-50, 20, 60);
-//        Point p7 = new Point(-50, 20, 10);
-//
-//        Material cubeMaterial = new Material().setKD(0.5).setKS(0.3).setShininess(20);
-//        Color cubeColor = new Color(80, 50, 100); // Muted purple
-//
-//        // Front Face
-//        scene.geometries.add(new Polygon(p0, p1, p2, p3)
-//                .setMaterial(cubeMaterial).setEmission(cubeColor));
-//        // Back Face
-//        scene.geometries.add(new Polygon(p7, p6, p5, p4)
-//                .setMaterial(cubeMaterial).setEmission(cubeColor));
-//        // Left Face
-//        scene.geometries.add(new Polygon(p3, p2, p6, p7)
-//                .setMaterial(cubeMaterial).setEmission(cubeColor));
-//        // Right Face
-//        scene.geometries.add(new Polygon(p4, p5, p1, p0)
-//                .setMaterial(cubeMaterial).setEmission(cubeColor));
-//        // Top Face
-//        scene.geometries.add(new Polygon(p1, p5, p6, p2)
-//                .setMaterial(cubeMaterial).setEmission(cubeColor));
-//        // Bottom Face (Partially hidden by floor)
-//        scene.geometries.add(new Polygon(p0, p4, p7, p3)
-//                .setMaterial(cubeMaterial).setEmission(cubeColor));
-//
-//
-//        // 7. Golden Tube (Cylinder-like object, assuming Cylinder class based on Tube)
-//        // Positioned upright, slightly to the right
-//        scene.geometries.add(
-//                new Tube(new Ray(new Point(90, 0, 0), new Vector(0, 0, 1)), 15d)
-//                        .setEmission(new Color(200, 150, 50)) // Golden color
-//                        .setMaterial(new Material()
-//                                .setKD(0.4)
-//                                .setKS(0.6)
-//                                .setShininess(60)
-//                                .setKR(0.1)) // Slight reflection
-//        );
-//
-//        // 8. Small Reflective Sphere (Blue accent)
-//        scene.geometries.add(
-//                new Sphere(new Point(-20, -30, 15), 10d)
-//                        .setEmission(new Color(10, 10, 50)) // Deep blue
-//                        .setMaterial(new Material()
-//                                .setKD(0.02)
-//                                .setKS(0.8)
-//                                .setShininess(80)
-//                                .setKR(0.6)) // Moderate reflection
-//        );
-//
-//        // 9. Green Opaque Sphere
-//        scene.geometries.add(
-//                new Sphere(new Point(40, 20, 20), 12d)
-//                        .setEmission(new Color(30, 80, 30)) // Forest green
-//                        .setMaterial(new Material()
-//                                .setKD(0.7)
-//                                .setKS(0.1)
-//                                .setShininess(10))
-//        );
-//
-//        // 10. Small Transparent Cube (using Polygons for a smaller, transparent cube)
-//        // Positioned next to the main transparent sphere
-//        Point sp0 = new Point(-70, 70, 5);
-//        Point sp1 = new Point(-70, 70, 25);
-//        Point sp2 = new Point(-70, 90, 25);
-//        Point sp3 = new Point(-70, 90, 5);
-//
-//        Point sp4 = new Point(-50, 70, 5);
-//        Point sp5 = new Point(-50, 70, 25);
-//        Point sp6 = new Point(-50, 90, 25);
-//        Point sp7 = new Point(-50, 90, 5);
-//
-//        Material smallCubeMaterial = new Material()
-//                .setKD(0.1).setKS(0.1).setShininess(30)
-//                .setKT(0.6).setKR(0.05); // Semi-transparent
-//        Color smallCubeColor = new Color(5, 5, 10); // Very subtle blue tint
-//
-//        scene.geometries.add(new Polygon(sp0, sp1, sp2, sp3)
-//                .setMaterial(smallCubeMaterial).setEmission(smallCubeColor));
-//        scene.geometries.add(new Polygon(sp7, sp6, sp5, sp4)
-//                .setMaterial(smallCubeMaterial).setEmission(smallCubeColor));
-//        scene.geometries.add(new Polygon(sp3, sp2, sp6, sp7)
-//                .setMaterial(smallCubeMaterial).setEmission(smallCubeColor));
-//        scene.geometries.add(new Polygon(sp4, sp5, sp1, sp0)
-//                .setMaterial(smallCubeMaterial).setEmission(smallCubeColor));
-//        scene.geometries.add(new Polygon(sp1, sp5, sp6, sp2)
-//                .setMaterial(smallCubeMaterial).setEmission(smallCubeColor));
-//        scene.geometries.add(new Polygon(sp0, sp4, sp7, sp3)
-//                .setMaterial(smallCubeMaterial).setEmission(smallCubeColor));
-//
-//        // --- Lighting ---
-//
-//        scene.setAmbientLight(new AmbientLight(new Color(30, 30, 30))); // Brighter ambient light for overall scene illumination
-//
-//        // Main Point Light - Warm white, soft falloff
-//        scene.lights.add(
-//                new PointLight(new Color(400, 400, 350), new Point(-100, -100, 200)) // Warmer light
-//                        .setKl(0.0005)
-//                        .setKq(0.00001)
-//        );
-//
-//        // Spot Light 1 - Focused on the main transparent sphere, subtle blue tint
-//        Point spotLightPos1 = new Point(-60, 50, 100);
-//        Vector directionToTransparentSphere = new Point(-50, 60, 40).subtract(spotLightPos1).normalize();
-//        scene.lights.add(
-//                new SpotLight(new Color(150, 150, 200), spotLightPos1, directionToTransparentSphere) // Cool blue light
-//                        .setKl(0.0007)
-//                        .setKq(0.00002)
-//        );
-//
-//        // Spot Light 2 - Highlighting the Mirror Sphere and Triangle from above, soft yellow
-//        Point spotLightPos2 = new Point(0, -50, 150);
-//        Vector directionToCenter = new Point(0, -60, 40).subtract(spotLightPos2).normalize(); // Pointing towards the mirror sphere
-//        scene.lights.add(
-//                new SpotLight(new Color(300, 300, 200), spotLightPos2, directionToCenter) // Warm yellow light
-//                        .setKl(0.0006)
-//                        .setKq(0.000015)
-//        );
-//
-//        // --- Camera setup & rendering ---
-//
-//        cameraBuilder
-//                .setLocation(new Point(0, -250, 120)) // Pulled back further, slightly higher
-//                .setDirection(new Point(0, 0, 40), new Vector(0, 1, 0)) // Looking towards the scene center
-//                .setVpDistance(180) // Increased view plane distance
-//                .setVpSize(250, 250) // Larger view plane
-//                .setResolution(1000, 1000) // Higher resolution for better detail
-//                .build()
-//                .renderImage()
-//                .writeToImage("myElaborateCustomScene"); // Output file name
-//    }
-//}
 package renderer;
 
 import static java.awt.Color.*;
@@ -363,74 +131,168 @@ class RefinedCustomSceneTests1 {
      * Renders a snowman scene, integrating it into the existing test framework.
      */
     @Test
-
     void renderSnowmanScene() {
         // Ensure the scene is clean for this test.
         scene.lights.clear(); // Clear existing lights
         scene.setBackground(new Color(135, 206, 235)); // Sky blue background
-        scene.setAmbientLight(new AmbientLight(new Color(255, 255, 255))); // Reduced ambient light
+
+        // Reduced ambient light to allow black objects to appear black
+        scene.setAmbientLight(new AmbientLight(new Color(20, 20, 20)));
 
         // --- Geometry for Snowman ---
 
-        // Snow floor (white plane)
+        // Snow floor (CHANGED TO LIGHT GREY/BLUE FOR CONTRAST)
         scene.geometries.add(
                 new Plane(new Point(0, -150, 0), new Vector(0, 1, 0))
-                        .setEmission(new Color(245, 245, 245)) // Off-white for snow
+                        // Changed emission from white to a light grey-blue
+                        .setEmission(new Color(200, 210, 220)) // Light blue-grey for the snow surface
                         .setMaterial(new Material().setKD(0.4).setKS(0.2).setShininess(20))
         );
 
-        // Snowman body
+        // Snowman body - ADJUSTED Z TO BE FURTHER BACK TO ALLOW FOR FOREGROUND OBJECTS
         scene.geometries.add(
-                new Sphere(new Point(0, -100, -150), 50d)  // Bottom sphere
+                new Sphere(new Point(0, -100, -200), 45d)  // Bottom sphere - Z changed from -150 to -200, RADIUS REDUCED
                         .setEmission(new Color(white))
                         .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(100)),
 
-                new Sphere(new Point(0, -30, -150), 35d)   // Middle sphere
+                new Sphere(new Point(0, -30, -200), 35d)   // Middle sphere - Z changed from -150 to -200
                         .setEmission(new Color(white))
                         .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(100)),
 
-                new Sphere(new Point(0, 10, -150), 20d)    // Top sphere (head)
+                new Sphere(new Point(0, 10, -200), 20d)    // Top sphere (head) - Z changed from -150 to -200
                         .setEmission(new Color(white))
                         .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(100))
         );
 
-        // Eyes
+        // Eyes - ADJUSTED Z FORWARD, AND MADE SMALLER
         scene.geometries.add(
-                new Sphere(new Point(-5, 13, -130), 2d).setEmission(Color.BLACK),
-                new Sphere(new Point(5, 13, -130), 2d).setEmission(Color.BLACK)
+                new Sphere(new Point(-5, 13, -170), 2d) // Z from -125 to -170, radius 2.5 to 2
+                        .setEmission(Color.BLACK)
+                        .setMaterial(new Material().setKD(0.01).setKS(0.01).setShininess(1)),
+
+                new Sphere(new Point(5, 13, -170), 2d)  // Z from -125 to -170, radius 2.5 to 2
+                        .setEmission(Color.BLACK)
+                        .setMaterial(new Material().setKD(0.01).setKS(0.01).setShininess(1))
         );
 
-        // Carrot nose
+        // Carrot nose - ADJUSTED Z FORWARD, AND MADE SMALLER
         scene.geometries.add(
-                new Sphere(new Point(0, 10, -125), 3d).setEmission(new Color(255, 140, 0))
+                new Sphere(new Point(0, 10, -165), 3d).setEmission(new Color(255, 140, 0)) // Z from -120 to -165, radius 3.5 to 3
         );
 
-        // Buttons
+        // --- Mouth (BACK TO TRIANGLE, ADJUSTED FOR VISIBILITY) ---
+        // These points are chosen to make it wide and clearly visible,
+        // and positioned further forward than the rest of the face features.
+        Point mouthP1 = new Point(-10, 0, -155);   // Left base point, significantly more forward
+        Point mouthP2 = new Point(5, 0, -155);    // Right base point, significantly more forward
+        Point mouthP3 = new Point(0, -3, -155);    // Apex of the triangle (pointing downwards for a smiley/neutral look)
+
         scene.geometries.add(
-                new Sphere(new Point(0, -10, -120), 2d).setEmission(Color.BLACK),
-                new Sphere(new Point(0, -25, -120), 2d).setEmission(Color.BLACK),
-                new Sphere(new Point(0, -40, -120), 2d).setEmission(Color.BLACK)
+                new Triangle(mouthP1, mouthP2, mouthP3)
+                        .setEmission(new Color(255, 0, 0)) // Pure Red
         );
 
-        // Wooden arms (as cylinders)
+
+        // --- Buttons ---
+        Material buttonMaterial = new Material().setKD(0.01).setKS(0.01).setShininess(1);
+
+        // 3 buttons on the middle sphere
         scene.geometries.add(
-                new Cylinder(new Ray(new Point(-30, -30, -150), new Vector(-0.8, 0.5, 0)), 2d, 35d)
+                new Sphere(new Point(0, -10, -165), 2.5d) // Middle sphere button 1
+                        .setEmission(Color.BLACK)
+                        .setMaterial(buttonMaterial),
+                new Sphere(new Point(0, -25, -165), 2.5d) // Middle sphere button 2
+                        .setEmission(Color.BLACK)
+                        .setMaterial(buttonMaterial),
+                new Sphere(new Point(0, -40, -165), 2.5d) // Middle sphere button 3
+                        .setEmission(Color.BLACK)
+                        .setMaterial(buttonMaterial)
+        );
+
+        // 4 buttons on the bottom sphere
+        scene.geometries.add(
+                new Sphere(new Point(0, -68, -150), 3d)
+                        .setEmission(Color.BLACK), // Absolute black emission
+
+                new Sphere(new Point(0, -86, -150), 3d)
+                        .setEmission(Color.BLACK), // Absolute black emission
+
+                new Sphere(new Point(0, -104, -150), 3d)
+                        .setEmission(Color.BLACK), // Absolute black emission
+
+                new Sphere(new Point(0, -122, -150), 3d)
+                        .setEmission(Color.BLACK) // Absolute black emission
+        );
+
+
+        // Wooden arms (as cylinders) - ADJUSTED Z FURTHER BACK
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(-30, -30, -200), new Vector(-0.8, 0.5, 0)), 2d, 35d) // Z from -150 to -200
                         .setEmission(new Color(139, 69, 19))
                         .setMaterial(new Material().setKD(0.3).setKS(0.2).setShininess(30)),
 
-                new Cylinder(new Ray(new Point(30, -30, -150), new Vector(0.8, 0.5, 0)), 2d, 35d)
+                new Cylinder(new Ray(new Point(30, -30, -200), new Vector(0.8, 0.5, 0)), 2d, 35d) // Z from -150 to -200
                         .setEmission(new Color(139, 69, 19))
                         .setMaterial(new Material().setKD(0.3).setKS(0.2).setShininess(30))
         );
 
-        // Hat (base + top part)
+        // Hat (base + top part) - ADJUSTED Z FORWARD
         scene.geometries.add(
-                new Cylinder(new Ray(new Point(0, 29, -150), new Vector(0, 1, 0)), 12d, 3d)
-                        .setEmission(Color.BLACK),
-
-                new Cylinder(new Ray(new Point(0, 32, -150), new Vector(0, 1, 0)), 8d, 15d)
+                new Cylinder(new Ray(new Point(0, 29, -195), new Vector(0, 1, 0)), 12d, 3d) // Z from -145 to -195
                         .setEmission(Color.BLACK)
+                        .setMaterial(new Material().setKD(0.01).setKS(0.01).setShininess(1)),
+
+                new Cylinder(new Ray(new Point(0, 32, -195), new Vector(0, 1, 0)), 8d, 15d) // Z from -145 to -195
+                        .setEmission(Color.BLACK)
+                        .setMaterial(new Material().setKD(0.01).setKS(0.01).setShininess(1))
         );
+
+        // פתיתי שלג פזורים באוויר
+        for (int i = -100; i <= 100; i += 30) {
+            for (int j = -100; j <= 100; j += 30) {
+                scene.geometries.add(
+                        new Sphere(new Point(i, j, -100 + Math.random() * 150), 1)
+                                .setEmission(new Color(255, 255, 255))
+                                .setMaterial(new Material().setKD(0.1).setKS(0.1).setShininess(10))
+                );
+            }
+        }
+        // פנים קדמי של המתנה
+        scene.geometries.add(
+                new Polygon(
+                        new Point(20, -150, -180), new Point(40, -150, -180),
+                        new Point(40, -130, -180), new Point(20, -130, -180)
+                ).setEmission(new Color(255, 20, 147)) // ורוד מנצנץ
+                        .setMaterial(new Material().setKD(0.4).setKS(0.8).setShininess(100)),
+
+                // למעלה
+                new Polygon(
+                        new Point(20, -130, -180), new Point(40, -130, -180),
+                        new Point(40, -130, -160), new Point(20, -130, -160)
+                ).setEmission(new Color(255, 105, 180)) // ורוד-בהיר
+                        .setMaterial(new Material().setKD(0.3).setKS(0.9).setShininess(150)),
+
+                // סרט אופקי על הפאה הקדמית
+                new Polygon(
+                        new Point(28, -150, -179.9), new Point(32, -150, -179.9),
+                        new Point(32, -130, -179.9), new Point(28, -130, -179.9)
+                ).setEmission(new Color(255, 215, 0)) // זהב
+                        .setMaterial(new Material().setKD(0.2).setKS(1.0).setShininess(200)),
+
+                // סרט אנכי על הפאה העליונה
+                new Polygon(
+                        new Point(29, -130, -180), new Point(31, -130, -180),
+                        new Point(31, -130, -160), new Point(29, -130, -160)
+                ).setEmission(new Color(255, 215, 0)) // זהב
+                        .setMaterial(new Material().setKD(0.2).setKS(1.0).setShininess(200)),
+
+                // קישוט כפתור נוצץ באמצע
+                new Sphere(new Point(30, -130, -170), 1.5)
+                        .setEmission(new Color(255, 255, 255)) // לבן נוצץ
+                        .setMaterial(new Material().setKD(0.1).setKS(1.0).setShininess(300))
+        );
+
+
 
         // --- Lighting ---
 
@@ -451,13 +313,13 @@ class RefinedCustomSceneTests1 {
 
         // --- Camera setup & rendering ---
         cameraBuilder
-                .setLocation(new Point(0, -50, 50)) // Closer and lower camera
-                .setDirection(new Point(0, -20, -150), new Vector(0, 1, 0)) // Looking at the snowman
-                .setVpDistance(100) // Closer view plane
-                .setVpSize(150, 150) // Smaller view plane for a tighter shot
+                .setLocation(new Point(-30, -50, 50)) // Camera location
+                .setDirection(new Point(0, -20, -180), new Vector(0, 1, 0)) // Target snowman's head, adjusted Z
+                .setVpDistance(200) // Increased View Plane Distance for wider view, from 100 to 200
+                .setVpSize(300, 300) // Increased View Plane Size for wider view, from 150,150 to 300,300
                 .setResolution(600, 600)
                 .build()
                 .renderImage()
-                .writeToImage("snowman_refined_v2");
+                .writeToImage("snowman_refined_v5"); // Changed output file name
     }
 }
