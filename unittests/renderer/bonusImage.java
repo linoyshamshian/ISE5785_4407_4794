@@ -103,7 +103,6 @@ class RefinedCustomSceneTests1 {
                         .setKq(0.00003) // Increased quadratic attenuation for very soft falloff
         );
 
-        // Spot Light on the triangle - Softer and less focused
         Point spotLightPos = new Point(70, 70, 120);
         // Pointing towards the center of the triangle face
         Vector directionToTriangle = new Point(65, -35, 50).subtract(spotLightPos).normalize();
@@ -257,52 +256,272 @@ class RefinedCustomSceneTests1 {
                 );
             }
         }
-        // פנים קדמי של המתנה
+        // Gift Box (a complete cube with a ribbon and a bow) - Significantly Larger and Closer
+        //Define common material for the gift box body
+        Material giftBoxMaterial = new Material().setKD(0.2).setKS(0.4).setShininess(70);
+        Color giftBoxColor = new Color(255, 20, 147); // Sparkling Pink
+
+        // Define common material for the gift box top
+        Material giftBoxTopMaterial = new Material().setKD(0.2).setKS(0.4).setShininess(100);
+        Color giftBoxTopColor = new Color(255, 105, 180); // Lighter Pink for top
+
+        // Define common material for the ribbon
+        Material ribbonMaterial = new Material().setKD(0.2).setKS(0.6).setShininess(200);
+        Color ribbonColor = new Color(255, 215, 0); // Gold
+
+        // Position and size for the gift box (increased size, slightly different Z)
+        double boxX = 30; // Center X
+        double boxY = -150; // Bottom Y (keeping it on the "snow" level)
+        double boxZ = -130; // Front Z (moved significantly closer to the camera for prominence)
+        double boxSize = 25; // Side length (increased for better visibility)
+
+        // Calculate points for the cube based on its center and size
+        Point p1 = new Point(boxX - boxSize / 2, boxY, boxZ); // Front-bottom-left
+        Point p2 = new Point(boxX + boxSize / 2, boxY, boxZ); // Front-bottom-right
+        Point p3 = new Point(boxX + boxSize / 2, boxY + boxSize, boxZ); // Front-top-right
+        Point p4 = new Point(boxX - boxSize / 2, boxY + boxSize, boxZ); // Front-top-left
+
+        Point p5 = new Point(boxX - boxSize / 2, boxY, boxZ - boxSize); // Back-bottom-left
+        Point p6 = new Point(boxX + boxSize / 2, boxY, boxZ - boxSize); // Back-bottom-right
+        Point p7 = new Point(boxX + boxSize / 2, boxY + boxSize, boxZ - boxSize); // Back-top-right
+        Point p8 = new Point(boxX - boxSize / 2, boxY + boxSize, boxZ - boxSize); // Back-top-left
+
+        // Add faces of the gift box
         scene.geometries.add(
-                new Polygon(
-                        new Point(20, -150, -180), new Point(40, -150, -180),
-                        new Point(40, -130, -180), new Point(20, -130, -180)
-                ).setEmission(new Color(255, 20, 147)) // ורוד מנצנץ
-                        .setMaterial(new Material().setKD(0.4).setKS(0.8).setShininess(100)),
-
-                // למעלה
-                new Polygon(
-                        new Point(20, -130, -180), new Point(40, -130, -180),
-                        new Point(40, -130, -160), new Point(20, -130, -160)
-                ).setEmission(new Color(255, 105, 180)) // ורוד-בהיר
-                        .setMaterial(new Material().setKD(0.3).setKS(0.9).setShininess(150)),
-
-                // סרט אופקי על הפאה הקדמית
-                new Polygon(
-                        new Point(28, -150, -179.9), new Point(32, -150, -179.9),
-                        new Point(32, -130, -179.9), new Point(28, -130, -179.9)
-                ).setEmission(new Color(255, 215, 0)) // זהב
-                        .setMaterial(new Material().setKD(0.2).setKS(1.0).setShininess(200)),
-
-                // סרט אנכי על הפאה העליונה
-                new Polygon(
-                        new Point(29, -130, -180), new Point(31, -130, -180),
-                        new Point(31, -130, -160), new Point(29, -130, -160)
-                ).setEmission(new Color(255, 215, 0)) // זהב
-                        .setMaterial(new Material().setKD(0.2).setKS(1.0).setShininess(200)),
-
-                // קישוט כפתור נוצץ באמצע
-                new Sphere(new Point(30, -130, -170), 1.5)
-                        .setEmission(new Color(255, 255, 255)) // לבן נוצץ
-                        .setMaterial(new Material().setKD(0.1).setKS(1.0).setShininess(300))
+                // Front face
+                new Polygon(p1, p2, p3, p4).setEmission(giftBoxColor).setMaterial(giftBoxMaterial),
+                // Back face
+                new Polygon(p6, p5, p8, p7).setEmission(giftBoxColor).setMaterial(giftBoxMaterial),
+                // Left face
+                new Polygon(p5, p1, p4, p8).setEmission(giftBoxColor).setMaterial(giftBoxMaterial),
+                // Right face
+                new Polygon(p2, p6, p7, p3).setEmission(giftBoxColor).setMaterial(giftBoxMaterial),
+                // Top face
+                new Polygon(p4, p3, p7, p8).setEmission(giftBoxTopColor).setMaterial(giftBoxTopMaterial),
+                // Bottom face
+                new Polygon(p5, p6, p2, p1).setEmission(giftBoxColor).setMaterial(giftBoxMaterial)
         );
 
+        // Ribbon - Horizontal (around Y-axis, passing through the middle)
+        double ribbonThickness = 2; // Thickness of the ribbon
+        scene.geometries.add(
+                // Horizontal ribbon section visible on the front face
+                new Polygon(
+                        new Point(boxX - boxSize / 2, boxY + boxSize / 2 - ribbonThickness / 2, boxZ + 0.1),
+                        new Point(boxX + boxSize / 2, boxY + boxSize / 2 - ribbonThickness / 2, boxZ + 0.1),
+                        new Point(boxX + boxSize / 2, boxY + boxSize / 2 + ribbonThickness / 2, boxZ + 0.1),
+                        new Point(boxX - boxSize / 2, boxY + boxSize / 2 + ribbonThickness / 2, boxZ + 0.1)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial),
+                // Horizontal ribbon section visible on the back face
+                new Polygon(
+                        new Point(boxX - boxSize / 2, boxY + boxSize / 2 - ribbonThickness / 2, boxZ - boxSize - 0.1),
+                        new Point(boxX + boxSize / 2, boxY + boxSize / 2 - ribbonThickness / 2, boxZ - boxSize - 0.1),
+                        new Point(boxX + boxSize / 2, boxY + boxSize / 2 + ribbonThickness / 2, boxZ - boxSize - 0.1),
+                        new Point(boxX - boxSize / 2, boxY + boxSize / 2 + ribbonThickness / 2, boxZ - boxSize - 0.1)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial),
+                // Horizontal ribbon section visible on the left face
+                new Polygon(
+                        new Point(boxX - boxSize / 2 - 0.1, boxY + boxSize / 2 - ribbonThickness / 2, boxZ),
+                        new Point(boxX - boxSize / 2 - 0.1, boxY + boxSize / 2 - ribbonThickness / 2, boxZ - boxSize),
+                        new Point(boxX - boxSize / 2 - 0.1, boxY + boxSize / 2 + ribbonThickness / 2, boxZ - boxSize),
+                        new Point(boxX - boxSize / 2 - 0.1, boxY + boxSize / 2 + ribbonThickness / 2, boxZ)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial),
+                // Horizontal ribbon section visible on the right face
+                new Polygon(
+                        new Point(boxX + boxSize / 2 + 0.1, boxY + boxSize / 2 - ribbonThickness / 2, boxZ),
+                        new Point(boxX + boxSize / 2 + 0.1, boxY + boxSize / 2 - ribbonThickness / 2, boxZ - boxSize),
+                        new Point(boxX + boxSize / 2 + 0.1, boxY + boxSize / 2 + ribbonThickness / 2, boxZ - boxSize),
+                        new Point(boxX + boxSize / 2 + 0.1, boxY + boxSize / 2 + ribbonThickness / 2, boxZ)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial)
+        );
+
+
+        // Ribbon - Vertical (around X-axis, passing through the middle)
+        scene.geometries.add(
+                // Vertical ribbon section visible on the top face
+                new Polygon(
+                        new Point(boxX - ribbonThickness / 2, boxY + boxSize + 0.1, boxZ),
+                        new Point(boxX + ribbonThickness / 2, boxY + boxSize + 0.1, boxZ),
+                        new Point(boxX + ribbonThickness / 2, boxY + boxSize + 0.1, boxZ - boxSize),
+                        new Point(boxX - ribbonThickness / 2, boxY + boxSize + 0.1, boxZ - boxSize)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial),
+                // Vertical ribbon section visible on the bottom face
+                new Polygon(
+                        new Point(boxX - ribbonThickness / 2, boxY - 0.1, boxZ),
+                        new Point(boxX + ribbonThickness / 2, boxY - 0.1, boxZ),
+                        new Point(boxX + ribbonThickness / 2, boxY - 0.1, boxZ - boxSize),
+                        new Point(boxX - ribbonThickness / 2, boxY - 0.1, boxZ - boxSize)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial),
+                // Vertical ribbon section visible on the front face
+                new Polygon(
+                        new Point(boxX - ribbonThickness / 2, boxY, boxZ + 0.1),
+                        new Point(boxX + ribbonThickness / 2, boxY, boxZ + 0.1),
+                        new Point(boxX + ribbonThickness / 2, boxY + boxSize, boxZ + 0.1),
+                        new Point(boxX - ribbonThickness / 2, boxY + boxSize, boxZ + 0.1)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial),
+                // Vertical ribbon section visible on the back face
+                new Polygon(
+                        new Point(boxX - ribbonThickness / 2, boxY, boxZ - boxSize - 0.1),
+                        new Point(boxX + ribbonThickness / 2, boxY, boxZ - boxSize - 0.1),
+                        new Point(boxX + ribbonThickness / 2, boxY + boxSize, boxZ - boxSize - 0.1),
+                        new Point(boxX - ribbonThickness / 2, boxY + boxSize, boxZ - boxSize - 0.1)
+                ).setEmission(ribbonColor).setMaterial(ribbonMaterial)
+        );
+
+
+        // Bow on top - more distinct loops using cylinders for a flattened look
+        double bowBaseY = boxY + boxSize  +0.5; // Top of the box
+        double bowBaseZ = boxZ - boxSize / 2; // Center Z of the box
+        double bowLoopRadius = 2; // Radius of the loops (thin)
+
+        double bowSegmentLength = 10; // Length of each cylinder segment
+        double bowBendFactor = 4; // How much the loops bend upwards/outwards
+
+        // Left Loop
+        // Arc segment 1 (up and left)
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(boxX - 8, bowBaseY, bowBaseZ - 2), new Vector(-0.5, 1, 0.1)), bowLoopRadius, bowSegmentLength)
+                        .setEmission(ribbonColor).setMaterial(ribbonMaterial));
+        // Arc segment 2 (more up and left)
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(boxX - 12, bowBaseY + bowBendFactor * 0.5, bowBaseZ - 2), new Vector(-0.3, 1, 0.1)), bowLoopRadius, bowSegmentLength * 0.8)
+                        .setEmission(ribbonColor).setMaterial(ribbonMaterial));
+        // Arc segment 3 (top of the loop, curving inwards)
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(boxX - 10, bowBaseY + bowBendFactor * 0.8, bowBaseZ - 2), new Vector(0.5, 0.5, 0.1)), bowLoopRadius, bowSegmentLength * 0.7)
+                        .setEmission(ribbonColor).setMaterial(ribbonMaterial));
+
+
+        // Right Loop - mirrored from Left Loop
+//         Arc segment 1 (up and right)
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(boxX + 8, bowBaseY, bowBaseZ - 2), new Vector(0.5, 1, 0.1)), bowLoopRadius, bowSegmentLength)
+                        .setEmission(ribbonColor).setMaterial(ribbonMaterial));
+//         Arc segment 2 (more up and right)
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(boxX + 12, bowBaseY + bowBendFactor * 0.5, bowBaseZ - 2), new Vector(0.3, 1, 0.1)), bowLoopRadius, bowSegmentLength * 0.8)
+                        .setEmission(ribbonColor).setMaterial(ribbonMaterial));
+        // Arc segment 3 (top of the loop, curving inwards)
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(boxX + 10, bowBaseY + bowBendFactor * 0.8, bowBaseZ - 2), new Vector(-0.5, 0.5, 0.1)), bowLoopRadius, bowSegmentLength * 0.7)
+                        .setEmission(ribbonColor).setMaterial(ribbonMaterial));
+
+
+        // --- Tree Geometry (using Polygons for foliage) ---
+        // Trunk (Cylinder - assuming Cylinder class exists)
+        double trunkX = -180; // Position X of the tree
+        double trunkY = -150; // Base Y of the tree (on the snow)
+        double trunkZ = -300; // Z position (behind the snowman)
+        double trunkRadius = 10;
+        double trunkHeight = 170;
+
+        scene.geometries.add(
+                new Cylinder(new Ray(new Point(trunkX, trunkY, trunkZ), new Vector(0, 1, 0)), trunkRadius, trunkHeight)
+                        .setEmission(new Color(101, 67, 33)) // Brown color
+                        .setMaterial(new Material().setKD(0.5).setKS(0.1).setShininess(2))
+        );
+
+        // Foliage (Pyramid made of Triangles)
+        double pyramidBaseY = trunkY + trunkHeight; // Base of the pyramid is top of the trunk
+        double pyramidHeight = 80; // Height of the pyramid
+        double pyramidBaseSide = 80; // Length of one side of the square base
+
+    // Define the base points of the square pyramid
+        Point pBase1 = new Point(trunkX - pyramidBaseSide / 2, pyramidBaseY, trunkZ - pyramidBaseSide / 2); // Front-Left
+        Point pBase2 = new Point(trunkX + pyramidBaseSide / 2, pyramidBaseY, trunkZ - pyramidBaseSide / 2); // Front-Right
+        Point pBase3 = new Point(trunkX + pyramidBaseSide / 2, pyramidBaseY, trunkZ + pyramidBaseSide / 2); // Back-Right
+        Point pBase4 = new Point(trunkX - pyramidBaseSide / 2, pyramidBaseY, trunkZ + pyramidBaseSide / 2); // Back-Left
+
+    // Define the apex (top point) of the pyramid
+        Point pyramidApex = new Point(trunkX, pyramidBaseY + pyramidHeight, trunkZ);
+
+        Material foliageMaterial = new Material().setKD(0.6).setKS(0.2).setShininess(10);
+        Color foliageColor = new Color(34, 139, 34); // Forest Green
+
+        scene.geometries.add(
+                new Polygon(pBase1, pBase2, pBase3, pBase4)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+
+                new Triangle(pBase1, pBase2, pyramidApex) // Front face
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pBase2, pBase3, pyramidApex) // Right face
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pBase3, pBase4, pyramidApex) // Back face
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pBase4, pBase1, pyramidApex) // Left face
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial)
+        );
+
+    // Second pyramid layer
+        double topPyramidBaseY = pyramidBaseY + pyramidHeight * 0.7;
+        double topPyramidHeight = pyramidHeight * 0.4;
+        double topPyramidBaseSide = pyramidBaseSide * 0.5;
+
+        Point pTopBase1 = new Point(trunkX - topPyramidBaseSide / 2, topPyramidBaseY, trunkZ - topPyramidBaseSide / 2);
+        Point pTopBase2 = new Point(trunkX + topPyramidBaseSide / 2, topPyramidBaseY, trunkZ - topPyramidBaseSide / 2);
+        Point pTopBase3 = new Point(trunkX + topPyramidBaseSide / 2, topPyramidBaseY, trunkZ + topPyramidBaseSide / 2);
+        Point pTopBase4 = new Point(trunkX - topPyramidBaseSide / 2, topPyramidBaseY, trunkZ + topPyramidBaseSide / 2);
+
+        Point topPyramidApex = new Point(trunkX, topPyramidBaseY + topPyramidHeight, trunkZ);
+
+        scene.geometries.add(
+                new Triangle(pTopBase1, pTopBase2, topPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pTopBase2, pTopBase3, topPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pTopBase3, pTopBase4, topPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pTopBase4, pTopBase1, topPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial)
+        );
+
+        // Third pyramid layer (smallest one)
+        double thirdPyramidBaseY = topPyramidBaseY + topPyramidHeight * 0.8;
+        double thirdPyramidHeight = topPyramidHeight * 0.5;
+        double thirdPyramidBaseSide = topPyramidBaseSide * 0.5;
+
+        Point pThirdBase1 = new Point(trunkX - thirdPyramidBaseSide / 2, thirdPyramidBaseY, trunkZ - thirdPyramidBaseSide / 2);
+        Point pThirdBase2 = new Point(trunkX + thirdPyramidBaseSide / 2, thirdPyramidBaseY, trunkZ - thirdPyramidBaseSide / 2);
+        Point pThirdBase3 = new Point(trunkX + thirdPyramidBaseSide / 2, thirdPyramidBaseY, trunkZ + thirdPyramidBaseSide / 2);
+        Point pThirdBase4 = new Point(trunkX - thirdPyramidBaseSide / 2, thirdPyramidBaseY, trunkZ + thirdPyramidBaseSide / 2);
+
+        Point thirdPyramidApex = new Point(trunkX, thirdPyramidBaseY + thirdPyramidHeight, trunkZ);
+
+        scene.geometries.add(
+                new Triangle(pThirdBase1, pThirdBase2, thirdPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pThirdBase2, pThirdBase3, thirdPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pThirdBase3, pThirdBase4, thirdPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial),
+                new Triangle(pThirdBase4, pThirdBase1, thirdPyramidApex)
+                        .setEmission(foliageColor)
+                        .setMaterial(foliageMaterial)
+        );
 
 
         // --- Lighting ---
 
         // Main Light Source
         scene.lights.add(
-                new SpotLight(new Color(700, 700, 600),
+                new SpotLight(new Color(700, 700, 500),
                         new Point(-70, 70, 100),
                         new Vector(0, -1, -0.5))
                         .setKl(0.00005).setKq(0.000001)
         );
+
 
         // Fill Light
         scene.lights.add(
