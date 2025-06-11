@@ -420,9 +420,10 @@ class LightsTests {
                         new Point(-80, 60, 100), new Vector(1, -1, -2))
                         .setKl(0.001).setKq(0.0001));
         camera1.setResolution(500, 500)
+                .setBlackboard(new Blackboard(9))
                 .build()
                 .renderImage()
-                .writeToImage("lightCylinderDirectional");
+                .writeToImage("lightCylinderDirectional_with_anti");
     }
 
 
