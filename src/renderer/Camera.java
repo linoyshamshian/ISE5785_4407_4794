@@ -1,9 +1,11 @@
 package renderer;
 
 import primitives.*;
+import primitives.Vector;
 import scene.Scene;
 
-import java.util.MissingResourceException;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import static primitives.Util.isZero;
 
@@ -28,6 +30,28 @@ public class Camera implements Cloneable {
     private RayTracerBase rayTracer;
     private int nX = 1;
     private int nY = 1;
+    private Blackboard blackboard;
+
+    /** Amount of threads to use fore rendering image by the camera */
+    private int threadsCount = 0;
+    /**
+     * Amount of threads to spare for Java VM threads:<br>
+     * Spare threads if trying to use all the cores
+     */
+    private static final int SPARE_THREADS = 2;
+    /**
+     * Debug print interval in seconds (for progress percentage)<br>
+     * if it is zero - there is no progress output
+     */
+    private double printInterval = 0;
+    /**
+     * Pixel manager for supporting:
+     * <ul>
+     * <li>multi-threading</li>
+     * <li>debug print of progress percentage in Console window/tab</li>
+     * </ul>
+     */
+    private PixelManager pixelManager;
 
     /**
      * Default constructor - private for use by Builder only.
@@ -93,32 +117,85 @@ public class Camera implements Cloneable {
     }
 
     /**
+     * Constructs a list of rays for super-sampling through a given pixel on the view plane.
+     * The rays are distributed within the pixel's area based on the configured grid size,
+     * with optional jittering.
+     *
+     * @param nX number of columns (resolution in width)
+     * @param nY number of rows (resolution in height)
+     * @param j  pixel index in X-axis (column)
+     * @param i  pixel index in Y-axis (row)
+     * @return a list of {@link Ray} objects for the specified pixel.
+     */
+    public List<Ray> constructBeamRays(int nX, int nY, int j, int i) {
+        List<Ray> rays = new ArrayList<>();
+        Random random = new Random();
+        int gridSize = blackboard.getGridSize();
+        double Ry = height / nY;
+        double Rx = width / nX;
+        double stepY = Ry / gridSize;
+        double stepX = Rx / gridSize;
+
+        for (int subI = 0; subI < gridSize; subI++) {
+            for (int subJ = 0; subJ < gridSize; subJ++) {
+                double jitterY = random.nextDouble() % gridSize; // Random offset in Y direction
+                double jitterX = random.nextDouble() % gridSize; // Random offset in X direction
+
+                double offsetI = (subI + jitterY) * stepY;
+                double offsetJ = (subJ + jitterX) * stepX;
+                double Yi = -(i - (nY - 1) / 2d) * Ry + offsetI;
+                double Xj = (j - (nX - 1) / 2d) * Rx + offsetJ;
+                Point pIJ = p0;
+                if (!isZero(Xj)) pIJ = pIJ.add(vRight.scale(Xj));
+                if (!isZero(Yi)) pIJ = pIJ.add(vUp.scale(Yi));
+                pIJ = pIJ.add(vTo.scale(distance)); // pIJ is the center of the pixel in the view plane
+
+                Ray ray = new Ray(p0, pIJ.subtract(p0).normalize());
+                rays.add(ray);
+            }
+        }
+        return rays;
+    }
+
+    /**
      * Casts a single ray through a pixel, gets its color and writes it to the image.
      *
      * @param j column index of the pixel
      * @param i row index of the pixel
      */
     private void castRay(int j, int i) {
-        Ray ray = constructRay(nX, nY, j, i);
-        Color pixelColor = rayTracer.traceRay(ray);
-        imageWriter.writePixel(j, i, pixelColor);
-    }
+        if (blackboard.isEnabled()){
+            List<Ray> rays = constructBeamRays(nX, nY, j, i);
 
-    /**
-     * Render the image by casting rays through each pixel.
-     *
-     * @return this camera instance
+            Color accumulatedColor = Color.BLACK;
+            for (Ray ray : rays) {
+                accumulatedColor = accumulatedColor.add(rayTracer.traceRay(ray));
+            }
+            accumulatedColor = accumulatedColor.scale(1.0 / rays.size());
+            imageWriter.writePixel(j, i, accumulatedColor);
+        }
+        else {
+            Ray ray = constructRay(nX, nY, j, i);
+            Color pixelColor = rayTracer.traceRay(ray);
+            imageWriter.writePixel(j, i, pixelColor);
+        }
+        pixelManager.pixelDone();
+    }
+    
+
+    /** This function renders image's pixel color map from the scene
+     * included in the ray tracer object
+     * @return the camera object itself
      */
     public Camera renderImage() {
-
-        for (int i = 0; i < nY; i++) {
-            for (int j = 0; j < nX; j++) {
-                castRay(j, i); // j - column index, i - row index
-            }
-        }
-
-        return this;
+        pixelManager = new PixelManager(nY, nX, printInterval);
+        return switch (threadsCount) {
+            case 0 -> renderImageNoThreads();
+            case -1 -> renderImageStream();
+            default -> renderImageRawThreads();
+        };
     }
+
 
     /**
      * Draws a grid over the image by first filling the background
@@ -175,6 +252,46 @@ public class Camera implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    /**
+     * Render image using multi-threading by parallel streaming
+     * @return the camera object itself
+     */
+
+    private Camera renderImageStream() {
+        IntStream.range(0, nY).parallel()
+                .forEach(i -> IntStream.range(0, nX).parallel()
+                        .forEach(j -> castRay(j, i)));
+        return this;
+    }
+    /**
+     * Render image without multi-threading
+     * @return the camera object itself
+     */
+    private Camera renderImageNoThreads() {
+        for (int i = 0; i < nY; ++i)
+            for (int j = 0; j < nX; ++j)
+                castRay(j, i);
+        return this;
+    }
+    /**
+     * Render image using multi-threading by creating and running raw threads
+     * @return the camera object itself
+     */
+    private Camera renderImageRawThreads() {
+        var threads = new LinkedList<Thread>();
+        while (threadsCount-- > 0)
+            threads.add(new Thread(() -> {
+                PixelManager.Pixel pixel;
+                while ((pixel = pixelManager.nextPixel()) != null)
+                    castRay(pixel.col(), pixel.row());
+            }));
+        for (var thread : threads) thread.start();
+        try {
+            for (var thread : threads) thread.join();
+        } catch (InterruptedException ignored) {}
+        return this;
     }
 
     /**
@@ -313,6 +430,53 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Set the blackboard
+         *
+         * @param blackboard the blackboard
+         * @return the camera builder
+         */
+        public Builder setBlackboard(Blackboard blackboard) {
+            camera.blackboard = blackboard;
+            return this;
+        }
+
+        /**
+         * Set multi-threading <br>
+         * Parameter value meaning:
+         * <ul>
+         * <li>-2 - number of threads is number of logical processors less 2</li>
+         * <li>-1 - stream processing parallelization (implicit multi-threading) is used</li>
+         * <li>0 - multi-threading is not activated</li>
+         * <li>1 and more - literally number of threads</li>
+         * </ul>
+         * @param threads number of threads
+         * @return builder object itself
+         */
+        public Builder setMultithreading(int threads) {
+            if (threads < -3)
+                throw new IllegalArgumentException("Multithreading parameter must be -2 or higher");
+            if (threads == -2) {
+                int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
+                camera.threadsCount = cores <= 2 ? 1 : cores;
+            } else
+                camera.threadsCount = threads;
+            return this;
+        }
+
+
+        /**
+         * Set debug printing interval. If it's zero - there won't be printing at all
+         * @param interval printing interval in %
+         * @return builder object itself
+         */
+        public Builder setDebugPrint(double interval) {
+            if (interval < 0) throw new IllegalArgumentException("interval parameter must be non-negative");
+            camera.printInterval = interval;
+            return this;
+        }
+
+
+        /**
          * Finalizes the building of the {@link Camera} object.
          * Verifies that all required components are set and valid.
          *
@@ -341,6 +505,8 @@ public class Camera implements Cloneable {
                 throw new IllegalArgumentException("vTo and vUp must be orthogonal");
             if (camera.nX <= 0 || camera.nY <= 0)
                 throw new IllegalArgumentException("Resolution must be positive");
+            if (camera.blackboard == null)
+                camera.blackboard = new Blackboard();
 
             camera.imageWriter = new ImageWriter(camera.nX, camera.nY);
 
@@ -353,6 +519,5 @@ public class Camera implements Cloneable {
         }
     } // end of Builder class
 } // end of Camera class
-
 
 
