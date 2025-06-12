@@ -91,7 +91,7 @@
 
 <ol dir="rtl">
   <li><b>קלט:</b><br>
-    <img src="images_for_readme/tiger.jpg" alt="Original Image" width="300" >
+    <img src="python_code/images_for_readme/tiger.jpg" alt="Original Image" width="300" >
 
   </li>
   <li><b>גילוי קצוות ופינות:</b><br>
@@ -104,9 +104,9 @@
     כל משולש נצבע בצבע הממוצע של האזור שלו.
   </li>
   <li><b>פלט:</b><br>
-    <img src="images_for_readme/AvgColor.png" alt="Triangulated Output" width="300" height="301">
-    <img src="images_for_readme/GreenLines.png" alt="Triangulated Output" width="300" height="301">
-    <img src="images_for_readme/detectedCanny.png" alt="Triangulated Output" width="300" height="301">
+    <img src="python_code/images_for_readme/AvgColor.png" alt="Triangulated Output" width="300" height="301">
+    <img src="python_code/images_for_readme/GreenLines.png" alt="Triangulated Output" width="300" height="301">
+    <img src="python_code/CannyEdgeDetection.py" alt="Triangulated Output" width="300" height="301">
     <br>
 <sub>
       משמאל לימין: קצוות | משולשים בקווים | משולשים ממולאים
