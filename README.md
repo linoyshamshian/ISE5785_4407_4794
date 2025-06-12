@@ -1,4 +1,4 @@
-<div dir="rtl">
+<div dir="rtl" align="right">
 
 # הפקת קואורדינטות וצבעים מתמונה משולשת
 
