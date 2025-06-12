@@ -61,7 +61,38 @@
   </li>
 </ul>
 
+
+<div dir="rtl" align="right">
+ 
+## דוגמה לזרימת עבודה
+ 
+<ol dir="rtl">
+<li><b>קלט:</b><br>
+<img src="./example_input.jpg" width="300" alt="תמונה מקורית" />
+</li>
+<li><b>גילוי קצוות ופינות:</b><br>
+    קבלת סט של נקודות מפתח (קצוות + פינות + נקודות קבועות).
+</li>
+<li><b>טריאנגולציה:</b><br>
+    פירוק התמונה לרשת משולשים בעזרת Delaunay.
+</li>
+<li><b>צביעת המשולשים:</b><br>
+    כל משולש נצבע בצבע הממוצע של האזור שלו.
+</li>
+<li><b>פלט:</b><br>
+<img src="images_for_readme/detectedCanny.png" width="220" alt="קצוות" />
+<img src="images_for_readme/GreenLines.png" width="220" alt="משולשים בקווים" />
+<img src="images_for_readme/AvgColor.png" width="220" alt="משולשים ממולאים" />
+<br>
+<sub>
+      משמאל לימין: קצוות | משולשים בקווים | משולשים ממולאים
+</sub>
+</li>
+</ol>
+ 
+</div>
 ---
+
 
 ## דוגמה לזרימת עבודה
 
