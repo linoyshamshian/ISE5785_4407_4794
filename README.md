@@ -80,9 +80,9 @@
     כל משולש נצבע בצבע הממוצע של האזור שלו.
   </li>
   <li><b>פלט:</b><br>
-    <img src="images_for_readme/AvgColor.png" alt="Triangulated Output" width="300" height="310">
-    <img src="images_for_readme/GreenLines.png" alt="Triangulated Output" width="300" height="310">
-    <img src="images_for_readme/detectedCanny.png" alt="Triangulated Output" width="300" height="310">
+    <img src="images_for_readme/AvgColor.png" alt="Triangulated Output" width="300" height="301">
+    <img src="images_for_readme/GreenLines.png" alt="Triangulated Output" width="300" height="301">
+    <img src="images_for_readme/detectedCanny.png" alt="Triangulated Output" width="300" height="301">
   </li>
 </ol>
 
