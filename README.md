@@ -67,7 +67,8 @@
 
 <ol dir="rtl">
   <li><b>קלט:</b><br>
-    <img src="images_for_readme/tiger.jpg" alt="Original Image">
+    <img src="images_for_readme/tiger.jpg" alt="Original Image" width="300" height="200">
+
   </li>
   <li><b>גילוי קצוות ופינות:</b><br>
     קבלת סט של נקודות מפתח (קצוות + פינות + נקודות קבועות).
