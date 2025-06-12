@@ -106,7 +106,7 @@
   <li><b>פלט:</b><br>
     <img src="python_code/AvgColor.png" alt="Triangulated Output" width="300" height="301">
     <img src="python_code/GreenLines.png" alt="Triangulated Output" width="300" height="301">
-    <img src="python_code/CannyEdgeDetection.py" alt="Triangulated Output" width="300" height="301">
+    <img src="python_code/detectedCanny.png" alt="Triangulated Output" width="300" height="301">
     <br>
 <sub>
       משמאל לימין: קצוות | משולשים בקווים | משולשים ממולאים
