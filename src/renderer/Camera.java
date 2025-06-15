@@ -33,7 +33,9 @@ public class Camera implements Cloneable {
     private int nX = 1;
     private int nY = 1;
     private Blackboard blackboard;
-
+    private boolean useAdaptiveSuperSampling = false;
+    private int assMaxDepth = 3;
+    private double assTolerance = 10.0;
     /**
      * Amount of threads to use fore rendering image by the camera
      */
@@ -163,10 +165,35 @@ public class Camera implements Cloneable {
      * @param j column index of the pixel
      * @param i row index of the pixel
      */
-    private void castRay(int j, int i) {
-        if (blackboard.isEnabled()) {
-            List<Ray> rays = constructBeamRays(nX, nY, j, i);
+//    private void castRay(int j, int i) {
+//        if (blackboard.isEnabled()) {
+//            List<Ray> rays = constructBeamRays(nX, nY, j, i);
+//
+//            Color accumulatedColor = Color.BLACK;
+//            for (Ray ray : rays) {
+//                accumulatedColor = accumulatedColor.add(rayTracer.traceRay(ray));
+//            }
+//            accumulatedColor = accumulatedColor.scale(1.0 / rays.size());
+//            imageWriter.writePixel(j, i, accumulatedColor);
+//        } else {
+//            Ray ray = constructRay(nX, nY, j, i);
+//            Color pixelColor = rayTracer.traceRay(ray);
+//            imageWriter.writePixel(j, i, pixelColor);
+//        }
+//        pixelManager.pixelDone();
+//    }
 
+
+
+    private void castRay(int j, int i) {
+        if (useAdaptiveSuperSampling) {
+            Point pixelCenter = getPixelCenter(nX, nY, j, i);
+            Vector pixelRight = vRight.scale(width / nX);
+            Vector pixelUp = vUp.scale(height / nY);
+            Color color = adaptiveSuperSample(pixelCenter, pixelRight, pixelUp, 0, assMaxDepth, assTolerance);
+            imageWriter.writePixel(j, i, color);
+        } else if (blackboard.isEnabled()) {
+            List<Ray> rays = constructBeamRays(nX, nY, j, i);
             Color accumulatedColor = Color.BLACK;
             for (Ray ray : rays) {
                 accumulatedColor = accumulatedColor.add(rayTracer.traceRay(ray));
@@ -180,7 +207,6 @@ public class Camera implements Cloneable {
         }
         pixelManager.pixelDone();
     }
-
 
     /**
      * This function renders image's pixel color map from the scene
@@ -256,11 +282,88 @@ public class Camera implements Cloneable {
     }
 
     /**
+     * Adaptive Super Sampling for a single pixel.
+     * Recursively subdivides the pixel and samples only where needed.
+     *
+     * @param center The 3D center of the pixel/sub-pixel
+     * @param right  The right vector (scaled to sub-pixel width)
+     * @param up     The up vector (scaled to sub-pixel height)
+     * @param depth  Current recursion depth
+     * @param maxDepth Max recursion depth (settable from test)
+     * @param tolerance Color difference threshold (settable from test)
+     * @return The averaged color for the pixel/sub-pixel
+     */
+    private Color adaptiveSuperSample(Point center, Vector right, Vector up, int depth, int maxDepth, double tolerance) {
+        // Sample 4 corners and the center
+        Point[] points = {
+                center.add(right.scale(-0.5)).add(up.scale(-0.5)), // top-left
+                center.add(right.scale(0.5)).add(up.scale(-0.5)),  // top-right
+                center.add(right.scale(-0.5)).add(up.scale(0.5)),  // bottom-left
+                center.add(right.scale(0.5)).add(up.scale(0.5))   // bottom-right
+        };
+
+        Color[] colors = new Color[4];
+        for (int i = 0; i < 4; i++) {
+            Ray ray = new Ray(p0, points[i].subtract(p0));
+            colors[i] = rayTracer.traceRay(ray);
+        }
+
+        // Check if all colors are "similar" (within tolerance)
+        if (isUniform(colors, tolerance) || depth >= maxDepth) {
+            // Return average color
+            return average(colors);
+        }
+
+        // Subdivide: 4 sub-quadrants (each is a quarter of the area)
+        Color[] subColors = new Color[4];
+        Vector halfRight = right.scale(0.5);
+        Vector halfUp = up.scale(0.5);
+        // Centers of 4 sub-pixels (quarter pixels)
+        Point[] subCenters = {
+                center.add(right.scale(-0.25)).add(up.scale(-0.25)), // top-left
+                center.add(right.scale(0.25)).add(up.scale(-0.25)),  // top-right
+                center.add(right.scale(-0.25)).add(up.scale(0.25)),  // bottom-left
+                center.add(right.scale(0.25)).add(up.scale(0.25))    // bottom-right
+        };
+        for (int i = 0; i < 4; i++) {
+            subColors[i] = adaptiveSuperSample(subCenters[i], halfRight, halfUp, depth + 1, maxDepth, tolerance);
+        }
+        return average(subColors);
+    }
+
+    /**
+     * Checks if all colors in the array are within the given tolerance.
+     */
+    private boolean isUniform(Color[] colors, double tolerance) {
+        for (int i = 0; i < colors.length; i++) {
+            for (int j = i + 1; j < colors.length; j++) {
+                java.awt.Color c1 = colors[i].getColor();
+                java.awt.Color c2 = colors[j].getColor();
+                double dr = c1.getRed() - c2.getRed();
+                double dg = c1.getGreen() - c2.getGreen();
+                double db = c1.getBlue() - c2.getBlue();
+                double dist = Math.sqrt(dr * dr + dg * dg + db * db);
+                if (dist > tolerance)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns the average color from an array of colors.
+     */
+    private Color average(Color[] colors) {
+        Color sum = Color.BLACK;
+        for (Color c : colors) sum = sum.add(c);
+        return sum.scale(1.0 / colors.length);
+    }
+
+    /**
      * Render image using multi-threading by parallel streaming
      *
      * @return the camera object itself
      */
-
     private Camera renderImageStream() {
         IntStream.range(0, nY).parallel()
                 .forEach(i -> IntStream.range(0, nX).parallel()
@@ -448,6 +551,45 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Enables or disables adaptive super sampling for this camera.
+         *
+         * @param useAdaptiveSuperSampling true to enable adaptive super sampling, false to disable
+         * @return this builder instance (for method chaining)
+         */
+        public Builder setUseAdaptiveSuperSampling(boolean useAdaptiveSuperSampling) {
+            camera.useAdaptiveSuperSampling = useAdaptiveSuperSampling;
+            return this;
+        }
+
+        /**
+         * Sets the maximum recursion depth for adaptive super sampling.
+         *
+         * @param assMaxDepth the maximum recursion depth (must be >= 0)
+         * @return this builder instance (for method chaining)
+         * @throws IllegalArgumentException if assMaxDepth is negative
+         */
+        public Builder setAssMaxDepth(int assMaxDepth) {
+            if (assMaxDepth < 0)
+                throw new IllegalArgumentException("Maximum recursion depth must be non-negative");
+            camera.assMaxDepth = assMaxDepth;
+            return this;
+        }
+
+        /**
+         * Sets the color difference tolerance for adaptive super sampling.
+         *
+         * @param assTolerance the color difference threshold (must be >= 0)
+         * @return this builder instance (for method chaining)
+         * @throws IllegalArgumentException if assTolerance is negative
+         */
+        public Builder setAssTolerance(double assTolerance) {
+            if (assTolerance < 0)
+                throw new IllegalArgumentException("Tolerance must be non-negative");
+            camera.assTolerance = assTolerance;
+            return this;
+        }
+
+        /**
          * Set multi-threading <br>
          * Parameter value meaning:
          * <ul>
@@ -516,6 +658,10 @@ public class Camera implements Cloneable {
                 throw new IllegalArgumentException("Resolution must be positive");
             if (camera.blackboard == null)
                 camera.blackboard = new Blackboard();
+            if (camera.assMaxDepth < 0)
+                throw new IllegalArgumentException("ASS maxDepth must be non-negative");
+            if (camera.assTolerance < 0)
+                throw new IllegalArgumentException("ASS tolerance must be non-negative");
 
             camera.imageWriter = new ImageWriter(camera.nX, camera.nY);
 
