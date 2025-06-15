@@ -1067,7 +1067,7 @@ class RefinedCustomSceneTests1_anti {
                         new Point(50, -50, 50))
                         .setKl(0.0001).setKq(0.000005)
         );
-        Blackboard ssParamsOn = new Blackboard(true, 9);
+        Blackboard ssParamsOn = new Blackboard(9);
         // --- Camera setup & rendering ---
         cameraBuilder
                 .setLocation(new Point(-30, -50, 50)) // Camera location

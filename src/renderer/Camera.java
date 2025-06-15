@@ -116,47 +116,42 @@ public class Camera implements Cloneable {
         return new Ray(p0, direction);
     }
 
+
     /**
-     * Constructs a list of rays for super-sampling through a given pixel on the view plane.
-     * The rays are distributed within the pixel's area based on the configured grid size,
-     * with optional jittering.
-     *
-     * @param nX number of columns (resolution in width)
-     * @param nY number of rows (resolution in height)
-     * @param j  pixel index in X-axis (column)
-     * @param i  pixel index in Y-axis (row)
-     * @return a list of {@link Ray} objects for the specified pixel.
+     * Computes the 3D center of a pixel on the view plane.
+     */
+    private Point getPixelCenter(int nX, int nY, int j, int i) {
+        double rX = width / nX;
+        double rY = height / nY;
+        double xJ = (j - (nX - 1) / 2d) * rX;
+        double yI = -(i - (nY - 1) / 2d) * rY;
+        Point pIJ = viewPlanePC;
+        if (!isZero(xJ)) pIJ = pIJ.add(vRight.scale(xJ));
+        if (!isZero(yI)) pIJ = pIJ.add(vUp.scale(yI));
+        return pIJ;
+    }
+
+
+    /**
+     * Constructs a list of rays for super-sampling through a given pixel on the view plane,
+     * using the configured blackboard.
      */
     public List<Ray> constructBeamRays(int nX, int nY, int j, int i) {
         List<Ray> rays = new ArrayList<>();
-        Random random = new Random();
-        int gridSize = blackboard.getGridSize();
-        double Ry = height / nY;
-        double Rx = width / nX;
-        double stepY = Ry / gridSize;
-        double stepX = Rx / gridSize;
+        // Compute pixel center and pixel axes (scaled to pixel size)
+        Point pixelCenter = getPixelCenter(nX, nY, j, i);
+        Vector pixelRight = vRight.scale(width / nX);
+        Vector pixelUp = vUp.scale(height / nY);
 
-        for (int subI = 0; subI < gridSize; subI++) {
-            for (int subJ = 0; subJ < gridSize; subJ++) {
-                double jitterY = random.nextDouble() % gridSize; // Random offset in Y direction
-                double jitterX = random.nextDouble() % gridSize; // Random offset in X direction
+        // Get all 3D sample points in the pixel
+        List<Point> samplePoints = blackboard.generateSamples3D(pixelCenter, pixelRight, pixelUp);
 
-                double offsetI = (subI + jitterY) * stepY;
-                double offsetJ = (subJ + jitterX) * stepX;
-                double Yi = -(i - (nY - 1) / 2d) * Ry + offsetI;
-                double Xj = (j - (nX - 1) / 2d) * Rx + offsetJ;
-                Point pIJ = p0;
-                if (!isZero(Xj)) pIJ = pIJ.add(vRight.scale(Xj));
-                if (!isZero(Yi)) pIJ = pIJ.add(vUp.scale(Yi));
-                pIJ = pIJ.add(vTo.scale(distance)); // pIJ is the center of the pixel in the view plane
-
-                Ray ray = new Ray(p0, pIJ.subtract(p0).normalize());
-                rays.add(ray);
-            }
+        // For each sample point, create a ray from the camera origin (p0) through the sample
+        for (Point sample : samplePoints) {
+            rays.add(new Ray(p0, sample.subtract(p0).normalize()));
         }
         return rays;
     }
-
     /**
      * Casts a single ray through a pixel, gets its color and writes it to the image.
      *
@@ -517,7 +512,7 @@ public class Camera implements Cloneable {
             camera.viewPlanePC = camera.p0.add(camera.vTo.scale(camera.distance));
             return (Camera) camera.clone(); // Cloneable – get a full shadow copy
         }
-    } // end of Builder class
-} // end of Camera class
+    }
+}
 
 
