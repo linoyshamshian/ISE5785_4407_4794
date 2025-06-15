@@ -25,6 +25,7 @@ class TeapotTest {
      * Teapot without improvements
      */
     @Test
+
     void testTeapot1() {
         prepareTeapot() //
                 .build() //
@@ -37,6 +38,7 @@ class TeapotTest {
      * 10 Teapot tests with CBR
      */
     @Test
+    @Disabled
     void testTeapot2() {
         for (int i = 10; i > 0; --i) {
             teapot2();
@@ -47,6 +49,7 @@ class TeapotTest {
      * 100 Teapot tests with BVH
      */
     @Test
+    @Disabled
     void testTeapot3() {
         for (int i = 100; i > 0; --i) {
             teapot3();
@@ -82,7 +85,6 @@ class TeapotTest {
      * @return camera builder with all the data for the test
      */
     Camera.Builder prepareTeapot() {
-        System.out.println("Images will be saved in: " + System.getProperty("user.dir"));
         Scene scene = new Scene("Test scene");
         addTeapotToScene(scene);
 
@@ -105,12 +107,12 @@ class TeapotTest {
                 // .setMultithreading(-3) // fail - paging file size
                 // .setMultithreading(-2) // 9.3
                 // .setMultithreading(-1) // 9.6
-                .setMultithreading(0) // 25
+                .setMultithreading(4) // 25
                 // .setMultithreading(1) // 25.8
                 // .setMultithreading(2) // 13.6
                 // .setMultithreading(3) // 10.7
                 // .setMultithreading(4) // 10.7
-                // .setDebugPrint(1.0) //
+                 .setDebugPrint(1.0) //
                 ;
     }
 

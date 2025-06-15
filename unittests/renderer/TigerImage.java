@@ -27,8 +27,8 @@ public class TigerImage {
             "C:\\Users\\chenb\\PycharmProjects\\PythonProject1\\triangles_data.txt";
 
     /** גודל מישור-התצוגה (Viewport) – 800×800 פיקסלים */
-    private static final int VIEWPORT_SIZE = 800;      // גם רוחב וגם גובה
-    private static final int IMAGE_RESOLUTION = 800;   // רזולוציית פלט
+    private static final int VIEWPORT_SIZE = 1000;      // גם רוחב וגם גובה
+    private static final int IMAGE_RESOLUTION = 1000;   // רזולוציית פלט
 
     /** שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך) */
     private static final double SAFETY_MARGIN = 0.98;
@@ -147,16 +147,20 @@ public class TigerImage {
         cameraBuilder
                 .setLocation(new Point(0, 0, VIEWPORT_SIZE))            // Z = 800
                 .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
-                .setVpDistance(VIEWPORT_SIZE)                          // 800
-                .setVpSize(VIEWPORT_SIZE, VIEWPORT_SIZE)               // 800×800
+                .setVpDistance(VIEWPORT_SIZE)
+                .setVpSize(VIEWPORT_SIZE, VIEWPORT_SIZE)
                 .setResolution(IMAGE_RESOLUTION, IMAGE_RESOLUTION)
                 .setBlackboard(new Blackboard(5))
+                .setMultithreading(3)
+                .setDebugPrint(1.0)
                 .build()
                 .renderImage()
-                .writeToImage("polyArtRender_Full_NoBorder_with_anti");
+                .writeToImage("polyArtRender_Full_NoBorder_with_anti_thread");
 
         System.out.println("Finished – check 'polyArtRender_Full_NoBorder.png'");
     }
 }
+
+
 
 
