@@ -1,10 +1,12 @@
 package renderer;
 
 import primitives.*;
-import primitives.Vector;
 import scene.Scene;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.MissingResourceException;
 import java.util.stream.IntStream;
 
 import static primitives.Util.isZero;
@@ -32,7 +34,9 @@ public class Camera implements Cloneable {
     private int nY = 1;
     private Blackboard blackboard;
 
-    /** Amount of threads to use fore rendering image by the camera */
+    /**
+     * Amount of threads to use fore rendering image by the camera
+     */
     private int threadsCount = 0;
     /**
      * Amount of threads to spare for Java VM threads:<br>
@@ -152,6 +156,7 @@ public class Camera implements Cloneable {
         }
         return rays;
     }
+
     /**
      * Casts a single ray through a pixel, gets its color and writes it to the image.
      *
@@ -159,7 +164,7 @@ public class Camera implements Cloneable {
      * @param i row index of the pixel
      */
     private void castRay(int j, int i) {
-        if (blackboard.isEnabled()){
+        if (blackboard.isEnabled()) {
             List<Ray> rays = constructBeamRays(nX, nY, j, i);
 
             Color accumulatedColor = Color.BLACK;
@@ -168,18 +173,19 @@ public class Camera implements Cloneable {
             }
             accumulatedColor = accumulatedColor.scale(1.0 / rays.size());
             imageWriter.writePixel(j, i, accumulatedColor);
-        }
-        else {
+        } else {
             Ray ray = constructRay(nX, nY, j, i);
             Color pixelColor = rayTracer.traceRay(ray);
             imageWriter.writePixel(j, i, pixelColor);
         }
         pixelManager.pixelDone();
     }
-    
 
-    /** This function renders image's pixel color map from the scene
+
+    /**
+     * This function renders image's pixel color map from the scene
      * included in the ray tracer object
+     *
      * @return the camera object itself
      */
     public Camera renderImage() {
@@ -251,6 +257,7 @@ public class Camera implements Cloneable {
 
     /**
      * Render image using multi-threading by parallel streaming
+     *
      * @return the camera object itself
      */
 
@@ -260,8 +267,10 @@ public class Camera implements Cloneable {
                         .forEach(j -> castRay(j, i)));
         return this;
     }
+
     /**
      * Render image without multi-threading
+     *
      * @return the camera object itself
      */
     private Camera renderImageNoThreads() {
@@ -270,8 +279,10 @@ public class Camera implements Cloneable {
                 castRay(j, i);
         return this;
     }
+
     /**
      * Render image using multi-threading by creating and running raw threads
+     *
      * @return the camera object itself
      */
     private Camera renderImageRawThreads() {
@@ -285,7 +296,8 @@ public class Camera implements Cloneable {
         for (var thread : threads) thread.start();
         try {
             for (var thread : threads) thread.join();
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
         return this;
     }
 
@@ -444,6 +456,7 @@ public class Camera implements Cloneable {
          * <li>0 - multi-threading is not activated</li>
          * <li>1 and more - literally number of threads</li>
          * </ul>
+         *
          * @param threads number of threads
          * @return builder object itself
          */
@@ -461,6 +474,7 @@ public class Camera implements Cloneable {
 
         /**
          * Set debug printing interval. If it's zero - there won't be printing at all
+         *
          * @param interval printing interval in %
          * @return builder object itself
          */

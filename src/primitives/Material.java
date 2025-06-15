@@ -121,6 +121,7 @@ public class Material {
         this.nSh = nSh;
         return this;
     }
+
     /**
      * Sets the transparency attenuation coefficient (𝒌𝑻) using a {@link Double3} value.
      *

@@ -1,12 +1,16 @@
 package renderer;
 
-import static java.awt.Color.*;
-
+import geometries.Plane;
+import geometries.Sphere;
+import geometries.Triangle;
+import lighting.AmbientLight;
+import lighting.PointLight;
+import lighting.SpotLight;
 import org.junit.jupiter.api.Test;
-
-import geometries.*;
-import lighting.*;
-import primitives.*;
+import primitives.Color;
+import primitives.Material;
+import primitives.Point;
+import primitives.Vector;
 import scene.Scene;
 
 /**
@@ -16,14 +20,20 @@ import scene.Scene;
  */
 class RefinedCustomSceneTests { // Keeping the class name as it is a refinement
 
-    /** Scene for the tests */
+    /**
+     * Scene for the tests
+     */
     private final Scene scene = new Scene("Refined Custom Scene");
-    /** Camera builder for the tests */
+    /**
+     * Camera builder for the tests
+     */
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(scene, RayTracerType.SIMPLE); // Use SimpleRayTracer
 
 
-    /** Produce a custom picture with various effects, refined for clarity and softness. */
+    /**
+     * Produce a custom picture with various effects, refined for clarity and softness.
+     */
     @Test
     void myRefinedCustomScene() { // Keeping the method name
 

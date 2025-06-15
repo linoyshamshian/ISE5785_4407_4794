@@ -1,13 +1,14 @@
 package renderer;
 
-import static java.awt.Color.*;
-
-import org.junit.jupiter.api.Test;
-
 import geometries.*;
-import lighting.*;
+import lighting.AmbientLight;
+import lighting.PointLight;
+import lighting.SpotLight;
+import org.junit.jupiter.api.Test;
 import primitives.*;
 import scene.Scene;
+
+import static java.awt.Color.white;
 
 /**
  * Custom test scene demonstrating a snowman with various geometric shapes,
@@ -15,9 +16,13 @@ import scene.Scene;
  */
 class RefinedCustomSceneTests1 {
 
-    /** Scene for the tests */
+    /**
+     * Scene for the tests
+     */
     private final Scene scene = new Scene("Refined Custom Scene");
-    /** Camera builder for the tests */
+    /**
+     * Camera builder for the tests
+     */
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(scene, RayTracerType.SIMPLE); // Use SimpleRayTracer
 
@@ -371,7 +376,7 @@ class RefinedCustomSceneTests1 {
 
 
         // Bow on top - more distinct loops using cylinders for a flattened look
-        double bowBaseY = boxY + boxSize  +0.5; // Top of the box
+        double bowBaseY = boxY + boxSize + 0.5; // Top of the box
         double bowBaseZ = boxZ - boxSize / 2; // Center Z of the box
         double bowLoopRadius = 2; // Radius of the loops (thin)
 
@@ -427,13 +432,13 @@ class RefinedCustomSceneTests1 {
         double pyramidHeight = 80; // Height of the pyramid
         double pyramidBaseSide = 80; // Length of one side of the square base
 
-    // Define the base points of the square pyramid
+        // Define the base points of the square pyramid
         Point pBase1 = new Point(trunkX - pyramidBaseSide / 2, pyramidBaseY, trunkZ - pyramidBaseSide / 2); // Front-Left
         Point pBase2 = new Point(trunkX + pyramidBaseSide / 2, pyramidBaseY, trunkZ - pyramidBaseSide / 2); // Front-Right
         Point pBase3 = new Point(trunkX + pyramidBaseSide / 2, pyramidBaseY, trunkZ + pyramidBaseSide / 2); // Back-Right
         Point pBase4 = new Point(trunkX - pyramidBaseSide / 2, pyramidBaseY, trunkZ + pyramidBaseSide / 2); // Back-Left
 
-    // Define the apex (top point) of the pyramid
+        // Define the apex (top point) of the pyramid
         Point pyramidApex = new Point(trunkX, pyramidBaseY + pyramidHeight, trunkZ);
 
         Material foliageMaterial = new Material().setKD(0.6).setKS(0.2).setShininess(10);
@@ -458,7 +463,7 @@ class RefinedCustomSceneTests1 {
                         .setMaterial(foliageMaterial)
         );
 
-    // Second pyramid layer
+        // Second pyramid layer
         double topPyramidBaseY = pyramidBaseY + pyramidHeight * 0.7;
         double topPyramidHeight = pyramidHeight * 0.4;
         double topPyramidBaseSide = pyramidBaseSide * 0.5;
@@ -545,17 +550,19 @@ class RefinedCustomSceneTests1 {
 }
 
 
-
-
 /**
  * Custom test scene demonstrating a snowman with various geometric shapes,
  * materials, and lighting, adapted to the existing test framework.
  */
 class RefinedCustomSceneTests1_anti {
 
-    /** Scene for the tests */
+    /**
+     * Scene for the tests
+     */
     private final Scene scene = new Scene("Refined Custom Scene");
-    /** Camera builder for the tests */
+    /**
+     * Camera builder for the tests
+     */
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(scene, RayTracerType.SIMPLE); // Use SimpleRayTracer
 
@@ -908,7 +915,7 @@ class RefinedCustomSceneTests1_anti {
 
 
         // Bow on top - more distinct loops using cylinders for a flattened look
-        double bowBaseY = boxY + boxSize  +0.5; // Top of the box
+        double bowBaseY = boxY + boxSize + 0.5; // Top of the box
         double bowBaseZ = boxZ - boxSize / 2; // Center Z of the box
         double bowLoopRadius = 2; // Radius of the loops (thin)
 

@@ -1,31 +1,33 @@
 package renderer;
 
-import static java.awt.Color.YELLOW;
-import static primitives.Util.random;
-
-import org.junit.jupiter.api.*;
-
-import static java.lang.Math.*;
-
-import geometries.*;
+import geometries.Geometries;
+import geometries.Sphere;
+import geometries.Triangle;
 import lighting.PointLight;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import primitives.*;
-import renderer.*;
 import scene.Scene;
+
+import static java.awt.Color.YELLOW;
+import static java.lang.Math.*;
+import static primitives.Util.random;
 
 /**
  * Test rendering an image
+ *
  * @author Dan Zilberstein
  */
 class TeapotTest {
-    /** Default constructor to satisfy JavaDoc generator */
+    /**
+     * Default constructor to satisfy JavaDoc generator
+     */
     TeapotTest() { /* to satisfy JavaDoc generator */ }
 
     /**
      * Teapot without improvements
      */
     @Test
-
     void testTeapot1() {
         prepareTeapot() //
                 .build() //
@@ -82,6 +84,7 @@ class TeapotTest {
 
     /**
      * Prepare data for test that generates a teapot picture
+     *
      * @return camera builder with all the data for the test
      */
     Camera.Builder prepareTeapot() {
@@ -112,18 +115,24 @@ class TeapotTest {
                 // .setMultithreading(2) // 13.6
                 // .setMultithreading(3) // 10.7
                 // .setMultithreading(4) // 10.7
-                 .setDebugPrint(1.0) //
+                .setDebugPrint(1.0) //
                 ;
     }
 
-    /** The color of the teapot */
-    private static final Color    color    = new Color(200, 0, 0);
-    /** The material of the teapot */
+    /**
+     * The color of the teapot
+     */
+    private static final Color color = new Color(200, 0, 0);
+    /**
+     * The material of the teapot
+     */
     private static final Material material = new Material().setKD(0.5).setKS(0.5).setShininess(60);
 
-    /** The vertices point list in the teapot's triangle mesh */
-    private static Point[]        points   = new Point[]
-            { null,                                                                                     //
+    /**
+     * The vertices point list in the teapot's triangle mesh
+     */
+    private static Point[] points = new Point[]
+            {null,                                                                                     //
                     new Point(40.6266, 28.3457, -1.10804),                                                    //
                     new Point(40.0714, 30.4443, -1.10804),                                                    //
                     new Point(40.7155, 31.1438, -1.10804),                                                    //
@@ -658,6 +667,7 @@ class TeapotTest {
 
     /**
      * Produce a scene with a 3D model of the teapot
+     *
      * @param scene the scene data container
      */
     private void addTeapotToScene(Scene scene) {
@@ -1657,35 +1667,62 @@ class TeapotTest {
         );
     }
 
-    /** the field is used for creating the bubbles from the teapot */
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
     private static Geometries bubbles;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     coneX;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     coneY;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     coneZ;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     radiusAtOne;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     maxConeHeight;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     minBubbleRadius;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     maxBubbleRadius;
-    /** the field is used for creating the bubbles from the teapot */
-    private static Double3    bubbleKS;
-    /** the field is used for creating the bubbles from the teapot */
-    private static Double3    bubbleKT;
-    /** the field is used for creating the bubbles from the teapot */
-    private static Double3    bubbleKR;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     bubbleMinKD;
-    /** the field is used for creating the bubbles from the teapot */
-    private static double     bubbleMaxKD;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double coneX;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double coneY;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double coneZ;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double radiusAtOne;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double maxConeHeight;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double minBubbleRadius;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double maxBubbleRadius;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static Double3 bubbleKS;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static Double3 bubbleKT;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static Double3 bubbleKR;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double bubbleMinKD;
+    /**
+     * the field is used for creating the bubbles from the teapot
+     */
+    private static double bubbleMaxKD;
 
     /**
      * Set the cone for generating bubbles from the teapot
+     *
      * @param x         X coordinate for the cone top
      * @param y         Y coordinate for the cone top
      * @param z         Z coordinate for the cone top
@@ -1693,15 +1730,16 @@ class TeapotTest {
      * @param maxHeight maximum height in the cone for generating the bubbles
      */
     private static void setCone(double x, double y, double z, double r, double maxHeight) {
-        coneX         = x;
-        coneY         = y;
-        coneZ         = z;
-        radiusAtOne   = r;
+        coneX = x;
+        coneY = y;
+        coneZ = z;
+        radiusAtOne = r;
         maxConeHeight = maxHeight;
     }
 
     /**
      * Setter for minimal and maximal size of the bubbles
+     *
      * @param min minimal size
      * @param max maximal size
      */
@@ -1712,6 +1750,7 @@ class TeapotTest {
 
     /**
      * Setter for bubble material parameters
+     *
      * @param minKD minimal diffusive factor
      * @param maxKD maximal diffusive factor
      * @param ks    specular factor
@@ -1721,33 +1760,35 @@ class TeapotTest {
     private static void setBubbleMaterial(double minKD, double maxKD, double ks, double kr, double kt) {
         bubbleMinKD = minKD;
         bubbleMaxKD = maxKD;
-        bubbleKS    = new Double3(ks);
-        bubbleKR    = new Double3(kr);
-        bubbleKT    = new Double3(kt);
+        bubbleKS = new Double3(ks);
+        bubbleKR = new Double3(kr);
+        bubbleKT = new Double3(kt);
     }
 
     /**
      * Generate a bubble
-     * @param  y the height in cone for the center of the bubble
-     * @return   the bubble sphere
+     *
+     * @param y the height in cone for the center of the bubble
+     * @return the bubble sphere
      */
     private static Sphere getRandomBubble(double y) {
-        double  coneR    = y * radiusAtOne;
-        double  randomR  = random(0, coneR);
-        double  angle    = random(0, 2 * PI);
-        double  x        = randomR * cos(angle);
-        double  z        = randomR * sin(angle);
-        Point   o        = new Point(coneX + x, coneY + y, coneZ + z);
-        double  r        = random(minBubbleRadius, maxBubbleRadius);
-        Double3 kd       = new Double3(random(bubbleMinKD, bubbleMaxKD),                            //
+        double coneR = y * radiusAtOne;
+        double randomR = random(0, coneR);
+        double angle = random(0, 2 * PI);
+        double x = randomR * cos(angle);
+        double z = randomR * sin(angle);
+        Point o = new Point(coneX + x, coneY + y, coneZ + z);
+        double r = random(minBubbleRadius, maxBubbleRadius);
+        Double3 kd = new Double3(random(bubbleMinKD, bubbleMaxKD),                            //
                 random(bubbleMinKD, bubbleMaxKD),                            //
                 random(bubbleMinKD, bubbleMaxKD));
-        var     material = new Material().setKD(kd).setKS(bubbleKS).setKR(bubbleKR).setKT(bubbleKT);
+        var material = new Material().setKD(kd).setKS(bubbleKS).setKR(bubbleKR).setKT(bubbleKT);
         return (Sphere) new Sphere(o, r).setMaterial(material);
     }
 
     /**
      * Create a composite geometry containing the bubbles (generate the bubbles)
+     *
      * @param amount amount of bubbles to generate
      */
     private static void prepareBubbles(int amount) {

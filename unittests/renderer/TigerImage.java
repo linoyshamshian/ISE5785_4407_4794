@@ -3,18 +3,18 @@ package renderer;
 import geometries.Triangle;
 import lighting.AmbientLight;
 import lighting.PointLight;
+import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Material;
 import primitives.Point;
 import primitives.Vector;
-import org.junit.jupiter.api.Test;
 import scene.Scene;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TigerImage {
@@ -26,14 +26,20 @@ public class TigerImage {
     private static final String TEXT_FILE_PATH =
             "C:\\Users\\chenb\\PycharmProjects\\PythonProject1\\triangles_data.txt";
 
-    /** גודל מישור-התצוגה (Viewport) – 800×800 פיקסלים */
+    /**
+     * גודל מישור-התצוגה (Viewport) – 800×800 פיקסלים
+     */
     private static final int VIEWPORT_SIZE = 1000;      // גם רוחב וגם גובה
     private static final int IMAGE_RESOLUTION = 1000;   // רזולוציית פלט
 
-    /** שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך) */
+    /**
+     * שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך)
+     */
     private static final double SAFETY_MARGIN = 0.98;
 
-    /** Z קבוע למישור שבו מונחים המשולשים */
+    /**
+     * Z קבוע למישור שבו מונחים המשולשים
+     */
     private static final double Z_PLANE = 0.01;
 
     @Test
@@ -58,13 +64,13 @@ public class TigerImage {
             String[] p = line.split(",");
             if (p.length != 12) continue; // שורה לא תקינה
 
-            double[] xs = { Double.parseDouble(p[0].trim()),
+            double[] xs = {Double.parseDouble(p[0].trim()),
                     Double.parseDouble(p[3].trim()),
-                    Double.parseDouble(p[6].trim()) };
+                    Double.parseDouble(p[6].trim())};
 
-            double[] ys = { Double.parseDouble(p[1].trim()),
+            double[] ys = {Double.parseDouble(p[1].trim()),
                     Double.parseDouble(p[4].trim()),
-                    Double.parseDouble(p[7].trim()) };
+                    Double.parseDouble(p[7].trim())};
 
             for (double x : xs) {
                 minX = Math.min(minX, x);
@@ -76,7 +82,7 @@ public class TigerImage {
             }
         }
 
-        double originalWidth  = maxX - minX;
+        double originalWidth = maxX - minX;
         double originalHeight = maxY - minY;
 
         /* ---------------------------------------------------------
@@ -109,7 +115,7 @@ public class TigerImage {
             // המרת שלוש נקודות
             Point[] pts = new Point[3];
             for (int i = 0; i < 3; i++) {
-                double x = v.get(i * 3    );
+                double x = v.get(i * 3);
                 double y = v.get(i * 3 + 1);
 
                 // Y inversion (כיוון תשובות)
@@ -150,7 +156,7 @@ public class TigerImage {
                 .setVpDistance(VIEWPORT_SIZE)
                 .setVpSize(VIEWPORT_SIZE, VIEWPORT_SIZE)
                 .setResolution(IMAGE_RESOLUTION, IMAGE_RESOLUTION)
-                .setBlackboard(new Blackboard(5))
+//                .setBlackboard(new Blackboard(5))
                 .setMultithreading(3)
                 .setDebugPrint(1.0)
                 .build()
@@ -160,7 +166,3 @@ public class TigerImage {
         System.out.println("Finished – check 'polyArtRender_Full_NoBorder.png'");
     }
 }
-
-
-
-
