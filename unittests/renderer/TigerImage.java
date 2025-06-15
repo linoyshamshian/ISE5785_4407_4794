@@ -23,8 +23,7 @@ public class TigerImage {
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(scene, RayTracerType.SIMPLE);
 
-    private static final String TEXT_FILE_PATH =
-            "C:\\Users\\chenb\\PycharmProjects\\PythonProject1\\triangles_data.txt";
+    private static final String TEXT_FILE_PATH = "python_code/triangles_data.txt";
 
     /**
      * גודל מישור-התצוגה (Viewport) – 800×800 פיקסלים
@@ -157,11 +156,14 @@ public class TigerImage {
                 .setVpSize(VIEWPORT_SIZE, VIEWPORT_SIZE)
                 .setResolution(IMAGE_RESOLUTION, IMAGE_RESOLUTION)
 //                .setBlackboard(new Blackboard(5))
+                .setUseAdaptiveSuperSampling(true)
+                .setAssMaxDepth(4)
+                .setAssTolerance(7.5)
                 .setMultithreading(3)
                 .setDebugPrint(1.0)
                 .build()
                 .renderImage()
-                .writeToImage("polyArtRender_Full_NoBorder_with_anti_thread");
+                .writeToImage("polyArtRender_Full_NoBorder_with_ass");
 
         System.out.println("Finished – check 'polyArtRender_Full_NoBorder.png'");
     }
