@@ -7,6 +7,7 @@ package primitives;
  * light's colors
  *
  * @author Dan Zilberstein
+ * we added a function that calculate differences between colors (colorDistance(Color c1, Color c2)).
  */
 public class Color {
     /**
@@ -126,6 +127,22 @@ public class Color {
     public Color reduce(int k) {
         if (k < 1) throw new IllegalArgumentException("Can't scale a color by a by a number lower than 1");
         return new Color(rgb.reduce(k));
+    }
+
+    /**
+     * Calculates the Euclidean distance between two colors in RGB space.
+     *
+     * @param c1 The first color.
+     * @param c2 The second color.
+     * @return The Euclidean distance between c1 and c2.
+     */
+    public static double colorDistance(Color c1, Color c2) {
+        java.awt.Color awt1 = c1.getColor();
+        java.awt.Color awt2 = c2.getColor();
+        double dr = awt1.getRed() - awt2.getRed();
+        double dg = awt1.getGreen() - awt2.getGreen();
+        double db = awt1.getBlue() - awt2.getBlue();
+        return Math.sqrt(dr * dr + dg * dg + db * db);
     }
 
     @Override

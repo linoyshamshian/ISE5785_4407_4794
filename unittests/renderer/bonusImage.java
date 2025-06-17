@@ -664,10 +664,18 @@ class RefinedCustomSceneTests1_anti {
                 .setDirection(new Point(0, 0, 40), new Vector(0, 1, 0))
                 .setVpDistance(150)
                 .setVpSize(200, 200)
-                .setResolution(800, 800)
+                .setResolution(2000, 2000)
+//                .setBlackboard(new Blackboard(9))
+                .setUseAdaptiveSuperSampling(true)
+                .setAssMaxDepth(4)
+                .setAssTolerance(7)
+                .setMultithreading(-2)
+                .setDebugPrint(1)
                 .build()
                 .renderImage()
-                .writeToImage("myRefinedCustomSceneRender_v3"); // New output file name
+                .writeToImage("shapes_with_aa"); // New output file name
+
+        System.out.println("shapes_with_aa");
     }
 
 
