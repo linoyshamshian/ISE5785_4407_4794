@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.stream.IntStream;
 
+import static primitives.Color.colorDistance;
 import static primitives.Util.isZero;
 
 /**
@@ -182,9 +183,6 @@ public class Camera implements Cloneable {
 //        }
 //        pixelManager.pixelDone();
 //    }
-
-
-
     private void castRay(int j, int i) {
         if (useAdaptiveSuperSampling) {
             Point pixelCenter = getPixelCenter(nX, nY, j, i);
@@ -285,21 +283,21 @@ public class Camera implements Cloneable {
      * Adaptive Super Sampling for a single pixel.
      * Recursively subdivides the pixel and samples only where needed.
      *
-     * @param center The 3D center of the pixel/sub-pixel
-     * @param right  The right vector (scaled to sub-pixel width)
-     * @param up     The up vector (scaled to sub-pixel height)
-     * @param depth  Current recursion depth
-     * @param maxDepth Max recursion depth (settable from test)
+     * @param center    The 3D center of the pixel/sub-pixel
+     * @param right     The right vector (scaled to sub-pixel width)
+     * @param up        The up vector (scaled to sub-pixel height)
+     * @param depth     Current recursion depth
+     * @param maxDepth  Max recursion depth (settable from test)
      * @param tolerance Color difference threshold (settable from test)
      * @return The averaged color for the pixel/sub-pixel
      */
     private Color adaptiveSuperSample(Point center, Vector right, Vector up, int depth, int maxDepth, double tolerance) {
         // Sample 4 corners and the center
         Point[] points = {
-                center.add(right.scale(-0.5)).add(up.scale(-0.5)), // top-left
-                center.add(right.scale(0.5)).add(up.scale(-0.5)),  // top-right
-                center.add(right.scale(-0.5)).add(up.scale(0.5)),  // bottom-left
-                center.add(right.scale(0.5)).add(up.scale(0.5))   // bottom-right
+                center.add(right.scale(-0.5)).add(up.scale(-0.5)), // bottom-left
+                center.add(right.scale(0.5)).add(up.scale(-0.5)),  // bottom-right
+                center.add(right.scale(-0.5)).add(up.scale(0.5)),  // top-left
+                center.add(right.scale(0.5)).add(up.scale(0.5))    // top-right
         };
 
         Color[] colors = new Color[4];
@@ -308,22 +306,22 @@ public class Camera implements Cloneable {
             colors[i] = rayTracer.traceRay(ray);
         }
 
-        // Check if all colors are "similar" (within tolerance)
+        // If all corner colors are "similar" (within tolerance) or we've reached the maximum recursion depth,
+        // return the average color for this region.
         if (isUniform(colors, tolerance) || depth >= maxDepth) {
-            // Return average color
             return average(colors);
         }
 
-        // Subdivide: 4 sub-quadrants (each is a quarter of the area)
+        // Otherwise, subdivide the region into 4 sub-quadrants and recursively sample each.
         Color[] subColors = new Color[4];
         Vector halfRight = right.scale(0.5);
         Vector halfUp = up.scale(0.5);
         // Centers of 4 sub-pixels (quarter pixels)
         Point[] subCenters = {
-                center.add(right.scale(-0.25)).add(up.scale(-0.25)), // top-left
-                center.add(right.scale(0.25)).add(up.scale(-0.25)),  // top-right
-                center.add(right.scale(-0.25)).add(up.scale(0.25)),  // bottom-left
-                center.add(right.scale(0.25)).add(up.scale(0.25))    // bottom-right
+                center.add(right.scale(-0.25)).add(up.scale(-0.25)), // bottom-left
+                center.add(right.scale(0.25)).add(up.scale(-0.25)),  // bottom-right
+                center.add(right.scale(-0.25)).add(up.scale(0.25)),  // top-left
+                center.add(right.scale(0.25)).add(up.scale(0.25))    // top-right
         };
         for (int i = 0; i < 4; i++) {
             subColors[i] = adaptiveSuperSample(subCenters[i], halfRight, halfUp, depth + 1, maxDepth, tolerance);
@@ -333,25 +331,28 @@ public class Camera implements Cloneable {
 
     /**
      * Checks if all colors in the array are within the given tolerance.
+     * <p>
+     * Tolerance meaning:
+     * - High tolerance = less sensitive, fewer recursions, faster rendering, but less sharp edges.
+     * - Low tolerance  = more sensitive, more recursions, slower rendering, but higher edge quality.
+     *
+     * @param colors    Array of Color objects to compare.
+     * @param tolerance Maximum allowed color distance for colors to be considered "similar".
+     * @return true if all color pairs are within the tolerance, false otherwise.
      */
     private boolean isUniform(Color[] colors, double tolerance) {
-        for (int i = 0; i < colors.length; i++) {
-            for (int j = i + 1; j < colors.length; j++) {
-                java.awt.Color c1 = colors[i].getColor();
-                java.awt.Color c2 = colors[j].getColor();
-                double dr = c1.getRed() - c2.getRed();
-                double dg = c1.getGreen() - c2.getGreen();
-                double db = c1.getBlue() - c2.getBlue();
-                double dist = Math.sqrt(dr * dr + dg * dg + db * db);
-                if (dist > tolerance)
+        for (int i = 0; i < colors.length; i++)
+            for (int j = i + 1; j < colors.length; j++)
+                if (colorDistance(colors[i], colors[j]) > tolerance)
                     return false;
-            }
-        }
         return true;
     }
 
     /**
      * Returns the average color from an array of colors.
+     *
+     * @param colors Array of Color objects.
+     * @return The average color.
      */
     private Color average(Color[] colors) {
         Color sum = Color.BLACK;
