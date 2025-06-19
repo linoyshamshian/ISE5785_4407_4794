@@ -228,7 +228,6 @@
 
 <img src="final_images/Moon_Texture.png" width="320" alt="תוצאה של הירח בלבד" />
 
----
 
 ### דוגמה לתמונה סופית מהסצנה
 
