@@ -105,12 +105,12 @@ class PixelManager {
 
             ++cCol;
             if (cCol < maxCols)
-                return new Pixel(cRow, cCol);
+                return new Pixel(cCol, cRow);
 
             cCol = 0;
             ++cRow;
             if (cRow < maxRows)
-                return new Pixel(cRow, cCol);
+                return new Pixel(cCol, cRow);
         }
         return null;
     }
