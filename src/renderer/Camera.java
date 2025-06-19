@@ -119,7 +119,6 @@ public class Camera implements Cloneable {
         } else {
             direction = pIJ.subtract(p0).normalize();
         }
-//        Vector v = pIJ.subtract(p0).normalize();
         return new Ray(p0, direction);
     }
 
@@ -166,43 +165,25 @@ public class Camera implements Cloneable {
      * @param j column index of the pixel
      * @param i row index of the pixel
      */
-//    private void castRay(int j, int i) {
-//        if (blackboard.isEnabled()) {
-//            List<Ray> rays = constructBeamRays(nX, nY, j, i);
-//
-//            Color accumulatedColor = Color.BLACK;
-//            for (Ray ray : rays) {
-//                accumulatedColor = accumulatedColor.add(rayTracer.traceRay(ray));
-//            }
-//            accumulatedColor = accumulatedColor.scale(1.0 / rays.size());
-//            imageWriter.writePixel(j, i, accumulatedColor);
-//        } else {
-//            Ray ray = constructRay(nX, nY, j, i);
-//            Color pixelColor = rayTracer.traceRay(ray);
-//            imageWriter.writePixel(j, i, pixelColor);
-//        }
-//        pixelManager.pixelDone();
-//    }
     private void castRay(int j, int i) {
+        Color color;
         if (useAdaptiveSuperSampling) {
             Point pixelCenter = getPixelCenter(nX, nY, j, i);
             Vector pixelRight = vRight.scale(width / nX);
             Vector pixelUp = vUp.scale(height / nY);
-            Color color = adaptiveSuperSample(pixelCenter, pixelRight, pixelUp, 0, assMaxDepth, assTolerance);
-            imageWriter.writePixel(j, i, color);
+            color = adaptiveSuperSample(pixelCenter, pixelRight, pixelUp, 0, assMaxDepth, assTolerance);
         } else if (blackboard.isEnabled()) {
             List<Ray> rays = constructBeamRays(nX, nY, j, i);
-            Color accumulatedColor = Color.BLACK;
+            color = Color.BLACK;
             for (Ray ray : rays) {
-                accumulatedColor = accumulatedColor.add(rayTracer.traceRay(ray));
+                color = color.add(rayTracer.traceRay(ray));
             }
-            accumulatedColor = accumulatedColor.scale(1.0 / rays.size());
-            imageWriter.writePixel(j, i, accumulatedColor);
+            color = color.scale(1.0 / rays.size());
         } else {
             Ray ray = constructRay(nX, nY, j, i);
-            Color pixelColor = rayTracer.traceRay(ray);
-            imageWriter.writePixel(j, i, pixelColor);
+            color = rayTracer.traceRay(ray);
         }
+        imageWriter.writePixel(j, i, color);
         pixelManager.pixelDone();
     }
 
@@ -220,7 +201,6 @@ public class Camera implements Cloneable {
             default -> renderImageRawThreads();
         };
     }
-
 
     /**
      * Draws a grid over the image by first filling the background
@@ -245,10 +225,8 @@ public class Camera implements Cloneable {
                 imageWriter.writePixel(j, i, color);
             }
         }
-
         return this;
     }
-
 
     /**
      * Writes the image to disk.
