@@ -1,202 +1,3 @@
-//package renderer;
-//
-//import geometries.Sphere;
-//import geometries.Triangle;
-//import lighting.AmbientLight;
-//import lighting.PointLight;
-//import org.junit.jupiter.api.Test;
-//import primitives.Color;
-//import primitives.Material;
-//import primitives.Point;
-//import primitives.Vector;
-//import scene.Scene;
-//
-//import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
-//import java.util.Arrays;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//public class FinalImage {
-//
-//    private final Scene scene = new Scene("Poly Art Auto-Fit");
-//    private final Camera.Builder cameraBuilder = Camera.getBuilder()
-//            .setRayTracer(scene, RayTracerType.SIMPLE);
-//
-//    private static final String TEXT_FILE_PATH = "C:\\Users\\chenb\\PycharmProjects\\PythonProject1\\full_mountain.txt";
-//
-//    /**
-//     * גודל מישור-התצוגה (Viewport) – 800×800 פיקסלים
-//     */
-//    private static final int VIEWPORT_SIZE = 1000;      // גם רוחב וגם גובה
-//    private static final int IMAGE_RESOLUTION = 1000;   // רזולוציית פלט
-//
-//    /**
-//     * שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך)
-//     */
-//    private static final double SAFETY_MARGIN = 1.0; // Set to 1.0 to attempt to fill the image
-//
-//    /**
-//     * Z קבוע למישור שבו מונחים המשולשים
-//     */
-//    private static final double Z_PLANE = 0.01;
-//
-//    @Test
-//    void renderPolyArtFromText() throws IOException {
-//        /* ---------------------------------------------------------
-//         * 1. קריאת כל השורות מהקובץ
-//         * --------------------------------------------------------- */
-//        List<String> lines = Files.readAllLines(Paths.get(TEXT_FILE_PATH));
-//        if (lines.isEmpty()) {
-//            System.err.println("No triangle data found – exiting");
-//            return;
-//        }
-//
-//        /* ---------------------------------------------------------
-//         * 2. מעבר ראשון: חישוב גבולות   (min/max)
-//         * --------------------------------------------------------- */
-//        double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE;
-//        double minY = Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
-//
-//        for (String line : lines) {
-//            if (line.trim().isEmpty() || line.trim().startsWith("#")) continue;
-//            String[] p = line.split(",");
-//            if (p.length != 12) continue; // שורה לא תקינה
-//
-//            double[] xs = {Double.parseDouble(p[0].trim()),
-//                    Double.parseDouble(p[3].trim()),
-//                    Double.parseDouble(p[6].trim())};
-//
-//            double[] ys = {Double.parseDouble(p[1].trim()),
-//                    Double.parseDouble(p[4].trim()),
-//                    Double.parseDouble(p[7].trim())};
-//
-//            for (double x : xs) {
-//                minX = Math.min(minX, x);
-//                maxX = Math.max(maxX, x);
-//            }
-//            for (double y : ys) {
-//                minY = Math.min(minY, y);
-//                maxY = Math.max(maxY, y);
-//            }
-//        }
-//
-//        double originalWidth = maxX - minX;
-//        double originalHeight = maxY - minY;
-//
-//        /* ---------------------------------------------------------
-//         * 3. חישוב Scale-Factor + Center Offset
-//         * --------------------------------------------------------- */
-//        double scaleX = VIEWPORT_SIZE / originalWidth;
-//        double scaleY = VIEWPORT_SIZE / originalHeight;
-//        double scale = SAFETY_MARGIN * Math.min(scaleX, scaleY); // Keep min to avoid cutting off parts
-//
-//        double offsetX = -((minX + maxX) / 2.0) * scale;
-//        double offsetY = -((minY + maxY) / 2.0) * scale;
-//
-//        /* ---------------------------------------------------------
-//         * 4. יצירת המשולשים – מעבר שני
-//         * --------------------------------------------------------- */
-//        Material triMat = new Material().setKD(0.6).setKS(0.2).setShininess(10);
-//
-//        int added = 0;
-//        for (String line : lines) {
-//            if (line.trim().isEmpty() || line.trim().startsWith("#")) continue;
-//            String[] p = line.split(",");
-//            if (p.length != 12) continue;
-//
-//            List<Integer> v = Arrays.stream(p).map(String::trim)
-//                    .map(Integer::parseInt).collect(Collectors.toList());
-//
-//            // המרת שלוש נקודות
-//            Point[] pts = new Point[3];
-//            for (int i = 0; i < 3; i++) {
-//                double x = v.get(i * 3);
-//                double y = v.get(i * 3 + 1);
-//
-//                // Y inversion (כיוון תשובות)
-//                y = maxY - (y - minY);        // הופכים בתוך תחום המקור
-//
-//                pts[i] = new Point(
-//                        x * scale + offsetX,
-//                        y * scale + offsetY,
-//                        Z_PLANE
-//                );
-//            }
-//
-//            Color col = new Color(v.get(9), v.get(10), v.get(11));
-//            scene.geometries.add(new Triangle(pts[0], pts[1], pts[2])
-//                    .setMaterial(triMat)
-//                    .setEmission(col));
-//            added++;
-//        }
-//        System.out.printf("Added %,d triangles%n", added);
-//
-//        // Sphere positioning and size adjustments
-//        Color dotColor = new Color(255, 0, 0); // Red color
-//        // Adjust px for top-left, py for top-left
-//        double px = -VIEWPORT_SIZE * 0.45; // Move significantly left (adjust as needed)
-//        double py = VIEWPORT_SIZE * 0.45;  // Move significantly up (adjust as needed)
-//        double pz = Z_PLANE;               // Keep at the same Z as the triangles
-//
-//        double dotRadius = 35;             // Keeps it large
-//        scene.geometries.add(
-//                new Sphere(new Point(px, py, pz), dotRadius)
-//                        .setEmission(dotColor)
-//                        .setMaterial(new Material().setKD(0).setKS(0).setShininess(0))
-//        );
-//        /* ---------------------------------------------------------
-//         * 5. רקע שחור ותאורה
-//         * --------------------------------------------------------- */
-//        scene.setBackground(new Color(0, 0, 0));                       // רקע מוחלט שחור
-//        scene.setAmbientLight(new AmbientLight(new Color(20, 20, 20)));
-//
-//        scene.lights.add(
-//                new PointLight(new Color(150, 150, 150),
-//                        new Point(0, 0, VIEWPORT_SIZE * 2))
-//                        .setKl(0.0008).setKq(0.00003));
-//
-//        /* ---------------------------------------------------------
-//         * 6. מצלמה
-//         * --------------------------------------------------------- */
-//        // Calculate viewport dimensions to match original data aspect ratio
-//        double cameraVpWidth;
-//        double cameraVpHeight;
-//
-//        // Determine which dimension is the bottleneck based on aspect ratio
-//        if (originalWidth / originalHeight > 1.0) { // Wider than tall
-//            cameraVpWidth = VIEWPORT_SIZE;
-//            cameraVpHeight = VIEWPORT_SIZE * (originalHeight / originalWidth);
-//        } else { // Taller than wide or square
-//            cameraVpWidth = VIEWPORT_SIZE * (originalWidth / originalHeight);
-//            cameraVpHeight = VIEWPORT_SIZE;
-//        }
-//
-//        cameraBuilder
-//                .setLocation(new Point(0, 0, VIEWPORT_SIZE))            // Z = 800
-//                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
-//                // Use calculated cameraVpWidth and cameraVpHeight
-//                .setVpDistance(VIEWPORT_SIZE)
-//                .setVpSize(cameraVpWidth, cameraVpHeight) // Adjust viewport size to match content aspect ratio
-//                .setResolution(IMAGE_RESOLUTION, IMAGE_RESOLUTION)
-////                .setBlackboard(new Blackboard(5))
-////                .setUseAdaptiveSuperSampling(true)
-////                .setAssMaxDepth(4)
-////                .setAssTolerance(7.5)
-//                .setMultithreading(-2)
-//                .setDebugPrint(1.0)
-//                .build()
-//                .renderImage()
-//                .writeToImage("Mountains");
-//
-//        System.out.println("Finished – check 'Mountains.png'");
-//    }
-//}
-
-
-
-
 package renderer;
 
 import geometries.Sphere;
@@ -226,16 +27,18 @@ public class FinalImage {
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(scene, RayTracerType.SIMPLE);
 
-    private static final String TEXT_FILE_PATH = "C:\\Users\\chenb\\PycharmProjects\\PythonProject1\\full_mountain.txt";
-    private static final String MOON_TEXTURE_PATH = "C:\\Users\\chenb\\Downloads\\moon.png";
+    private static final String TEXT_FILE_PATH = "C:\\Users\\linoy\\Downloads\\full_mountain.txt";
+    private static final String MOON_TEXTURE_PATH = "C:\\Users\\linoy\\Downloads\\moon.png";
 
     // Output image resolution
     private static final int IMAGE_RESOLUTION_WIDTH = 1000;
-    private static final int IMAGE_RESOLUTION_HEIGHT = 1000;
+    private static final int IMAGE_RESOLUTION_HEIGHT = 1300;
+    private static final double VIEWPORT_BASE_SIZE = 1300;
+
 
     // Base size for viewport distance (can be same as resolution for 1:1 pixel mapping)
     // This value often influences the "zoom" level and should be consistent with how the scene is perceived
-    private static final double VIEWPORT_BASE_SIZE = 1000;
+//    private static final double VIEWPORT_BASE_SIZE = 1000;
 
     /**
      * שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך)
@@ -299,7 +102,6 @@ public class FinalImage {
         double originalAspectRatio = originalWidth / originalHeight;
         // Calculate aspect ratio of the target image resolution
         double targetAspectRatio = (double) IMAGE_RESOLUTION_WIDTH / IMAGE_RESOLUTION_HEIGHT;
-
         /* ---------------------------------------------------------
          * 3. חישוב Scale-Factor + Center Offset
          * This scaling should ensure the mountain fits the *viewport*,
@@ -413,8 +215,14 @@ public class FinalImage {
                 double phi = u * 2 * Math.PI;
 
                 double sinTheta = Math.sin(theta);
-                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(phi);
-                double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(theta);
+//                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(phi);
+
+                double aspectFix = effectiveViewportWidth / effectiveViewportHeight;
+                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(phi) / aspectFix;
+                double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(theta) + 1;
+
+
+//                double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(theta);
                 double pz = moonCenter.xyz.d3() + MOON_RADIUS * sinTheta * Math.sin(phi);
 
                 Color dotColor = new Color(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
@@ -427,6 +235,8 @@ public class FinalImage {
             }
         }
         System.out.println("Moon added using image-based dot texture.");
+
+
 
 
         /* ---------------------------------------------------------
