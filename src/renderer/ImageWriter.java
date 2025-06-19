@@ -29,7 +29,7 @@ final class ImageWriter {
      * Directory path for the image file generation - relative to the user
      * directory
      */
-    private static final String FOLDER_PATH = System.getProperty("user.dir") + "/images";
+    private static final String FOLDER_PATH = System.getProperty("user.dir") + "/final_images";
 
     /**
      * Image generation buffer (the matrix of the pixels)
