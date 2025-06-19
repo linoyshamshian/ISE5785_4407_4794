@@ -480,6 +480,4 @@ class LightsTests {
                 .renderImage() //
                 .writeToImage("lightTubeSpot");
     }
-
-
 }
