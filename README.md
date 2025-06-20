@@ -167,7 +167,7 @@
   </li>
   <li>
     <b>תיקון זווית, אך המצלמה רחוקה מדי:</b><br>
-    <img src=final_images/small_tiger.png" width="320" alt="מצלמה רחוקה מדי" />
+    <img src="final_images/small_tiger.png" width="320" alt="מצלמה רחוקה מדי" />
   </li>
   <li>
     <b>הפלט הסופי – מצלמה ואובייקטים ממוקמים נכון:</b><br>
