@@ -163,11 +163,11 @@
 <ol dir="rtl">
   <li>
     <b>תמונה ראשונית – מצלמה בזווית לא נכונה:</b><br>
-    <img src="python_code/tiger_camera_above.png" width="320" alt="מצלמה בזווית לא נכונה" />
+    <img src="final_images/tiger_camera_above.png" width="320" alt="מצלמה בזווית לא נכונה" />
   </li>
   <li>
     <b>תיקון זווית, אך המצלמה רחוקה מדי:</b><br>
-    <img src="python_code/small_tiger.png" width="320" alt="מצלמה רחוקה מדי" />
+    <img src=final_images/small_tiger.png" width="320" alt="מצלמה רחוקה מדי" />
   </li>
   <li>
     <b>הפלט הסופי – מצלמה ואובייקטים ממוקמים נכון:</b><br>
