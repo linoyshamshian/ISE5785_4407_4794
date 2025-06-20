@@ -237,7 +237,7 @@
 
 ### דוגמה לתמונה סופית מהסצנה
 
-<img src="ffinal_images/Mountains_and_Moon_ASS.png" width="320" alt="נוף הררי עם ירח" />
+<img src="final_images/Mountains_and_Moon_ASS.png" width="320" alt="נוף הררי עם ירח" />
 
 ---
 
