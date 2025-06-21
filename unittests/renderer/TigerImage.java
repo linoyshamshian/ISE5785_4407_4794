@@ -155,15 +155,15 @@ public class TigerImage {
                 .setVpDistance(VIEWPORT_SIZE)
                 .setVpSize(VIEWPORT_SIZE, VIEWPORT_SIZE)
                 .setResolution(IMAGE_RESOLUTION, IMAGE_RESOLUTION)
-//                .setBlackboard(new Blackboard(5))
-                .setUseAdaptiveSuperSampling(true)
-                .setAssMaxDepth(4)
-                .setAssTolerance(7)
+                .setBlackboard(new Blackboard(17))
+//                .setUseAdaptiveSuperSampling(true)
+//                .setAssMaxDepth(4)
+//                .setAssTolerance(7)
                 .setMultithreading(-2)
                 .setDebugPrint(1.0)
                 .build()
                 .renderImage()
-                .writeToImage("Tiger_ASS");
+                .writeToImage("Tiger_AA");
 
         System.out.println("Finished – check 'polyArtRender.png'");
     }
