@@ -89,17 +89,18 @@ public class FinalImage {
         double originalWidth = maxX - minX;
         double originalHeight = maxY - minY;
 
-        // Calculate aspect ratio of the mountain data
-        double originalAspectRatio = originalWidth / originalHeight;
-
+        //----In case we do not define the width----
         // Ensure originalHeight is not zero to prevent division by zero
         if (originalHeight == 0) {
             System.err.println("Error: originalHeight is zero, cannot calculate aspect ratio correctly.");
             originalHeight = 1; // Prevent division by zero
         }
+        // Calculate aspect ratio of the mountain data
+        double originalAspectRatio = originalWidth / originalHeight;
 
         // Calculate IMAGE_RESOLUTION_WIDTH, ensuring it's at least 1 pixel wide
         int IMAGE_RESOLUTION_WIDTH = (int) Math.max(1, Math.round(originalAspectRatio * IMAGE_RESOLUTION_HEIGHT));
+        //---- ----
 
         // Calculate aspect ratio of the target image resolution
         double targetAspectRatio = (double) IMAGE_RESOLUTION_WIDTH / IMAGE_RESOLUTION_HEIGHT;
@@ -115,10 +116,8 @@ public class FinalImage {
             effectiveViewportHeight = VIEWPORT_BASE_SIZE; // Fit by height
             overallScaleFactor = effectiveViewportHeight / originalHeight;
         }
-
         // Apply safety margin to the overall scale factor
         overallScaleFactor *= SAFETY_MARGIN;
-
         // Recalculate effective viewport dimensions after applying overallScaleFactor
         effectiveViewportWidth = originalWidth * overallScaleFactor;
         effectiveViewportHeight = originalHeight * overallScaleFactor;
@@ -140,6 +139,7 @@ public class FinalImage {
             String[] p = line.split(",");
             if (p.length != 12) continue;
 
+            //Convert the values to numbers
             List<Integer> v = Arrays.stream(p).map(String::trim)
                     .map(Integer::parseInt).collect(Collectors.toList());
 
@@ -150,6 +150,7 @@ public class FinalImage {
                 double y = v.get(i * 3 + 1);
 
                 // Y inversion (coordinate system adjustment)
+                // Flip Y coordinate to match image coordinate system where Y=0 is top
                 y = maxY - (y - minY);
 
                 pts[i] = new Point(
@@ -190,28 +191,45 @@ public class FinalImage {
 
         double dotRadius = MOON_RADIUS * MOON_DOT_RADIUS_FACTOR;
 
+        // Loop over the vertical pixels of the moon texture image with a step to sample points
         for (int y = 0; y < textureHeight; y += MOON_DOT_SAMPLING_STEP) {
+            // Normalize y to [0,1] range
             double v = (double) y / textureHeight;
-            double theta = v * Math.PI;
+            // Convert normalized y to polar angle phi (0 to PI)
+            double phi = v * Math.PI;
 
+            // Loop over the horizontal pixels of the moon texture image with a step
             for (int x = 0; x < textureWidth; x += MOON_DOT_SAMPLING_STEP) {
+                // Get the RGB color of the current pixel
                 int rgb = moonTexture.getRGB(x, y);
                 java.awt.Color awtColor = new java.awt.Color(rgb);
 
+                // Skip very dark pixels (assumed background)
                 if (awtColor.getRed() < 20 && awtColor.getGreen() < 20 && awtColor.getBlue() < 20)
                     continue;
 
+                // Normalize x to [0,1] range
                 double u = (double) x / textureWidth;
-                double phi = u * 2 * Math.PI;
+                // Convert normalized x to azimuthal angle theta (0 to 2*PI)
+                double theta = u * 2 * Math.PI;
 
-                double sinTheta = Math.sin(theta);
+                // Calculate sine of polar angle phi
+                double sinTheta = Math.sin(phi);
+                // Aspect ratio correction to avoid ellipse distortion
                 double aspectFix = effectiveViewportWidth / effectiveViewportHeight;
-                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(phi) / aspectFix;
-                double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(theta) + 1;
-                double pz = moonCenter.xyz.d3() + MOON_RADIUS * sinTheta * Math.sin(phi);
+                // Calculate 3D coordinates on the sphere surface using spherical coordinates
+                // Spherical coordinates formulas:
+                // x = r * sin(φ) * cos(θ)
+                // y = r * sin(φ) * sin(θ)
+                // z = r * cos(φ)
+                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(theta) / aspectFix;
+                double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(phi) + 1;
+                double pz = moonCenter.xyz.d3() + MOON_RADIUS * sinTheta * Math.sin(theta);
 
+                // Create color for the sphere dot
                 Color dotColor = new Color(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
 
+                // Add a small sphere at the calculated position with the pixel color
                 scene.geometries.add(
                         new Sphere(new Point(px, py, pz), dotRadius)
                                 .setEmission(dotColor)
@@ -242,14 +260,14 @@ public class FinalImage {
                 .setVpSize(effectiveViewportWidth, effectiveViewportHeight) // Use the calculated effective viewport size
                 .setResolution(IMAGE_RESOLUTION_WIDTH, IMAGE_RESOLUTION_HEIGHT) // Output image resolution
                 //.setBlackboard(new Blackboard(5))
-                .setUseAdaptiveSuperSampling(true)
-                .setAssMaxDepth(5)
-                .setAssTolerance(7)
+//                .setUseAdaptiveSuperSampling(true)
+//                .setAssMaxDepth(5)
+//                .setAssTolerance(7)
                 .setMultithreading(-2)
                 .setDebugPrint(1.0)
                 .build()
                 .renderImage()
-                .writeToImage("Mountains_and_Moon_ASS");
+                .writeToImage("Mountains_and_Moon1");
 
         System.out.println("Finished – check 'Mountains_and_Moon.png'");
     }

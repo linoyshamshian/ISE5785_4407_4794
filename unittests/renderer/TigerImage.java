@@ -25,26 +25,21 @@ public class TigerImage {
 
     private static final String TEXT_FILE_PATH = "python_code/triangles_data.txt";
 
-    /**
-     * גודל מישור-התצוגה (Viewport) – 800×800 פיקסלים
-     */
-    private static final int VIEWPORT_SIZE = 1000;      // גם רוחב וגם גובה
-    private static final int IMAGE_RESOLUTION = 1000;   // רזולוציית פלט
+    // Viewport size (width and height in pixels)
+    private static final int VIEWPORT_SIZE = 1000;
+    // Output image resolution (width and height in pixels)
+    private static final int IMAGE_RESOLUTION = 1000;
 
-    /**
-     * שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך)
-     */
+    // Safety margin (e.g., 0.98 means 2% margin from the edges)
     private static final double SAFETY_MARGIN = 0.98;
 
-    /**
-     * Z קבוע למישור שבו מונחים המשולשים
-     */
+    // Z coordinate for the plane where the triangles are placed
     private static final double Z_PLANE = 0.01;
 
     @Test
     void renderPolyArtFromText() throws IOException {
         /* ---------------------------------------------------------
-         * 1. קריאת כל השורות מהקובץ
+         * 1. Read all lines from the triangles data file
          * --------------------------------------------------------- */
         List<String> lines = Files.readAllLines(Paths.get(TEXT_FILE_PATH));
         if (lines.isEmpty()) {
@@ -53,16 +48,18 @@ public class TigerImage {
         }
 
         /* ---------------------------------------------------------
-         * 2. מעבר ראשון: חישוב גבולות   (min/max)
+         * 2. First pass: Find the min/max bounds of all triangles
          * --------------------------------------------------------- */
         double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE;
         double minY = Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
 
+        // Iterate over all lines to find the bounding box of the triangles
         for (String line : lines) {
-            if (line.trim().isEmpty() || line.trim().startsWith("#")) continue;
+            if (line.trim().isEmpty() || line.trim().startsWith("#")) continue;// Skip empty or comment lines
             String[] p = line.split(",");
-            if (p.length != 12) continue; // שורה לא תקינה
+            if (p.length != 12) continue; // Skip invalid lines
 
+            // Extract X and Y coordinates of the triangle's vertices
             double[] xs = {Double.parseDouble(p[0].trim()),
                     Double.parseDouble(p[3].trim()),
                     Double.parseDouble(p[6].trim())};
@@ -71,6 +68,7 @@ public class TigerImage {
                     Double.parseDouble(p[4].trim()),
                     Double.parseDouble(p[7].trim())};
 
+            // Update min/max for X and Y
             for (double x : xs) {
                 minX = Math.min(minX, x);
                 maxX = Math.max(maxX, x);
@@ -85,20 +83,19 @@ public class TigerImage {
         double originalHeight = maxY - minY;
 
         /* ---------------------------------------------------------
-         * 3. חישוב Scale-Factor + Center Offset
+         * 3. Calculate scale factor and center offset for fitting triangles to viewport
          * --------------------------------------------------------- */
+        // Calculate the scale so the triangles fit within the viewport, considering the safety margin
         double scale = SAFETY_MARGIN *
                 Math.min(VIEWPORT_SIZE / originalWidth,
                         VIEWPORT_SIZE / originalHeight);
 
-        double offsetX = -((minX + maxX) / 2.0) * scale;               // מרכז בציר X
-        double offsetY = -((minY + maxY) / 2.0) * scale;               // מרכז בציר Y
-        //      מיישרים את Y כלפי מעלה:
-        double invertFactor = VIEWPORT_SIZE / originalHeight;          // יחס להפיכת Y
-        // (אפשר גם פשוט ORIGINAL_IMAGE_HEIGHT אם הקובץ 0-800, אבל זו גישה כללית יותר)
+        // Calculate offsets to center the triangles in the viewport
+        double offsetX = -((minX + maxX) / 2.0) * scale; // Center X
+        double offsetY = -((minY + maxY) / 2.0) * scale; // Center Y
 
         /* ---------------------------------------------------------
-         * 4. יצירת המשולשים – מעבר שני
+         * 4. Second pass: Create and add triangles to the scene
          * --------------------------------------------------------- */
         Material triMat = new Material().setKD(0.6).setKS(0.2).setShininess(10);
 
@@ -108,26 +105,29 @@ public class TigerImage {
             String[] p = line.split(",");
             if (p.length != 12) continue;
 
+            // Parse all 12 values (3 vertices × 2 coordinates + 3 color components)
             List<Integer> v = Arrays.stream(p).map(String::trim)
                     .map(Integer::parseInt).collect(Collectors.toList());
 
-            // המרת שלוש נקודות
+            // Convert the three vertices to Point objects, applying scale and offset
             Point[] pts = new Point[3];
             for (int i = 0; i < 3; i++) {
                 double x = v.get(i * 3);
                 double y = v.get(i * 3 + 1);
 
-                // Y inversion (כיוון תשובות)
-                y = maxY - (y - minY);        // הופכים בתוך תחום המקור
+                // Invert Y axis to match image coordinate system (Y=0 is top)
+                y = maxY - (y - minY);
 
                 pts[i] = new Point(
-                        x * scale + offsetX,
-                        y * scale + offsetY,
-                        Z_PLANE
+                        x * scale + offsetX, // Apply scale and offset to X
+                        y * scale + offsetY, // Apply scale and offset to Y
+                        Z_PLANE // Place all triangles on the same Z plane
                 );
             }
 
+            // Create color from the last three values (RGB)
             Color col = new Color(v.get(9), v.get(10), v.get(11));
+            // Add the triangle to the scene with the given material and color
             scene.geometries.add(new Triangle(pts[0], pts[1], pts[2])
                     .setMaterial(triMat)
                     .setEmission(col));
@@ -136,22 +136,23 @@ public class TigerImage {
         System.out.printf("Added %,d triangles%n", added);
 
         /* ---------------------------------------------------------
-         * 5. רקע שחור ותאורה
+         * 5. Set black background and add lighting
          * --------------------------------------------------------- */
-        scene.setBackground(new Color(0, 0, 0));                       // רקע מוחלט שחור
+        scene.setBackground(new Color(0, 0, 0)); // Absolute black background
         scene.setAmbientLight(new AmbientLight(new Color(20, 20, 20)));
 
+        // Add a point light above the scene for shading and highlights
         scene.lights.add(
                 new PointLight(new Color(150, 150, 150),
                         new Point(0, 0, VIEWPORT_SIZE * 2))
                         .setKl(0.0008).setKq(0.00003));
 
         /* ---------------------------------------------------------
-         * 6. מצלמה
+         * 6. Camera setup and image rendering
          * --------------------------------------------------------- */
         cameraBuilder
-                .setLocation(new Point(0, 0, VIEWPORT_SIZE))            // Z = 800
-                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setLocation(new Point(0, 0, VIEWPORT_SIZE)) // Camera placed above the scene
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))// Looking down the -Z axis, Y is up
                 .setVpDistance(VIEWPORT_SIZE)
                 .setVpSize(VIEWPORT_SIZE, VIEWPORT_SIZE)
                 .setResolution(IMAGE_RESOLUTION, IMAGE_RESOLUTION)
