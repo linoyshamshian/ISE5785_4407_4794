@@ -171,7 +171,7 @@
   </li>
   <li>
     <b>הפלט הסופי – מצלמה ואובייקטים ממוקמים נכון:</b><br>
-    <img src="python_code/final_tiger1.png" width="320" alt="פלט סופי" />
+    <img src="final_images/Tiger_AA.png" width="320" alt="פלט סופי" />
   </li>
 </ol>
 
