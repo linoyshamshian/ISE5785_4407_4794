@@ -23,30 +23,21 @@ import java.util.stream.Collectors;
 
 public class FinalImage {
 
-    private final Scene scene = new Scene("Poly Art Auto-Fit");
+    private final Scene scene = new Scene("Beautiful Art Mountains By Linoy And Chen");
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(scene, RayTracerType.SIMPLE);
 
-    private static final String TEXT_FILE_PATH = "C:\\Users\\linoy\\Downloads\\full_mountain.txt";
-    private static final String MOON_TEXTURE_PATH = "C:\\Users\\linoy\\Downloads\\moon.png";
+    private static final String TEXT_FILE_PATH = "python_code/mountains_data.txt";
+    private static final String MOON_TEXTURE_PATH = "python_code/moon.png";
 
     // Output image resolution
-    private static final int IMAGE_RESOLUTION_WIDTH = 1000;
     private static final int IMAGE_RESOLUTION_HEIGHT = 1300;
     private static final double VIEWPORT_BASE_SIZE = 1300;
 
-
-    // Base size for viewport distance (can be same as resolution for 1:1 pixel mapping)
-    // This value often influences the "zoom" level and should be consistent with how the scene is perceived
-//    private static final double VIEWPORT_BASE_SIZE = 1000;
-
-    /**
-     * שיעור כווץ קטן כדי להשאיר 2 % שוליים ביטחון (אפשר 1.0 אם לא צריך)
-     */
     private static final double SAFETY_MARGIN = 1.0; // Set to 1.0 to attempt to fill the image without cutting content
 
     /**
-     * Z קבוע למישור שבו מונחים המשולשים
+     * Z-coordinate for the plane where the triangles are placed
      */
     private static final double Z_PLANE = 0.01;
 
@@ -58,7 +49,7 @@ public class FinalImage {
     @Test
     void renderPolyArtFromText() throws IOException {
         /* ---------------------------------------------------------
-         * 1. קריאת כל השורות מהקובץ
+         * 1. Read all lines from the file
          * --------------------------------------------------------- */
         List<String> lines = Files.readAllLines(Paths.get(TEXT_FILE_PATH));
         if (lines.isEmpty()) {
@@ -67,7 +58,7 @@ public class FinalImage {
         }
 
         /* ---------------------------------------------------------
-         * 2. מעבר ראשון: חישוב גבולות   (min/max)
+         * 2. First pass: Calculate bounds (min/max)
          * --------------------------------------------------------- */
         double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE;
         double minY = Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
@@ -100,13 +91,18 @@ public class FinalImage {
 
         // Calculate aspect ratio of the mountain data
         double originalAspectRatio = originalWidth / originalHeight;
+
+        // Ensure originalHeight is not zero to prevent division by zero
+        if (originalHeight == 0) {
+            System.err.println("Error: originalHeight is zero, cannot calculate aspect ratio correctly.");
+            originalHeight = 1; // Prevent division by zero
+        }
+
+        // Calculate IMAGE_RESOLUTION_WIDTH, ensuring it's at least 1 pixel wide
+        int IMAGE_RESOLUTION_WIDTH = (int) Math.max(1, Math.round(originalAspectRatio * IMAGE_RESOLUTION_HEIGHT));
+
         // Calculate aspect ratio of the target image resolution
         double targetAspectRatio = (double) IMAGE_RESOLUTION_WIDTH / IMAGE_RESOLUTION_HEIGHT;
-        /* ---------------------------------------------------------
-         * 3. חישוב Scale-Factor + Center Offset
-         * This scaling should ensure the mountain fits the *viewport*,
-         * not necessarily the image resolution directly yet.
-         * --------------------------------------------------------- */
         double effectiveViewportWidth;
         double effectiveViewportHeight;
         double overallScaleFactor;
@@ -114,11 +110,9 @@ public class FinalImage {
         // Determine how to fit the mountain content into the target image aspect ratio
         if (originalAspectRatio > targetAspectRatio) { // Mountain is wider than the target image
             effectiveViewportWidth = VIEWPORT_BASE_SIZE; // Fit by width
-            effectiveViewportHeight = VIEWPORT_BASE_SIZE / originalAspectRatio; // Scale height proportionally
             overallScaleFactor = effectiveViewportWidth / originalWidth;
         } else { // Mountain is taller or same aspect ratio as the target image
             effectiveViewportHeight = VIEWPORT_BASE_SIZE; // Fit by height
-            effectiveViewportWidth = VIEWPORT_BASE_SIZE * originalAspectRatio; // Scale width proportionally
             overallScaleFactor = effectiveViewportHeight / originalHeight;
         }
 
@@ -136,7 +130,7 @@ public class FinalImage {
 
 
         /* ---------------------------------------------------------
-         * 4. יצירת המשולשים – מעבר שני
+         * 4. Create Triangles – Second Pass
          * --------------------------------------------------------- */
         Material triMat = new Material().setKD(0.6).setKS(0.2).setShininess(10);
 
@@ -149,13 +143,13 @@ public class FinalImage {
             List<Integer> v = Arrays.stream(p).map(String::trim)
                     .map(Integer::parseInt).collect(Collectors.toList());
 
-            // המרת שלוש נקודות
+            // Convert three points
             Point[] pts = new Point[3];
             for (int i = 0; i < 3; i++) {
                 double x = v.get(i * 3);
                 double y = v.get(i * 3 + 1);
 
-                // Y inversion (כיוון תשובות)
+                // Y inversion (coordinate system adjustment)
                 y = maxY - (y - minY);
 
                 pts[i] = new Point(
@@ -184,16 +178,12 @@ public class FinalImage {
             throw new RuntimeException("Couldn't load moon texture image", e);
         }
 
-        // Adjust moonCenter to place it in the top-left corner of the *actual rendered viewport*
-        // The effectiveViewportWidth and effectiveViewportHeight define the bounds of the mountain content.
-        // We need to place the moon relative to this content area, not the full 1000x1000 output image.
-        // The camera's origin (0,0) is at the center of the viewport.
+        // Adjust moonCenter to place it in the top-left corner of the *actual rendered viewport
         Point moonCenter = new Point(
                 -effectiveViewportWidth / 2.0 + MOON_RADIUS * 1.5, // X: left edge + moon radius + padding
                 effectiveViewportHeight / 2.0 - MOON_RADIUS * 1.5, // Y: top edge - moon radius - padding
-                Z_PLANE // Z_PLANE is fine, perhaps slightly more if it should hover
+                Z_PLANE
         );
-        // You'll likely need to fine-tune the '1.5' factor for padding/offset.
 
         int textureWidth = moonTexture.getWidth();
         int textureHeight = moonTexture.getHeight();
@@ -215,14 +205,9 @@ public class FinalImage {
                 double phi = u * 2 * Math.PI;
 
                 double sinTheta = Math.sin(theta);
-//                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(phi);
-
                 double aspectFix = effectiveViewportWidth / effectiveViewportHeight;
                 double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(phi) / aspectFix;
                 double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(theta) + 1;
-
-
-//                double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(theta);
                 double pz = moonCenter.xyz.d3() + MOON_RADIUS * sinTheta * Math.sin(phi);
 
                 Color dotColor = new Color(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
@@ -236,11 +221,8 @@ public class FinalImage {
         }
         System.out.println("Moon added using image-based dot texture.");
 
-
-
-
         /* ---------------------------------------------------------
-         * 5. רקע שחור ותאורה
+         * 5. Black Background and Lighting
          * --------------------------------------------------------- */
         scene.setBackground(new Color(0, 0, 0));
         scene.setAmbientLight(new AmbientLight(new Color(20, 20, 20)));
@@ -251,7 +233,7 @@ public class FinalImage {
                         .setKl(0.0008).setKq(0.00003));
 
         /* ---------------------------------------------------------
-         * 6. מצלמה
+         * 6. Camera Setup
          * --------------------------------------------------------- */
         cameraBuilder
                 .setLocation(new Point(0, 0, VIEWPORT_BASE_SIZE))            // Z location
@@ -259,16 +241,16 @@ public class FinalImage {
                 .setVpDistance(VIEWPORT_BASE_SIZE)
                 .setVpSize(effectiveViewportWidth, effectiveViewportHeight) // Use the calculated effective viewport size
                 .setResolution(IMAGE_RESOLUTION_WIDTH, IMAGE_RESOLUTION_HEIGHT) // Output image resolution
-//                .setBlackboard(new Blackboard(5))
-//                .setUseAdaptiveSuperSampling(true)
-//                .setAssMaxDepth(4)
-//                .setAssTolerance(7.5)
+                //.setBlackboard(new Blackboard(5))
+                .setUseAdaptiveSuperSampling(true)
+                .setAssMaxDepth(5)
+                .setAssTolerance(7)
                 .setMultithreading(-2)
                 .setDebugPrint(1.0)
                 .build()
                 .renderImage()
-                .writeToImage("Mountains_and_Moon_NoStretch"); // New output name
+                .writeToImage("Mountains_and_Moon_ASS");
 
-        System.out.println("Finished – check 'Mountains_and_Moon_NoStretch.png'");
+        System.out.println("Finished – check 'Mountains_and_Moon.png'");
     }
 }
