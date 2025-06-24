@@ -58,7 +58,8 @@
 
 
 <div dir="rtl" align="right">
-## קבצי פלט
+
+  ## קבצי פלט
 
 <ul dir="rtl">
   <li><code>triangles_data.json</code> – לכל משולש נשמרים שלושת הקודקודים (x, y, z) והצבע הממוצע (RGB).</li>
