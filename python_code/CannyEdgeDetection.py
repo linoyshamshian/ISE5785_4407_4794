@@ -79,19 +79,23 @@ else:
     else:
         # שלב 3: טריאנגולציה - פירוק התמונה למשולשים לפי הנקודות
 
+        # מגדיר את גבולות השטח שבו תתבצע הטריאנגולציה (כל התמונה)
         rect = (0, 0, img.shape[1], img.shape[0])
+        # יוצר אובייקט טריאנגולציה דלונית של OpenCV (מנוע הטריאנגולציה)
         subdiv = cv.Subdiv2D(rect)
 
         # מוסיפים את כל הנקודות לטריאנגולציה
         for p in points_for_subdiv:
-            # Ensure points are within the rect for insertion (Subdiv2D can be sensitive)
+            # בדיקה: רק נקודות שבתוך גבולות התמונה נכנסות (כדי למנוע שגיאות)
             if 0 <= p[0] < width and 0 <= p[1] < height:
+                 # כאן מתבצע לא רק "הוספה", אלא עדכון רשת המשולשים כך שתישמר טריאנגולציה דלונית
                 subdiv.insert(tuple(p))
 
+        # לאחר שכל הנקודות הוכנסו, שולפים את רשימת המשולשים שנוצרו
         triangle_list = subdiv.getTriangleList()
 
-        img_triangles = img.copy()
-        img_filled_triangles = img.copy()
+        img_triangles = img.copy() #  עותק של התמונה המקורית – עליו נצייר את קווי המשולשים
+        img_filled_triangles = img.copy() #  עותק נוסף – עליו נמלא את המשולשים בצבע הממוצע שלהם
         all_triangles_data = [] # כאן נשמור את נתוני המשולשים
         min_area_threshold = 10 # שטח מינימלי למשולש (מדלגים על קטנים מדי)
         margin_x = 10  # מרווח לבדיקה אם משולש בגבול התמונה
@@ -113,6 +117,7 @@ else:
 
                 # אם השטח גדול מסף המינימום, המשך בעיבוד המשולש
                 if area > min_area_threshold:
+                    # ממירים את שלושת קודקודי המשולש למערך numpy (נדרש לפונקציות של OpenCV)
                     triangle_pts_2d_np = np.array([pt1_2d, pt2_2d, pt3_2d], np.int32)
 
                     # יוצרים מסיכה של המשולש כדי לחשב צבע ממוצע
@@ -122,7 +127,9 @@ else:
                     # בודקים שיש פיקסלים במסיכה
                     if np.any(mask == 255):
 
-                        # אוספים את ערכי הצבע של הפיקסלים שבמשולש
+                        # לוקח את ערכי הצבע של כל הפיקסלים שבתוך המשולש בלבד,
+                        # ע"י שימוש במסיכה: mask==255 מסמן בדיוק את הפיקסלים שנמצאים במשולש,
+                        # וכך אפשר לחשב ממוצע צבע רק עבורם בקלות וביעילות.
                         b_values = img[:, :, 0][mask == 255]
                         g_values = img[:, :, 1][mask == 255]
                         r_values = img[:, :, 2][mask == 255]
@@ -145,11 +152,11 @@ else:
                             "color_rgb": average_color_rgb
                         })
 
-                        # מציירים את המשולש על תמונת הקווים
+                        # מצייר שלושה קווים ירוקים בין קודקודי המשולש על img_triangles,
+                        # כך שכל משולש ייראה כרשת קווים (wireframe) ברורה.
                         cv.line(img_triangles, pt1_2d, pt2_2d, (0, 255, 0), 1)
                         cv.line(img_triangles, pt2_2d, pt3_2d, (0, 255, 0), 1)
                         cv.line(img_triangles, pt3_2d, pt1_2d, (0, 255, 0), 1)
-
 
                         # ממלאים את המשולש בצבע הממוצע בתמונה נוספת
                         cv.fillPoly(img_filled_triangles, [triangle_pts_2d_np], average_color_bgr)

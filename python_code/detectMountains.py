@@ -52,12 +52,12 @@ else:
     all_raw_points.extend([(width-1, height//4), (width-1, height*3//4), (width//4, height-1), (width*3//4, height-1)])
 
 
-    # ✅ הוספת נקודות אקראיות – עליון עם צפיפות גבוהה, אמצעי עם צפיפות בינונית, תחתון עם צפיפות גבוהה מאוד
+    #  הוספת נקודות אקראיות – עליון עם צפיפות גבוהה, אמצעי עם צפיפות בינונית, תחתון עם צפיפות גבוהה מאוד
     top_height_limit = height // 3 # סף גובה לשליש העליון (שמיים)
     middle_height_limit = height * 2 // 3 # סף גובה לשליש האמצעי (מעבר בין שמיים להרים)
     # שליש תחתון (הרים ועצים) מתחיל מ-middle_height_limit ועד height-1
 
-    num_top_points = 800 # מספר נקודות אקראיות לשמיים (שליש עליון). השארנו כדי שהשמיים יהיו חלקים.
+    num_top_points = 800 # מספר נקודות אקראיות לשמיים (שליש עליון). כדי שהשמיים יהיו חלקים.
     num_middle_points = 400 # מספר נקודות אקראיות לאמצע.
     num_bottom_points = 5000 #  מספר גבוה מאוד של נקודות לחלק התחתון (הרים ועצים)
 
@@ -82,14 +82,16 @@ else:
     # שלב 2: סינון נקודות קרובות מדי
     # עם הוספת נקודות אקראיות, min_point_distance הופך לקריטי מאוד
     # ערך נמוך יותר יאפשר ליותר נקודות להישאר, מה שיוביל ליותר משולשים
-    min_point_distance = 4 #  הקטנה נוספת של המרחק המינימלי כדי לשמר יותר פרטים
+    min_point_distance = 4 #  הקטנה של המרחק המינימלי כדי לשמר יותר פרטים
     filtered_points = []
     all_raw_points.sort(key=lambda p: (p[1], p[0]))
 
+    # שלב סינון: מסנן את כל הנקודות כך שלא תהיינה קרובות מדי זו לזו (מונע הצפה של משולשים קטנים)
     for p in all_raw_points:
         if all(distance(p, existing_p) >= min_point_distance for existing_p in filtered_points):
             filtered_points.append(p)
 
+    # ממיר את רשימת הנקודות למערך numpy בפורמט float32, מוכן לטריאנגולציה
     points_for_subdiv = np.array(filtered_points, dtype=np.float32).reshape(-1, 2)
     print(f"Filtered down to {len(points_for_subdiv)} points for triangulation.")
 
@@ -97,42 +99,55 @@ else:
         print("Not enough unique points detected to form triangles. Adjust parameters.")
     else:
         rect = (0, 0, img.shape[1], img.shape[0])
+        # יוצר את מנוע הטריאנגולציה של OpenCV
         subdiv = cv.Subdiv2D(rect)
 
+        # מוסיף את כל הנקודות לטריאנגולציה, רק אם הן בגבולות התמונה
         for p in points_for_subdiv:
             if 0 <= p[0] < width and 0 <= p[1] < height:
                 subdiv.insert(tuple(p))
 
+         # שולף את רשימת המשולשים שנוצרו (כל משולש – 6 ערכים: x1, y1, x2, y2, x3, y3)
         triangle_list = subdiv.getTriangleList()
 
+        # יוצרים עותקים של התמונה המקורית: אחד לציור קווי המשולשים, אחד למילוי בצבעים
         img_triangles = img.copy()
         img_filled_triangles = img.copy()
         all_triangles_data = []
         min_area_threshold = 5
         margin_x, margin_y = 10, 10
 
+        # עובר על כל המשולשים שנוצרו
         for t in triangle_list:
             pt1_2d = (int(t[0]), int(t[1]))
             pt2_2d = (int(t[2]), int(t[3]))
             pt3_2d = (int(t[4]), int(t[5]))
 
+            # בודק שכל הקודקודים בטווח התמונה (כולל מרווח)
             if all(
                 -margin_x <= pt[0] < img.shape[1] + margin_x and
                 -margin_y <= pt[1] < img.shape[0] + margin_y
                 for pt in [pt1_2d, pt2_2d, pt3_2d]
             ):
+                # מחשב את שטח המשולש (נוסחת דטרמיננטה)
                 area = 0.5 * abs(
                     pt1_2d[0]*(pt2_2d[1] - pt3_2d[1]) +
                     pt2_2d[0]*(pt3_2d[1] - pt1_2d[1]) +
                     pt3_2d[0]*(pt1_2d[1] - pt2_2d[1])
                 )
 
+                # מדלג על משולשים קטנים מדי
                 if area > min_area_threshold:
+                    # יוצר מערך numpy של קודקודי המשולש, נדרש לפונקציות של OpenCV
                     triangle_pts_2d_np = np.array([pt1_2d, pt2_2d, pt3_2d], np.int32)
+                    # יוצר מסיכה בגודל התמונה, עליה נמלא את המשולש בלבן (255)
                     mask = np.zeros(img.shape[:2], dtype=np.uint8)
                     cv.fillPoly(mask, [triangle_pts_2d_np], 255)
 
                     if np.any(mask == 255):
+                        # לוקח את ערכי הצבע של כל הפיקסלים שבתוך המשולש בלבד,
+                        # ע"י שימוש במסיכה: mask==255 מסמן בדיוק את הפיקסלים שנמצאים במשולש,
+                        # וכך אפשר לחשב ממוצע צבע רק עבורם בקלות וביעילות.
                         b = img[:, :, 0][mask == 255]
                         g = img[:, :, 1][mask == 255]
                         r = img[:, :, 2][mask == 255]
