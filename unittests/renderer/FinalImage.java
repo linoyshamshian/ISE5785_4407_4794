@@ -122,11 +122,12 @@ public class FinalImage {
         effectiveViewportWidth = originalWidth * overallScaleFactor;
         effectiveViewportHeight = originalHeight * overallScaleFactor;
 
-
         // These offsets center the mountain within the *effective* viewport
+        // This shifts the model so that its center (after scaling) will be at the origin (0,0) of the display or canvas.
+        // The center is found by averaging the min and max coordinates, then scaling that value.
+        // The negative sign moves the model so its center aligns with the center of the view.
         double offsetX = -((minX + maxX) / 2.0) * overallScaleFactor;
         double offsetY = -((minY + maxY) / 2.0) * overallScaleFactor;
-
 
         /* ---------------------------------------------------------
          * 4. Create Triangles – Second Pass
@@ -214,17 +215,17 @@ public class FinalImage {
                 double theta = u * 2 * Math.PI;
 
                 // Calculate sine of polar angle phi
-                double sinTheta = Math.sin(phi);
+                double sinPhi = Math.sin(phi);
                 // Aspect ratio correction to avoid ellipse distortion
                 double aspectFix = effectiveViewportWidth / effectiveViewportHeight;
                 // Calculate 3D coordinates on the sphere surface using spherical coordinates
                 // Spherical coordinates formulas:
                 // x = r * sin(φ) * cos(θ)
-                // y = r * sin(φ) * sin(θ)
-                // z = r * cos(φ)
-                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinTheta * Math.cos(theta) / aspectFix;
+                // y = r * cos(φ)
+                // z = r * sin(φ) * sin(θ)
+                double px = moonCenter.xyz.d1() + MOON_RADIUS * sinPhi * Math.cos(theta) / aspectFix;
                 double py = moonCenter.xyz.d2() + MOON_RADIUS * Math.cos(phi) + 1;
-                double pz = moonCenter.xyz.d3() + MOON_RADIUS * sinTheta * Math.sin(theta);
+                double pz = moonCenter.xyz.d3() + MOON_RADIUS * sinPhi * Math.sin(theta);
 
                 // Create color for the sphere dot
                 Color dotColor = new Color(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
